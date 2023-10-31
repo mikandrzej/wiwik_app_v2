@@ -5,6 +5,14 @@
 #include <QAbstractTableModel>
 #include <QObject>
 
+enum EgCarModelColumns : int {
+  Name = 0,
+  PlateNo,
+  Temperature,
+  BatteryVoltage,
+  Length
+};
+
 class EgCarsModel : public QAbstractTableModel {
   Q_OBJECT
 public:
@@ -30,9 +38,10 @@ public:
 private:
   EgVehicleListData m_data;
 
-    // QAbstractItemModel interface
+  // QAbstractItemModel interface
 public:
-    bool setData(const QModelIndex &index, const QVariant &value, int role) override;
+  bool setData(const QModelIndex &index, const QVariant &value,
+               int role) override;
 };
 
 #endif // QCARSMODEL_H

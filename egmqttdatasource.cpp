@@ -137,18 +137,22 @@ void EgMqttDataSource::parseVehicleMessage(int vehicle_id,
 
   if (message_type == "irvine_temperature1") {
     double temperature = jsonObj["value"].toDouble();
-    qDebug() << "Received temperature data " << temperature
-             << " from vehicle:" << vehicle_id;
     EgSensorData sensorData = {
         .vehicleId = vehicle_id,
+        .dataType = EgSensorDataType::Temperature1,
         .timestamp = QDateTime::fromSecsSinceEpoch(timestamp),
-        .temperature = temperature,
+        .value = temperature,
     };
     emit sensorDataReceived(sensorData);
   } else if (message_type == "irvine_battery") {
     double battery = jsonObj["value"].toDouble();
-    qDebug() << "Received battery data " << battery
-             << " from vehicle:" << vehicle_id;
+    EgSensorData sensorData = {
+        .vehicleId = vehicle_id,
+        .dataType = EgSensorDataType::BatteryVoltage,
+        .timestamp = QDateTime::fromSecsSinceEpoch(timestamp),
+        .value = battery,
+    };
+    emit sensorDataReceived(sensorData);
   } else {
     qWarning() << "Unknown type of vehicle message: " << message_type;
     return;

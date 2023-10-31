@@ -9,8 +9,8 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Widgets)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Mqtt PrintSupport)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Widgets Quick Location)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Mqtt PrintSupport Quick Location)
 
 set(PROJECT_SOURCES
         main.cpp
@@ -28,6 +28,10 @@ set(PROJECT_SOURCES
         EgDeviceData.h
         eghistoryvehiclesmodel.h eghistoryvehiclesmodel.cpp
         dialogeditvehicles.h dialogeditvehicles.cpp dialogeditvehicles.ui
+        egtemperaturechart.h egtemperaturechart.cpp
+        egvehiclesmap.h egvehiclesmap.cpp
+        geomap.qml
+        geoItem.qml
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -60,7 +64,7 @@ add_library(CustomPlot SHARED
 target_link_libraries(CustomPlot PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::PrintSupport)
 
 
-target_link_libraries(wiwik_app_widgets_5 PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Mqtt CustomPlot)
+target_link_libraries(wiwik_app_widgets_5 PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Mqtt Qt${QT_VERSION_MAJOR}::Quick Qt${QT_VERSION_MAJOR}::Location CustomPlot)
 
 set_target_properties(wiwik_app_widgets_5 PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com

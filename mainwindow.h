@@ -1,10 +1,11 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "QCustomPlot/qcustomplot.h"
+// #include "QCustomPlot/qcustomplot.h"
 #include "dialogassignsensor.h"
 #include "dialogeditvehicles.h"
 #include "egcarsmodel.h"
+#include "egtemperaturechart.h"
 #include <QLabel>
 #include <QMainWindow>
 
@@ -21,7 +22,8 @@ public:
   MainWindow(QWidget *parent = nullptr);
   ~MainWindow();
 
-  QCustomPlot *historyPlot() const;
+  //  QCustomPlot *historyPlot() const;
+  EgTemperatureChart *historyPlot();
 
   void setVehModel(EgCarsModel *newVehModel);
 
@@ -31,7 +33,7 @@ public:
   DialogEditVehicles *dialogEditVehicles() const;
 
   QPushButton *pbEditVehicles() const;
-  public slots:
+public slots:
   void setMqttStatus(bool status);
   void setRestStatus(bool status);
 
@@ -51,14 +53,23 @@ private slots:
   void on_pb_editVehicles_clicked();
 
   void onDeHistoryDateChanged(const QDate &date);
-  signals:
+  void on_pb_historyReset_clicked();
+
+  void on_pb_historyDateMinus_clicked();
+
+  void on_pb_historyDatePlus_clicked();
+
+  void on_pb_historySelectDate_clicked();
+
+signals:
   void vehicleHistoryDataRequested(int, QDate &);
 
 private:
   Ui::MainWindow *ui;
   QLabel *m_statusBarMqttLabel;
   QLabel *m_statusBarRestLabel;
-  QCustomPlot *m_historyPlot;
+  //  QCustomPlot *m_historyPlot;
+  EgTemperatureChart *m_historyPlot;
   int m_liveVehicleListSelectedRow = -1;
   QModelIndex m_historyVehicleListSelectedIndex;
 

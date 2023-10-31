@@ -9,21 +9,21 @@ QVariant EgCarsModel::data(const QModelIndex &index, int role) const {
   if (index.row() < m_data.vehicles.count()) {
     auto data = m_data.vehicles[index.row()];
     switch (index.column()) {
-    case 0:
+    case EgCarModelColumns::Name:
       switch (role) {
       case Qt::DisplayRole:
         return data->name;
         break;
       }
       break;
-    case 1:
+    case EgCarModelColumns::PlateNo:
       switch (role) {
       case Qt::DisplayRole:
         return data->plateNo;
         break;
       }
       break;
-    case 2:
+    case EgCarModelColumns::Temperature:
       switch (role) {
       case Qt::DisplayRole:
         return QString("%1℃").arg(data->temperature);
@@ -33,6 +33,13 @@ QVariant EgCarsModel::data(const QModelIndex &index, int role) const {
           return QColorConstants::Red;
         else
           return QColorConstants::Green;
+        break;
+      }
+      break;
+    case EgCarModelColumns::BatteryVoltage:
+      switch (role) {
+      case Qt::DisplayRole:
+        return QString("%1mV").arg(data->batteryVoltage);
         break;
       }
       break;
@@ -59,10 +66,30 @@ void EgCarsModel::onSensorDataReceived(EgSensorData &sensorData) {
   for (int k = 0; k < m_data.vehicles.count(); k++) {
     auto &vehicle = m_data.vehicles[k];
     if (vehicle->id == sensorData.vehicleId) {
-      qDebug() << "Update sensor data with temperature: "
-               << sensorData.temperature;
-      vehicle->temperature = sensorData.temperature;
-      emit dataChanged(createIndex(k, 2), createIndex(k, 2), {Qt::DisplayRole});
+      switch (sensorData.dataType) {
+      case EgSensorDataType::Temperature1: {
+        bool ok;
+        auto temperature = sensorData.value.toDouble(&ok);
+        if (ok) {
+          vehicle->temperature = temperature;
+          emit dataChanged(createIndex(k, EgCarModelColumns::Temperature),
+                           createIndex(k, EgCarModelColumns::Temperature),
+                           {Qt::DisplayRole});
+        }
+        break;
+      }
+      case EgSensorDataType::BatteryVoltage: {
+        bool ok;
+        auto battery = sensorData.value.toDouble(&ok);
+        if (ok) {
+          vehicle->batteryVoltage = battery;
+          emit dataChanged(createIndex(k, EgCarModelColumns::BatteryVoltage),
+                           createIndex(k, EgCarModelColumns::BatteryVoltage),
+                           {Qt::DisplayRole});
+        }
+        break;
+      }
+      }
     }
   }
 }
@@ -74,11 +101,11 @@ bool EgCarsModel::setData(const QModelIndex &index, const QVariant &value,
   if (index.isValid()) {
     if (Qt::DisplayRole == role) {
       switch (index.column()) {
-      case 0:
+      case EgCarModelColumns::Name:
         m_data.vehicles[index.row()]->name = value.toString();
         emit dataChanged(index, index, {role});
         return true;
-      case 1:
+      case EgCarModelColumns::PlateNo:
         m_data.vehicles[index.row()]->plateNo = value.toString();
         emit dataChanged(index, index, {role});
         return true;
@@ -92,28 +119,39 @@ int EgCarsModel::rowCount(const QModelIndex &parent) const {
   return m_data.vehicles.count();
 }
 
-int EgCarsModel::columnCount(const QModelIndex &parent) const { return 3; }
+int EgCarsModel::columnCount(const QModelIndex &parent) const {
+  return EgCarModelColumns::Length;
+}
 
 QVariant EgCarsModel::headerData(int section, Qt::Orientation orientation,
                                  int role) const {
   switch (orientation) {
   case Qt::Horizontal:
     switch (section) {
-    case 0:
+    case EgCarModelColumns::Name:
       switch (role) {
       case Qt::DisplayRole:
         return QString("Pojazd");
       }
-    case 1:
+      break;
+    case EgCarModelColumns::PlateNo:
       switch (role) {
       case Qt::DisplayRole:
         return QString("Rejestracja");
       }
-    case 2:
+      break;
+    case EgCarModelColumns::Temperature:
       switch (role) {
       case Qt::DisplayRole:
         return QString("Temperatura");
       }
+      break;
+    case EgCarModelColumns::BatteryVoltage:
+      switch (role) {
+      case Qt::DisplayRole:
+        return QString("Napięcie baterii");
+      }
+      break;
     }
     break;
   case Qt::Vertical:
