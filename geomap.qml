@@ -22,13 +22,23 @@ Item {
 
 
         MapItemView{
-            model: app.model
+            model: app.carsModel
+            delegate: MapPolyline{
+                path: model.polylinePath
+                line.width: model.polylineWidth
+                line.color: model.polylineColor
+            }
+        }
+
+        MapItemView{
+            model: app.carsModel
             delegate: MapCircle{
-                id:uavPos
-                radius: 5000
-                color:'black'
-                border.width:3
-                center: QtPositioning.coordinate(model.position.latitude, model.position.longitude)
+                radius: model.circleRadius
+                color:model.color
+                border.width:model.circleBorderWidth
+                center: QtPositioning.coordinate(model.markerPosition.latitude,
+                                                 model.markerPosition.longitude)
+                enabled: model.markerType === "circle"
             }
         }
     }

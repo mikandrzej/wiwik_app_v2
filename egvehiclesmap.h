@@ -1,7 +1,8 @@
 #ifndef EGVEHICLESMAP_H
 #define EGVEHICLESMAP_H
 
-#include <QStandardItemModel>
+#include "egcarsmapmodel.h"
+
 #include <QWidget>
 
 class EgVehiclesMap : public QWidget {
@@ -9,13 +10,13 @@ class EgVehiclesMap : public QWidget {
 public:
   explicit EgVehiclesMap(QWidget *parent = nullptr);
 
-  QStandardItemModel *model() const;
+  QAbstractListModel *carsModel() const;
 
 signals:
 
 private:
-  QStandardItemModel *m_model;
-  Q_PROPERTY(QObject *model READ model CONSTANT)
+  EgCarsMapModel *m_carsModel;
+  Q_PROPERTY(QObject *carsModel READ carsModel CONSTANT)
 };
 
 #endif // EGVEHICLESMAP_H

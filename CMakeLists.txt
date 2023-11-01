@@ -31,7 +31,7 @@ set(PROJECT_SOURCES
         egtemperaturechart.h egtemperaturechart.cpp
         egvehiclesmap.h egvehiclesmap.cpp
         geomap.qml
-        geoItem.qml
+        egcarsmapmodel.h egcarsmapmodel.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
