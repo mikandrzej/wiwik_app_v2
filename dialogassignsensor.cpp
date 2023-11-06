@@ -11,7 +11,7 @@ DialogAssignSensor::DialogAssignSensor(QWidget *parent)
 DialogAssignSensor::~DialogAssignSensor() { delete ui; }
 
 void DialogAssignSensor::setVehiclesList(
-    const EgVehicleListData &vehicleListData) {
+    const EgVehiclesData &vehicleListData) {
   m_vehicleListData = vehicleListData;
   ui->lst_vehicles->clear();
   foreach (auto vehicle, m_vehicleListData.vehicles) {

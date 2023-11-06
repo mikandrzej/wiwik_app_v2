@@ -32,6 +32,13 @@ set(PROJECT_SOURCES
         egvehiclesmap.h egvehiclesmap.cpp
         geomap.qml
         egcarsmapmodel.h egcarsmapmodel.cpp
+        vehiclesmodel.h vehiclesmodel.cpp
+        onevehiclemodel.h onevehiclemodel.cpp
+        onevehicletemperaturemodel.h onevehicletemperaturemodel.cpp
+        onevehiclepositionmodel.h onevehiclepositionmodel.cpp
+        onevehiclebatterymodel.h onevehiclebatterymodel.cpp
+        livevehiclesproxymodel.h livevehiclesproxymodel.cpp
+        historyvehiclesproxymodel.h historyvehiclesproxymodel.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

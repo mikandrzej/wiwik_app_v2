@@ -18,7 +18,7 @@ public:
   explicit DialogAssignSensor(QWidget *parent = nullptr);
   ~DialogAssignSensor();
 
-  void setVehiclesList(const EgVehicleListData &vehicleListData);
+  void setVehiclesList(const EgVehiclesData &vehicleListData);
   void setDevicesList(const EgDevicesListData &deviceListData);
 
 signals:
@@ -33,7 +33,7 @@ private slots:
 
 private:
   Ui::DialogAssignSensor *ui;
-  EgVehicleListData m_vehicleListData;
+  EgVehiclesData m_vehicleListData;
   EgDevicesListData m_deviceListData;
 };
 

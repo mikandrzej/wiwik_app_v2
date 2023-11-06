@@ -1,7 +1,7 @@
 #ifndef EGVEHICLEDATA_H
 #define EGVEHICLEDATA_H
 
-#include "qvariant.h"
+#include "qgeopositioninfo.h"
 #include <QDateTime>
 #include <QList>
 #include <QString>
@@ -10,21 +10,27 @@ struct EgVehicleData {
   int id;
   QString name;
   QString plateNo;
-  double temperature;
-  double batteryVoltage;
 };
 
-enum class EgSensorDataType { Temperature1, BatteryVoltage };
+enum class EgSensorDataType { Temperature1, BatteryVoltage, GpsPosition };
 
 struct EgSensorData {
   int vehicleId;
   EgSensorDataType dataType;
   QDateTime timestamp;
-  QVariant value;
+  union {
+    double battery;
+    double temperature;
+  };
+  QGeoPositionInfo geoPosition;
 };
 
-struct EgVehicleListData {
+struct EgVehiclesData {
   QList<EgVehicleData *> vehicles;
+};
+
+struct EgSensorsData {
+  QList<EgSensorData *> sensors;
 };
 
 #endif // EGVEHICLEDATA_H

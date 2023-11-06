@@ -10,7 +10,8 @@ class EgVehiclesMap : public QWidget {
 public:
   explicit EgVehiclesMap(QWidget *parent = nullptr);
 
-  QAbstractListModel *carsModel() const;
+  EgCarsMapModel *carsModel() const;
+  void setCarsModel(EgCarsMapModel *model);
 
 signals:
 

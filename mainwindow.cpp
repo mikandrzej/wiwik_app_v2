@@ -44,9 +44,12 @@ MainWindow::MainWindow(QWidget *parent)
   ui->de_history->setDate(QDate::currentDate());
 
   QVBoxLayout *layout = new QVBoxLayout(ui->w_map);
-  auto m_mapWidget = new EgVehiclesMap(ui->w_map);
+  m_mapWidget = new EgVehiclesMap(ui->w_map);
   ui->w_map->setLayout(layout);
   layout->addWidget(m_mapWidget);
+
+  m_liveVehModel = new LiveVehiclesProxyModel(this);
+  m_historyVehModel = new HistoryVehiclesProxyModel(this);
 }
 
 MainWindow::~MainWindow() { delete ui; }
@@ -69,10 +72,15 @@ DialogAssignSensor *MainWindow::dialogAssignSensor() const {
 QPushButton *MainWindow::pbAssignSensor() const { return ui->pb_assignSensor; }
 QPushButton *MainWindow::pbEditVehicles() const { return ui->pb_editVehicles; }
 
-void MainWindow::setVehModel(EgCarsModel *newVehModel) {
+void MainWindow::setVehModel(VehiclesModel *newVehModel) {
   m_vehModel = newVehModel;
 
-  connect(m_vehModel, &EgCarsModel::dataChanged, this,
+  m_liveVehModel->setSourceModel(m_vehModel);
+  ui->tv_cars->setModel(m_liveVehModel);
+  m_historyVehModel->setSourceModel(newVehModel);
+  ui->lv_historyVehicles->setModel(m_historyVehModel);
+
+  connect(m_vehModel, &QAbstractItemModel::dataChanged, this,
           &MainWindow::onVehiclesModelDataChanged);
 }
 
@@ -105,12 +113,20 @@ void MainWindow::setRestStatus(bool status) {
 }
 
 void MainWindow::onLiveVehicleListClicked(const QModelIndex &index) {
-  m_liveVehicleListSelectedRow = index.row();
-  auto const vehicle_data = m_vehModel->getData().vehicles[index.row()];
-  // todo use model
-  ui->l_vehName->setText(vehicle_data->name);
-  ui->l_plateNo->setText(vehicle_data->plateNo);
-  ui->l_vehTemp->setText(QString("%1℃").arg(vehicle_data->temperature));
+  ui->l_vehName->setText(
+      m_vehModel
+          ->data(index.siblingAtColumn(m_vehModel->ColumnName), Qt::DisplayRole)
+          .toString());
+  ui->l_plateNo->setText(
+      m_vehModel
+          ->data(index.siblingAtColumn(m_vehModel->ColumnPlateNo),
+                 Qt::DisplayRole)
+          .toString());
+  ui->l_vehTemp->setText(
+      m_vehModel
+          ->data(index.siblingAtColumn(m_vehModel->ColumnTemperature),
+                 Qt::DisplayRole)
+          .toString());
 }
 
 void MainWindow::onHistoryVehicleListClicked(const QModelIndex &index) {
@@ -122,9 +138,13 @@ void MainWindow::plotHistoryData() {
   if (!m_historyVehicleListSelectedIndex.isValid()) {
     return;
   }
-  int vehicleId = m_vehModel->getData()
-                      .vehicles[m_historyVehicleListSelectedIndex.row()]
-                      ->id;
+  bool ok;
+  int vehicleId =
+      m_vehModel->data(m_historyVehicleListSelectedIndex, Qt::DisplayRole)
+          .toInt(&ok);
+  if (!ok)
+    return;
+
   QDate date = ui->de_history->date();
   emit vehicleHistoryDataRequested(vehicleId, date);
 }
@@ -148,64 +168,55 @@ void MainWindow::historyDataAutoRescale() {
 }
 
 void MainWindow::onSensorLiveDataReceived(EgSensorData &sensorData) {
-  if (sensorData.dataType != EgSensorDataType::Temperature1) {
-    return;
-  }
-  bool ok;
-  double value = sensorData.value.toDouble(&ok);
-  if (!ok) {
-    return;
-  }
+  //  if (sensorData.dataType != EgSensorDataType::Temperature1) {
+  //    return;
+  //  }
+  //  double value = sensorData.temperature;
 
-  if (!m_historyVehicleListSelectedIndex.isValid()) {
-    return;
-  }
-  auto vehicle =
-      m_vehModel->getData().vehicles[m_historyVehicleListSelectedIndex.row()];
-  if (sensorData.vehicleId != vehicle->id) {
-    return;
-  }
+  //  if (!m_historyVehicleListSelectedIndex.isValid()) {
+  //    return;
+  //  }
+  //  auto vehicle =
+  //      m_vehModel->getData().vehicles[m_historyVehicleListSelectedIndex.row()];
+  //  if (sensorData.vehicleId != vehicle->id) {
+  //    return;
+  //  }
 
-  auto date_a = sensorData.timestamp.date();
-  auto date_b = ui->de_history->date();
-  if (date_a != date_b) {
-    return;
-  }
+  //  auto date_a = sensorData.timestamp.date();
+  //  auto date_b = ui->de_history->date();
+  //  if (date_a != date_b) {
+  //    return;
+  //  }
 
-  m_historyPlot->appendPoint(sensorData.timestamp.toSecsSinceEpoch(), value);
+  //  m_historyPlot->appendPoint(sensorData.timestamp.toSecsSinceEpoch(),
+  //  value);
 
-  historyDataAutoRescale();
+  //  historyDataAutoRescale();
 }
 
 void MainWindow::onVehiclesModelDataChanged(const QModelIndex &topLeft,
                                             const QModelIndex &bottomRight,
                                             const QVector<int> &roles) {
+  // todo use slot/signals
   if (m_liveVehicleListSelectedRow >= topLeft.row() &&
       m_liveVehicleListSelectedRow <= bottomRight.row()) {
     if (roles.contains(Qt::DisplayRole)) {
       for (int col = topLeft.column(); col <= bottomRight.column(); col++) {
+        QVariant data =
+            m_vehModel->data(topLeft.sibling(m_liveVehicleListSelectedRow, col),
+                             Qt::DisplayRole);
         switch (col) {
-        case EgCarModelColumns::Name:
-          ui->l_vehName->setText(m_vehModel->getData()
-                                     .vehicles[m_liveVehicleListSelectedRow]
-                                     ->name);
+        case VehiclesModel::ColumnName:
+          ui->l_vehName->setText(data.toString());
           break;
-        case EgCarModelColumns::PlateNo:
-          ui->l_plateNo->setText(m_vehModel->getData()
-                                     .vehicles[m_liveVehicleListSelectedRow]
-                                     ->plateNo);
+        case VehiclesModel::ColumnPlateNo:
+          ui->l_plateNo->setText(data.toString());
           break;
-        case EgCarModelColumns::Temperature:
-          ui->l_vehTemp->setText(
-              QString("%1℃").arg(m_vehModel->getData()
-                                     .vehicles[m_liveVehicleListSelectedRow]
-                                     ->temperature));
+        case VehiclesModel::ColumnTemperature:
+          ui->l_vehTemp->setText(data.toString());
           break;
-        case EgCarModelColumns::BatteryVoltage:
-          ui->l_sensorBatteryVoltage->setText(
-              QString("%1mV").arg(m_vehModel->getData()
-                                      .vehicles[m_liveVehicleListSelectedRow]
-                                      ->batteryVoltage));
+        case VehiclesModel::ColumnBattery:
+          ui->l_sensorBatteryVoltage->setText(data.toString());
           break;
         }
       }

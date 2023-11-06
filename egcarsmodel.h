@@ -10,6 +10,7 @@ enum EgCarModelColumns : int {
   PlateNo,
   Temperature,
   BatteryVoltage,
+  GPSPosition,
   Length
 };
 
@@ -22,21 +23,21 @@ public:
 public:
   QVariant data(const QModelIndex &index, int role) const override;
   void appendCar(EgVehicleData *car);
-  void overrideCars(EgVehicleListData *list);
+  void overrideCars(EgVehiclesData *list);
   int rowCount(const QModelIndex &parent) const override;
   int columnCount(const QModelIndex &parent) const override;
   QVariant headerData(int section, Qt::Orientation orientation,
                       int role) const override;
-  void overrideCars(EgVehicleListData &list);
+  void overrideCars(EgVehiclesData &list);
 
 public slots:
   void onSensorDataReceived(EgSensorData &sensorData);
 
 public:
-  const EgVehicleListData &getData();
+  const EgVehiclesData &getData();
 
 private:
-  EgVehicleListData m_data;
+  EgVehiclesData m_data;
 
   // QAbstractItemModel interface
 public:

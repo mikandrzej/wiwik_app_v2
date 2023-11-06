@@ -24,6 +24,7 @@ EgMqttDataSource::EgMqttDataSource(QObject *parent) : QMqttClient{parent} {
 void EgMqttDataSource::onClentStateChanged(QMqttClient::ClientState state) {
 
   if (Connected == state) {
+    setServerState(true);
     qDebug() << "Connected";
 
     auto subsVeh = subscribe(QMqttTopicFilter("vehicles/#"));
@@ -33,6 +34,13 @@ void EgMqttDataSource::onClentStateChanged(QMqttClient::ClientState state) {
     auto subsServer = subscribe(QMqttTopicFilter("server/#"));
     connect(subsServer, &QMqttSubscription::messageReceived, this,
             &EgMqttDataSource::onServerMessageReceived);
+  } else if (Disconnected == state) {
+    setServerState(false);
+    m_serverTimeoutTimer->stop();
+    QTimer::singleShot(m_serverConnRetryInterval, this, [this]() {
+      qDebug() << "Reconnecting to MQTT server";
+      connectToHost();
+    });
   }
 }
 
@@ -129,29 +137,53 @@ void EgMqttDataSource::parseVehicleMessage(int vehicle_id,
   quint64 timestamp = jsonObj["timestamp"].toInt();
   QString message_type = topicLevels[2];
 
-  if (!jsonObj.contains("value")) {
-    qWarning() << "Json value for message type:" << message_type
-               << " should contain key \"value\"";
-    return;
-  }
-
   if (message_type == "irvine_temperature1") {
+    if (!jsonObj.contains("value")) {
+      qWarning() << "Json value for message type:" << message_type
+                 << " should contain key \"value\"";
+      return;
+    }
     double temperature = jsonObj["value"].toDouble();
     EgSensorData sensorData = {
         .vehicleId = vehicle_id,
         .dataType = EgSensorDataType::Temperature1,
         .timestamp = QDateTime::fromSecsSinceEpoch(timestamp),
-        .value = temperature,
+        .temperature = temperature,
     };
     emit sensorDataReceived(sensorData);
   } else if (message_type == "irvine_battery") {
+    if (!jsonObj.contains("value")) {
+      qWarning() << "Json value for message type:" << message_type
+                 << " should contain key \"value\"";
+      return;
+    }
     double battery = jsonObj["value"].toDouble();
     EgSensorData sensorData = {
         .vehicleId = vehicle_id,
         .dataType = EgSensorDataType::BatteryVoltage,
         .timestamp = QDateTime::fromSecsSinceEpoch(timestamp),
-        .value = battery,
+        .battery = battery,
     };
+    emit sensorDataReceived(sensorData);
+  } else if (message_type == "gps") {
+    int fix_mode = jsonObj["fix_mode"].toInt();
+    int satellites = jsonObj["satellites"].toInt();
+    double latitude = jsonObj["latitude"].toDouble();
+    double longitude = jsonObj["longitude"].toDouble();
+    double speed = jsonObj["speed"].toDouble();
+    double precision = jsonObj["precision"].toDouble();
+    int gps_timestamp = jsonObj["gps_timestamp"].toInt();
+    QGeoPositionInfo positionInfo;
+    positionInfo.setCoordinate(QGeoCoordinate(latitude, longitude));
+    positionInfo.setAttribute(QGeoPositionInfo::GroundSpeed, speed);
+    positionInfo.setAttribute(QGeoPositionInfo::HorizontalAccuracy, precision);
+    positionInfo.setTimestamp(QDateTime::fromSecsSinceEpoch(gps_timestamp));
+
+    EgSensorData sensorData = {.vehicleId = vehicle_id,
+                               .dataType = EgSensorDataType::GpsPosition,
+                               .timestamp =
+                                   QDateTime::fromSecsSinceEpoch(timestamp),
+                               .geoPosition = positionInfo};
     emit sensorDataReceived(sensorData);
   } else {
     qWarning() << "Unknown type of vehicle message: " << message_type;

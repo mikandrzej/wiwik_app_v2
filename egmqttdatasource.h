@@ -24,6 +24,7 @@ signals:
 private:
   int m_uptime;
   int m_serverTimeout = 30000;
+  int m_serverConnRetryInterval = 5000;
   bool m_serverState = false;
   QTimer *m_serverTimeoutTimer = nullptr;
   void parseVehicleMessage(int vehicle_id, QStringList &topicLevels,

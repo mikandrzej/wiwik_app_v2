@@ -5,14 +5,14 @@ EgDataProvider::EgDataProvider(QObject *parent) : QObject{parent} {
   m_restDataSource = new EgRestDataSource(this);
 
   connect(m_restDataSource, &EgRestDataSource::vehicleListReady, this,
-          &EgDataProvider::vehicleDataReceived);
+          &EgDataProvider::vehiclesDataReceived);
   connect(m_restDataSource, &EgRestDataSource::deviceListReady, this,
           &EgDataProvider::devicesDataReceived);
   connect(m_mqttDataSource, &EgMqttDataSource::sensorDataReceived, this,
           &EgDataProvider::sensorLiveDataReceived);
 
   connect(m_restDataSource, &EgRestDataSource::vehicleListReady, this,
-          [&](EgVehicleListData &vehicleListData) {
+          [&](EgVehiclesData &vehicleListData) {
             this->m_vehicleList.vehicles.clear();
             this->m_vehicleList.vehicles.append(vehicleListData.vehicles);
           });
@@ -54,6 +54,6 @@ const EgDevicesListData &EgDataProvider::getDevicesList() {
   return m_deviceList;
 }
 
-const EgVehicleListData &EgDataProvider::getVehiclesList() {
+const EgVehiclesData &EgDataProvider::getVehiclesList() {
   return m_vehicleList;
 }

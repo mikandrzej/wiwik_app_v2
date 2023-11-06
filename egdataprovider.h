@@ -16,7 +16,7 @@ public:
   void requestDevicesData();
 
 signals:
-  void vehicleDataReceived(EgVehicleListData &vehiclesData);
+  void vehiclesDataReceived(EgVehiclesData &vehiclesData);
   void devicesDataReceived(EgDevicesListData &devicesData);
   void sensorLiveDataReceived(EgSensorData &sensorData);
   void mqttServerStateChanged(bool state);
@@ -31,12 +31,12 @@ public slots:
 
 public:
   const EgDevicesListData &getDevicesList();
-  const EgVehicleListData &getVehiclesList();
+  const EgVehiclesData &getVehiclesList();
 
 private:
   EgMqttDataSource *m_mqttDataSource;
   EgRestDataSource *m_restDataSource;
   EgDevicesListData m_deviceList;
-  EgVehicleListData m_vehicleList;
+  EgVehiclesData m_vehicleList;
 };
 #endif // EGDATAPROVIDER_H

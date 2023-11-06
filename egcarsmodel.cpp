@@ -26,20 +26,29 @@ QVariant EgCarsModel::data(const QModelIndex &index, int role) const {
     case EgCarModelColumns::Temperature:
       switch (role) {
       case Qt::DisplayRole:
-        return QString("%1℃").arg(data->temperature);
+        //        return QString("%1℃").arg(data->temperature);
         break;
       case Qt::BackgroundRole:
-        if (data->temperature > 0.0)
-          return QColorConstants::Red;
-        else
-          return QColorConstants::Green;
+        //        if (data->temperature > 0.0)
+        //            return QColorConstants::Red;
+        //        else
+        //            return QColorConstants::Green;
         break;
       }
       break;
     case EgCarModelColumns::BatteryVoltage:
       switch (role) {
       case Qt::DisplayRole:
-        return QString("%1mV").arg(data->batteryVoltage);
+        //        return QString("%1mV").arg(data->batteryVoltage);
+        break;
+      }
+      break;
+    case EgCarModelColumns::GPSPosition:
+      switch (role) {
+      case Qt::DisplayRole:
+        //        return QString::number(data->gpsPosition.latitude(), 'f', 6) +
+        //        ", " +
+        //               QString::number(data->gpsPosition.longitude(), 'f', 6);
         break;
       }
       break;
@@ -55,7 +64,7 @@ void EgCarsModel::appendCar(EgVehicleData *car) {
   endInsertRows();
 }
 
-void EgCarsModel::overrideCars(EgVehicleListData &list) {
+void EgCarsModel::overrideCars(EgVehiclesData &list) {
   beginResetModel();
   m_data.vehicles.clear();
   m_data.vehicles.append(list.vehicles);
@@ -68,33 +77,32 @@ void EgCarsModel::onSensorDataReceived(EgSensorData &sensorData) {
     if (vehicle->id == sensorData.vehicleId) {
       switch (sensorData.dataType) {
       case EgSensorDataType::Temperature1: {
-        bool ok;
-        auto temperature = sensorData.value.toDouble(&ok);
-        if (ok) {
-          vehicle->temperature = temperature;
-          emit dataChanged(createIndex(k, EgCarModelColumns::Temperature),
-                           createIndex(k, EgCarModelColumns::Temperature),
-                           {Qt::DisplayRole});
-        }
+        //        vehicle->temperature = sensorData.temperature;
+        emit dataChanged(createIndex(k, EgCarModelColumns::Temperature),
+                         createIndex(k, EgCarModelColumns::Temperature),
+                         {Qt::DisplayRole});
+
         break;
       }
       case EgSensorDataType::BatteryVoltage: {
-        bool ok;
-        auto battery = sensorData.value.toDouble(&ok);
-        if (ok) {
-          vehicle->batteryVoltage = battery;
-          emit dataChanged(createIndex(k, EgCarModelColumns::BatteryVoltage),
-                           createIndex(k, EgCarModelColumns::BatteryVoltage),
-                           {Qt::DisplayRole});
-        }
+        //        vehicle->batteryVoltage = sensorData.battery;
+        emit dataChanged(createIndex(k, EgCarModelColumns::BatteryVoltage),
+                         createIndex(k, EgCarModelColumns::BatteryVoltage),
+                         {Qt::DisplayRole});
         break;
       }
+      case EgSensorDataType::GpsPosition:
+        //        vehicle->gpsPosition = sensorData.geoPosition.coordinate();
+        emit dataChanged(createIndex(k, EgCarModelColumns::GPSPosition),
+                         createIndex(k, EgCarModelColumns::GPSPosition),
+                         {Qt::DisplayRole});
+        break;
       }
     }
   }
 }
 
-const EgVehicleListData &EgCarsModel::getData() { return m_data; }
+const EgVehiclesData &EgCarsModel::getData() { return m_data; }
 
 bool EgCarsModel::setData(const QModelIndex &index, const QVariant &value,
                           int role) {
@@ -150,6 +158,12 @@ QVariant EgCarsModel::headerData(int section, Qt::Orientation orientation,
       switch (role) {
       case Qt::DisplayRole:
         return QString("Napięcie baterii");
+      }
+      break;
+    case EgCarModelColumns::GPSPosition:
+      switch (role) {
+      case Qt::DisplayRole:
+        return QString("Pozycja GPS");
       }
       break;
     }

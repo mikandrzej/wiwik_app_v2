@@ -21,6 +21,12 @@ void EgCarsMapModel::removeCar(EgCarMapModel *carModel) {
   }
 }
 
+void EgCarsMapModel::onSensorDataReceived(EgSensorData &sensorData) {
+  if (sensorData.dataType != EgSensorDataType::GpsPosition) {
+    return;
+  }
+}
+
 QHash<int, QByteArray> EgCarsMapModel::roleNames() const {
   const QHash<int, QByteArray> roles = {
       {RoleName, "name"},

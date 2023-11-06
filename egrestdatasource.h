@@ -22,7 +22,7 @@ public slots:
   void requestVehicleHistoryData(int vehicleId, QDate &date);
   void onAddNewVehicle(QString &vehName, QString &plateNo);
 signals:
-  void vehicleListReady(EgVehicleListData &vehicleListData);
+  void vehicleListReady(EgVehiclesData &vehicleListData);
   void deviceListReady(EgDevicesListData &vehicleListData);
   void serverStateChanged(bool state);
   void vehiclesHistoryDataReady(QVector<int> &, QVector<double> &);

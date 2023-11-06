@@ -42,6 +42,7 @@ EgVehiclesMap::EgVehiclesMap(QWidget *parent) : QWidget{parent} {
   //      new QGeoCircle(map->property("center").value<QGeoCoordinate>(), 5000);
   //  QMetaObject::invokeMethod(map, "addMapItem", Q_ARG(QGeoCircle *, circle));
 
+  /*
   auto carModel = new EgCarMapModel();
   carModel->setColor(QColorConstants::Red);
   carModel->setPolylineColor(QColorConstants::Red);
@@ -62,6 +63,9 @@ EgVehiclesMap::EgVehiclesMap(QWidget *parent) : QWidget{parent} {
   carModel->updatePosition(center);
 
   m_carsModel->addCar(carModel);
+*/
 }
 
-QAbstractListModel *EgVehiclesMap::carsModel() const { return m_carsModel; }
+EgCarsMapModel *EgVehiclesMap::carsModel() const { return m_carsModel; }
+
+void EgVehiclesMap::setCarsModel(EgCarsMapModel *model) { m_carsModel = model; }

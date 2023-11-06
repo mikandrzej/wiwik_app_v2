@@ -8,28 +8,23 @@
 
 App::App(MainWindow *mainWindow, QObject *parent)
     : QObject{parent}, m_mainWindow(mainWindow) {
-
-  m_mainWindow->setVehModel(&m_carsModel);
-
   bindGui();
 
-  connect(&m_dataProvider, &EgDataProvider::vehicleDataReceived, this,
-          &App::onVehiclesDataReceived);
   connect(&m_dataProvider, &EgDataProvider::sensorLiveDataReceived,
-          &m_carsModel, &EgCarsModel::onSensorDataReceived);
+          &m_carsMapModel, &EgCarsMapModel::onSensorDataReceived);
+
+  connect(&m_dataProvider, &EgDataProvider::sensorLiveDataReceived,
+          &m_vehiclesModel, &VehiclesModel::onSensorDataReceived);
+  connect(&m_dataProvider, &EgDataProvider::vehiclesDataReceived,
+          &m_vehiclesModel, &VehiclesModel::onVehiclesDataReceived);
 
   connect(&m_dataProvider, &EgDataProvider::restServerStateChanged, this,
           &App::onRestServerStateChanged);
 }
 
 void App::bindGui() {
-  auto tv_cars = m_mainWindow->findChild<QTableView *>("tv_cars");
-  tv_cars->setModel(&m_carsModel);
 
-  auto lv_historyVehicles =
-      m_mainWindow->findChild<QListView *>("lv_historyVehicles");
-  m_historyVehiclesModel.setSourceModel(&m_carsModel);
-  lv_historyVehicles->setModel(&m_historyVehiclesModel);
+  m_mainWindow->setVehModel(&m_vehiclesModel);
 
   connect(&m_dataProvider, &EgDataProvider::mqttServerStateChanged,
           m_mainWindow, &MainWindow::setMqttStatus);
@@ -55,12 +50,6 @@ void App::bindGui() {
           &EgDataProvider::onAddNewVehicle);
 }
 
-void App::onVehiclesDataReceived(EgVehicleListData &vehiclesData) {
-  qDebug() << "App received vehicles data";
-
-  m_carsModel.overrideCars(vehiclesData);
-}
-
 void App::onSensorDataReceived(EgSensorData &sensorData) {
   qDebug() << "Sensor data received";
 }
@@ -80,6 +69,6 @@ void App::onAssignSensorClicked(bool checked) {
 }
 
 void App::onEditVehiclesClicked(bool checked) {
-  m_mainWindow->dialogEditVehicles()->setCarListModel(&m_carsModel);
+  //  m_mainWindow->dialogEditVehicles()->setCarListModel(&m_carsModel);
   m_mainWindow->dialogEditVehicles()->open();
 }

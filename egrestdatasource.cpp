@@ -215,7 +215,7 @@ void EgRestDataSource::onVehicleListRequestReady(QByteArray &replyData) {
   }
 
   auto vehArray = jsonDoc.array();
-  EgVehicleListData vehicleList;
+  EgVehiclesData vehicleList;
   foreach (auto jsonVeh, vehArray) {
     auto vehData = new EgVehicleData();
 

@@ -1,4 +1,5 @@
 #ifndef EGCARSMAPMODEL_H
+#include "EgVehicleData.h"
 #define EGCARSMAPMODEL_H
 
 #include <QAbstractListModel>
@@ -89,6 +90,8 @@ public:
   void removeCar(EgCarMapModel *carModel);
 
 signals:
+public slots:
+  void onSensorDataReceived(EgSensorData &sensorData);
 
 private:
   enum RoleNames {
