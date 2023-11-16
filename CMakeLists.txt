@@ -17,7 +17,6 @@ set(PROJECT_SOURCES
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui
-        egcarsmodel.h egcarsmodel.cpp
         app.h app.cpp
         egsettings.h egsettings.cpp
         egdataprovider.h egdataprovider.cpp
@@ -28,7 +27,6 @@ set(PROJECT_SOURCES
         EgDeviceData.h
         eghistoryvehiclesmodel.h eghistoryvehiclesmodel.cpp
         dialogeditvehicles.h dialogeditvehicles.cpp dialogeditvehicles.ui
-        egtemperaturechart.h egtemperaturechart.cpp
         egvehiclesmap.h egvehiclesmap.cpp
         geomap.qml
         egcarsmapmodel.h egcarsmapmodel.cpp
@@ -39,6 +37,8 @@ set(PROJECT_SOURCES
         onevehiclebatterymodel.h onevehiclebatterymodel.cpp
         livevehiclesproxymodel.h livevehiclesproxymodel.cpp
         historyvehiclesproxymodel.h historyvehiclesproxymodel.cpp
+        chartwidget.h chartwidget.cpp
+        vehicleseditmodel.h vehicleseditmodel.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

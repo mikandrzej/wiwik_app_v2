@@ -1,5 +1,4 @@
 #include "egvehiclesmap.h"
-#include "egcarsmapmodel.h"
 
 #include <QLayout>
 #include <QQuickView>
@@ -7,23 +6,20 @@
 
 EgVehiclesMap::EgVehiclesMap(QWidget *parent) : QWidget{parent} {
 
-  m_carsModel = new EgCarsMapModel();
-
-  auto quickView = new QQuickView();
-  quickView->setResizeMode(QQuickView::SizeRootObjectToView);
-  quickView->engine()->rootContext()->setContextProperty("app", this);
-  quickView->setSource(QUrl(QString::fromUtf8(
+  m_quickView = new QQuickView();
+  m_quickView->setResizeMode(QQuickView::SizeRootObjectToView);
+  m_quickView->setSource(QUrl(QString::fromUtf8(
       "file:///H:/Projects/C++/Qt/wiwik_app_widgets_5/geomap.qml")));
 
-  QWidget *container = QWidget::createWindowContainer(quickView);
-  container->setMinimumSize(quickView->size());
+  QWidget *container = QWidget::createWindowContainer(m_quickView);
+  container->setMinimumSize(m_quickView->size());
   container->setFocusPolicy(Qt::TabFocus);
 
   QVBoxLayout *layout = new QVBoxLayout(container);
   this->setLayout(layout);
   layout->addWidget(container);
 
-  QObject *map = quickView->findChild<QObject *>("map");
+  QObject *map = m_quickView->findChild<QObject *>("map");
   //  double zoom = map->property("zoomLevel").toDouble();
   //  qDebug() << "Quick view map zoom: " << zoom;
 
@@ -66,6 +62,10 @@ EgVehiclesMap::EgVehiclesMap(QWidget *parent) : QWidget{parent} {
 */
 }
 
-EgCarsMapModel *EgVehiclesMap::carsModel() const { return m_carsModel; }
+VehiclesModel *EgVehiclesMap::vehiclesModel() const { return m_vehiclesModel; }
 
-void EgVehiclesMap::setCarsModel(EgCarsMapModel *model) { m_carsModel = model; }
+void EgVehiclesMap::setVehiclesModel(VehiclesModel *model) {
+  m_vehiclesModel = model;
+  m_quickView->engine()->rootContext()->setContextProperty("app", this);
+  emit vehiclesModelChanged();
+}

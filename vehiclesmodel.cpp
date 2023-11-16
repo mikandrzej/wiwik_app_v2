@@ -1,5 +1,6 @@
 #include "vehiclesmodel.h"
 #include "math.h"
+#include <QColor>
 #include <QSet>
 
 VehiclesModel::VehiclesModel(QObject *parent) : QAbstractTableModel{parent} {}
@@ -25,6 +26,23 @@ QVariant VehiclesModel::data(const QModelIndex &index, int role) const {
     switch (role) {
     case Qt::DisplayRole:
       return item->id();
+    case RoleColor:
+      return QColorConstants::Red;
+    case RoleCircleRadius:
+      return 5;
+    case RoleCircleBorderWidth:
+      return 2;
+    case RoleMarkerPosition:
+      return QVariant::fromValue(
+          item->positionModel()->lastValue().coordinate());
+    case RoleMarkerType:
+      return "marker";
+    case RolePolylinePath:
+      return item->positionModel()->path();
+    case RolePolylineColor:
+      return QColorConstants::Blue;
+    case RolePolylineWidth:
+      return 3;
     }
     break;
   case ColumnName:
@@ -60,19 +78,18 @@ QVariant VehiclesModel::data(const QModelIndex &index, int role) const {
                  QString::number(position.coordinate().longitude()));
       }
     }
+    case ColumnBattery:
+      switch (role) {
+      case Qt::DisplayRole: {
+        auto value = item->batteryModel()->lastValue();
+        if (isnan(value))
+          return "-";
+        else
+          return QString("%1mV").arg(QString::number(value, 'f', 2));
+      }
+      }
+      break;
     }
-    break;
-  case ColumnBattery:
-    switch (role) {
-    case Qt::DisplayRole: {
-      auto value = item->batteryModel()->lastValue();
-      if (isnan(value))
-        return "-";
-      else
-        return QString("%1mV").arg(QString::number(value, 'f', 2));
-    }
-    }
-    break;
   }
   return QVariant();
 }
@@ -105,7 +122,19 @@ QVariant VehiclesModel::headerData(int section, Qt::Orientation orientation,
 }
 
 QHash<int, QByteArray> VehiclesModel::roleNames() const {
-  return QHash<int, QByteArray>{{RoleHistoryData, "historyData"}};
+  return QHash<int, QByteArray>{
+      {RoleHistoryData, "historyData"},
+      {RoleId, "id"},
+      {RoleName, "name"},
+      {RolePolylineColor, "polylineColor"},
+      {RolePolylineWidth, "polylineWidth"},
+      {RoleCircleRadius, "circleRadius"},
+      {RoleColor, "color"},
+      {RoleCircleBorderWidth, "circleBorderWidth"},
+      {RolePolylinePath, "polylinePath"},
+      {RoleMarkerPosition, "markerPosition"},
+      {RoleMarkerType, "markerType"},
+  };
 }
 
 void VehiclesModel::onSensorDataReceived(EgSensorData &sensorData) {
@@ -150,6 +179,9 @@ void VehiclesModel::onSensorsDataReceived(EgSensorsData &sensorsData) {
     case EgSensorDataType::GpsPosition:
       model->positionModel()->insert(sensorData->timestamp.toSecsSinceEpoch(),
                                      sensorData->geoPosition);
+      emit dataChanged(index(m_vehicleRowByModel[model], ColumnPosition),
+                       index(m_vehicleRowByModel[model], ColumnPosition),
+                       {RoleMarkerPosition});
       break;
     }
   }

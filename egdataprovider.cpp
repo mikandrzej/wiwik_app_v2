@@ -31,6 +31,8 @@ EgDataProvider::EgDataProvider(QObject *parent) : QObject{parent} {
           &EgDataProvider::vehiclesHistoryDataReady);
   connect(this, &EgDataProvider::onAddNewVehicle, m_restDataSource,
           &EgRestDataSource::onAddNewVehicle);
+  connect(this, &EgDataProvider::onEditVehicle, m_restDataSource,
+          &EgRestDataSource::onEditVehicle);
 }
 
 void EgDataProvider::requestVehiclesData() {

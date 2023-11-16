@@ -2,9 +2,9 @@
 #define MAINWINDOW_H
 
 // #include "QCustomPlot/qcustomplot.h"
+#include "chartwidget.h"
 #include "dialogassignsensor.h"
 #include "dialogeditvehicles.h"
-#include "egtemperaturechart.h"
 #include "egvehiclesmap.h"
 #include "historyvehiclesproxymodel.h"
 #include "livevehiclesproxymodel.h"
@@ -25,9 +25,6 @@ public:
   MainWindow(QWidget *parent = nullptr);
   ~MainWindow();
 
-  //  QCustomPlot *historyPlot() const;
-  EgTemperatureChart *historyPlot();
-
   void setVehModel(VehiclesModel *newVehModel);
 
   DialogAssignSensor *dialogAssignSensor() const;
@@ -36,6 +33,7 @@ public:
   DialogEditVehicles *dialogEditVehicles() const;
 
   QPushButton *pbEditVehicles() const;
+  ChartWidget *historyPlot();
 public slots:
   void setMqttStatus(bool status);
   void setRestStatus(bool status);
@@ -71,8 +69,7 @@ private:
   Ui::MainWindow *ui;
   QLabel *m_statusBarMqttLabel;
   QLabel *m_statusBarRestLabel;
-  //  QCustomPlot *m_historyPlot;
-  EgTemperatureChart *m_historyPlot;
+  ChartWidget *m_historyPlot;
   int m_liveVehicleListSelectedRow = -1;
   QModelIndex m_historyVehicleListSelectedIndex;
 
@@ -80,7 +77,6 @@ private:
   LiveVehiclesProxyModel *m_liveVehModel;
   HistoryVehiclesProxyModel *m_historyVehModel;
   EgVehiclesMap *m_mapWidget;
-  EgCarsMapModel *m_mapCarsModel;
   DialogAssignSensor *m_dialogAssignSensor;
   DialogEditVehicles *m_dialogEditVehicles;
   void historyDataAutoRescale();

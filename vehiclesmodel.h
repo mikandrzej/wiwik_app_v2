@@ -18,7 +18,7 @@ public:
   QVariant headerData(int section, Qt::Orientation orientation,
                       int role) const override;
   QHash<int, QByteArray> roleNames() const override;
-  enum ColumnTypes {
+  enum {
     ColumnId,
     ColumnName,
     ColumnPlateNo,
@@ -27,7 +27,19 @@ public:
     ColumnBattery,
     ColumnMax
   };
-  enum Roles { RoleHistoryData = Qt::UserRole };
+  enum Roles {
+    RoleHistoryData = Qt::UserRole,
+    RoleName,
+    RoleId,
+    RolePolylineColor,
+    RolePolylineWidth,
+    RoleCircleRadius,
+    RoleColor,
+    RoleCircleBorderWidth,
+    RolePolylinePath,
+    RoleMarkerPosition,
+    RoleMarkerType,
+  };
 
 public slots:
   void onSensorDataReceived(EgSensorData &sensorData);

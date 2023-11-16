@@ -19,14 +19,19 @@ public:
 
 signals:
   void addNewVehicle(QString &vehName, QString &plateNo);
+  void editVehicle(int id, QString &vehName, QString &plateNo);
 
 private slots:
 
   void on_pb_saveAsNewVehicle_clicked();
 
+  void onVehicleClicked(const QModelIndex &index);
+  void on_pb_saveVehicle_clicked();
+
 private:
   Ui::DialogEditVehicles *ui;
   QAbstractItemModel *m_carListModel;
+  QModelIndex m_clickedIndex;
 };
 
 #endif // DIALOGEDITVEHICLES_H

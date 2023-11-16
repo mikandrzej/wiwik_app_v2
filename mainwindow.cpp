@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
+#include "chartwidget.h"
 #include "egvehiclesmap.h"
 
 #include <QCalendarWidget>
@@ -21,12 +22,27 @@ MainWindow::MainWindow(QWidget *parent)
 
   auto wg_chart = ui->wg_chart;
   //  m_historyPlot = new QCustomPlot(wg_chart);
-  m_historyPlot = new EgTemperatureChart();
   auto historyPlotLayout = new QVBoxLayout(wg_chart);
-  historyPlotLayout->addWidget(m_historyPlot->instance());
+  //  m_historyPlot = new EgTemperatureChart();
+  //  historyPlotLayout->addWidget(m_historyPlot->instance());
 
-  m_historyPlot->instance()->setLocale(
-      QLocale(QLocale::Polish, QLocale::Poland));
+  m_historyPlot = new ChartWidget();
+  historyPlotLayout->addWidget(m_historyPlot);
+  //  auto chart = m_historyPlot->addGraph("testowy");
+  //  chart->appendData(0, 10);
+  //  chart->appendData(5, 7);
+  //  chart->appendData(10, 13);
+  //  chart = m_historyPlot->addGraph("testowy2");
+  //  chart->appendData(50, 6);
+  //  chart->appendData(60, 7);
+  //  chart->appendData(70, 11);
+  //  plot->setAxisRange(Qt::XAxis, 0, 10);
+  //  plot->setAxisRange(Qt::YAxis, 0, 20);
+  //  m_historyPlot->rescaleAxis(Qt::XAxis);
+  //  m_historyPlot->rescaleAxis(Qt::YAxis);
+
+  //  m_historyPlot->instance()->setLocale(
+  //      QLocale(QLocale::Polish, QLocale::Poland));
 
   m_dialogAssignSensor = new DialogAssignSensor(this);
   m_dialogEditVehicles = new DialogEditVehicles(this);
@@ -54,7 +70,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow() { delete ui; }
 
-EgTemperatureChart *MainWindow::historyPlot() { return m_historyPlot; }
+ChartWidget *MainWindow::historyPlot() { return m_historyPlot; }
 
 void MainWindow::onPbHistoryTodayClicked(bool state) {
   ui->de_history->setDate(QDate::currentDate());
@@ -79,6 +95,8 @@ void MainWindow::setVehModel(VehiclesModel *newVehModel) {
   ui->tv_cars->setModel(m_liveVehModel);
   m_historyVehModel->setSourceModel(newVehModel);
   ui->lv_historyVehicles->setModel(m_historyVehModel);
+
+  m_mapWidget->setVehiclesModel(newVehModel);
 
   connect(m_vehModel, &QAbstractItemModel::dataChanged, this,
           &MainWindow::onVehiclesModelDataChanged);
@@ -156,14 +174,17 @@ void MainWindow::onHistoryDataReady(QVector<int> &timestamps,
   for (auto timestamp : timestamps) {
     x.append(timestamp);
   }
-  m_historyPlot->clearGraph();
-
-  m_historyPlot->setData(x, temperatures);
+  m_historyPlot->clearGraphs();
+  auto chart = m_historyPlot->addGraph("unknown");
+  chart->setData(x, temperatures);
+  m_historyPlot->rescaleAxis(Qt::XAxis);
+  m_historyPlot->rescaleAxis(Qt::YAxis);
 }
 
 void MainWindow::historyDataAutoRescale() {
   if (ui->cb_autoReset->isChecked()) {
-    m_historyPlot->resetView();
+    m_historyPlot->rescaleAxis(Qt::XAxis);
+    m_historyPlot->rescaleAxis(Qt::YAxis);
   }
 }
 
@@ -230,7 +251,10 @@ DialogEditVehicles *MainWindow::dialogEditVehicles() const {
   return m_dialogEditVehicles;
 }
 
-void MainWindow::on_pb_historyReset_clicked() { m_historyPlot->resetView(); }
+void MainWindow::on_pb_historyReset_clicked() {
+  m_historyPlot->rescaleAxis(Qt::XAxis);
+  m_historyPlot->rescaleAxis(Qt::YAxis);
+}
 
 void MainWindow::on_pb_historyDateMinus_clicked() {
   ui->de_history->setDate(ui->de_history->date().addDays(-1));

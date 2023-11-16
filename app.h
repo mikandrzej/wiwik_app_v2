@@ -5,6 +5,7 @@
 #include "egdataprovider.h"
 #include "egsettings.h"
 #include "mainwindow.h"
+#include "vehicleseditmodel.h"
 #include "vehiclesmodel.h"
 #include <QObject>
 
@@ -27,7 +28,7 @@ private slots:
 private:
   EgSettings m_egSettings;
   VehiclesModel m_vehiclesModel;
-
+  VehiclesEditModel m_vehiclesEditModel;
   EgCarsMapModel m_carsMapModel;
   MainWindow *m_mainWindow;
   EgDataProvider m_dataProvider;

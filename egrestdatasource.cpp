@@ -128,6 +128,35 @@ void EgRestDataSource::onAddNewVehicle(QString &vehName, QString &plateNo) {
   });
 }
 
+void EgRestDataSource::onEditVehicle(int id, QString &vehName,
+                                     QString &plateNo) {
+  QUrl url(m_serverPath + m_editVehiclePath);
+  QUrlQuery uq;
+
+  uq.addQueryItem("id", QString::number(id));
+  uq.addQueryItem("veh_name", vehName);
+  uq.addQueryItem("plate_no", plateNo);
+  uq.addQueryItem("user_id", QString::number(1));
+
+  url.setQuery(uq);
+  QNetworkRequest request(url);
+
+  // send url request
+  QNetworkReply *reply = m_netAccMgr.get(request);
+
+  connect(reply, &QNetworkReply::finished, reply, [reply, this]() {
+    QVariant status_code =
+        reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
+    if (status_code.isValid()) {
+      if (status_code == 200) {
+        this->getVehicleList();
+      } else {
+        qWarning() << "editVehicle request failed with code " << status_code;
+      }
+    }
+  });
+}
+
 void EgRestDataSource::assignVehicleToDevice(EgDeviceData *selectedDevice,
                                              EgVehicleData *selectedVehicle) {
   QString devId = selectedDevice->id;

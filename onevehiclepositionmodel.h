@@ -12,6 +12,8 @@ public:
 
   QGeoPositionInfo lastValue() const;
 
+  QVariantList path();
+
 public slots:
   void insert(int timestamp, QGeoPositionInfo &value);
 

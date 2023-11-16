@@ -21,6 +21,7 @@ public:
 public slots:
   void requestVehicleHistoryData(int vehicleId, QDate &date);
   void onAddNewVehicle(QString &vehName, QString &plateNo);
+  void onEditVehicle(int id, QString &vehName, QString &plateNo);
 signals:
   void vehicleListReady(EgVehiclesData &vehicleListData);
   void deviceListReady(EgDevicesListData &vehicleListData);
@@ -40,6 +41,7 @@ private:
   QString m_getUptimeSubpath = "/api/getUptime";
   QString m_getVehicleHistoryDataPath = "/api/getVehicleTempData";
   QString m_addVehiclePath = "/api/addVehicle";
+  QString m_editVehiclePath = "/api/editVehicle";
 
   int m_uptime;
   int m_serverStatePeriod = 3000;

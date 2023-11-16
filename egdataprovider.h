@@ -23,6 +23,7 @@ signals:
   void restServerStateChanged(bool state);
   void vehiclesHistoryDataReady(QVector<int> &, QVector<double> &);
   void onAddNewVehicle(QString &vehName, QString &plateNo);
+  void onEditVehicle(int id, QString &vehName, QString &plateNo);
 
 public slots:
   void assignVehicleToDevice(EgDeviceData *selectedDevice,

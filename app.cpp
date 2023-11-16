@@ -25,6 +25,7 @@ App::App(MainWindow *mainWindow, QObject *parent)
 void App::bindGui() {
 
   m_mainWindow->setVehModel(&m_vehiclesModel);
+  m_vehiclesEditModel.setSourceModel(&m_vehiclesModel);
 
   connect(&m_dataProvider, &EgDataProvider::mqttServerStateChanged,
           m_mainWindow, &MainWindow::setMqttStatus);
@@ -48,6 +49,8 @@ void App::bindGui() {
   connect(m_mainWindow->dialogEditVehicles(),
           &DialogEditVehicles::addNewVehicle, &m_dataProvider,
           &EgDataProvider::onAddNewVehicle);
+  connect(m_mainWindow->dialogEditVehicles(), &DialogEditVehicles::editVehicle,
+          &m_dataProvider, &EgDataProvider::onEditVehicle);
 }
 
 void App::onSensorDataReceived(EgSensorData &sensorData) {
@@ -69,6 +72,6 @@ void App::onAssignSensorClicked(bool checked) {
 }
 
 void App::onEditVehiclesClicked(bool checked) {
-  //  m_mainWindow->dialogEditVehicles()->setCarListModel(&m_carsModel);
+  m_mainWindow->dialogEditVehicles()->setCarListModel(&m_vehiclesEditModel);
   m_mainWindow->dialogEditVehicles()->open();
 }
