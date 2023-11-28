@@ -128,65 +128,77 @@ void EgMqttDataSource::parseVehicleMessage(int vehicle_id,
     return;
   }
 
-  auto jsonObj = jsonDoc.object();
-
-  if (!jsonObj.contains("timestamp")) {
-    qWarning() << "Json should contain value \"timestamp\"";
+  if (topicLevels.length() != 7)
     return;
-  }
-  quint64 timestamp = jsonObj["timestamp"].toInt();
-  QString message_type = topicLevels[2];
 
-  if (message_type == "irvine_temperature1") {
-    if (!jsonObj.contains("value")) {
-      qWarning() << "Json value for message type:" << message_type
-                 << " should contain key \"value\"";
-      return;
-    }
-    double temperature = jsonObj["value"].toDouble();
-    EgSensorData sensorData = {
-        .vehicleId = vehicle_id,
-        .dataType = EgSensorDataType::Temperature1,
-        .timestamp = QDateTime::fromSecsSinceEpoch(timestamp),
-        .temperature = temperature,
-    };
-    emit sensorDataReceived(sensorData);
-  } else if (message_type == "irvine_battery") {
-    if (!jsonObj.contains("value")) {
-      qWarning() << "Json value for message type:" << message_type
-                 << " should contain key \"value\"";
-      return;
-    }
-    double battery = jsonObj["value"].toDouble();
-    EgSensorData sensorData = {
-        .vehicleId = vehicle_id,
-        .dataType = EgSensorDataType::BatteryVoltage,
-        .timestamp = QDateTime::fromSecsSinceEpoch(timestamp),
-        .battery = battery,
-    };
-    emit sensorDataReceived(sensorData);
-  } else if (message_type == "gps") {
-    int fix_mode = jsonObj["fix_mode"].toInt();
-    int satellites = jsonObj["satellites"].toInt();
-    double latitude = jsonObj["latitude"].toDouble();
-    double longitude = jsonObj["longitude"].toDouble();
-    double speed = jsonObj["speed"].toDouble();
-    double precision = jsonObj["precision"].toDouble();
-    int gps_timestamp = jsonObj["gps_timestamp"].toInt();
-    QGeoPositionInfo positionInfo;
-    positionInfo.setCoordinate(QGeoCoordinate(latitude, longitude));
-    positionInfo.setAttribute(QGeoPositionInfo::GroundSpeed, speed);
-    positionInfo.setAttribute(QGeoPositionInfo::HorizontalAccuracy, precision);
-    positionInfo.setTimestamp(QDateTime::fromSecsSinceEpoch(gps_timestamp));
+  if (topicLevels[2] == "devices") {
+    auto deviceAddress = topicLevels[3];
+    if (topicLevels[4] == "sensors") {
+      auto sensorType = topicLevels[5];
+      auto sensorAddress = topicLevels[6];
 
-    EgSensorData sensorData = {.vehicleId = vehicle_id,
-                               .dataType = EgSensorDataType::GpsPosition,
-                               .timestamp =
-                                   QDateTime::fromSecsSinceEpoch(timestamp),
-                               .geoPosition = positionInfo};
-    emit sensorDataReceived(sensorData);
-  } else {
-    qWarning() << "Unknown type of vehicle message: " << message_type;
-    return;
+      auto jsonObj = jsonDoc.object();
+
+      if (!jsonObj.contains("timestamp")) {
+        qWarning() << "Json should contain value \"timestamp\"";
+        return;
+      }
+      quint64 timestamp = jsonObj["timestamp"].toInt();
+
+      if (sensorType == "temperature") {
+        if (!jsonObj.contains("value")) {
+          qWarning() << "Json value for message type:" << sensorType
+                     << " should contain key \"value\"";
+          return;
+        }
+        double temperature = jsonObj["value"].toDouble();
+        EgSensorData sensorData = {
+            .sensorAddress = sensorAddress,
+            .vehicleId = vehicle_id,
+            .dataType = EgSensorDataType::Temperature,
+            .timestamp = QDateTime::fromSecsSinceEpoch(timestamp),
+            .temperature = temperature,
+        };
+        emit sensorDataReceived(sensorData);
+      } else if (sensorType == "battery") {
+        if (!jsonObj.contains("value")) {
+          qWarning() << "Json value for sensor type:" << sensorType
+                     << " should contain key \"value\"";
+          return;
+        }
+        double battery = jsonObj["value"].toDouble();
+        EgSensorData sensorData = {
+            .sensorAddress = sensorAddress,
+            .vehicleId = vehicle_id,
+            .dataType = EgSensorDataType::BatteryVoltage,
+            .timestamp = QDateTime::fromSecsSinceEpoch(timestamp),
+            .battery = battery,
+        };
+        emit sensorDataReceived(sensorData);
+      } else if (sensorType == "gps") {
+        int fix_mode = jsonObj["fix_mode"].toInt();
+        int satellites = jsonObj["satellites"].toInt();
+        double latitude = jsonObj["latitude"].toDouble();
+        double longitude = jsonObj["longitude"].toDouble();
+        double speed = jsonObj["speed"].toDouble();
+        double precision = jsonObj["precision"].toDouble();
+        int gps_timestamp = jsonObj["gps_timestamp"].toInt();
+        QGeoPositionInfo positionInfo;
+        positionInfo.setCoordinate(QGeoCoordinate(latitude, longitude));
+        positionInfo.setAttribute(QGeoPositionInfo::GroundSpeed, speed);
+        positionInfo.setAttribute(QGeoPositionInfo::HorizontalAccuracy,
+                                  precision);
+        positionInfo.setTimestamp(QDateTime::fromSecsSinceEpoch(gps_timestamp));
+
+        EgSensorData sensorData = {.sensorAddress = sensorAddress,
+                                   .deviceAddress = deviceAddress,
+                                   .vehicleId = vehicle_id,
+                                   .dataType = EgSensorDataType::GpsPosition,
+                                   .timestamp =
+                                       QDateTime::fromSecsSinceEpoch(timestamp),
+                                   .geoPosition = positionInfo};
+        emit sensorDataReceived(sensorData);
+      }
+    }
   }
 }

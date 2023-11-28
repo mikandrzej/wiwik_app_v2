@@ -38,9 +38,9 @@ public slots:
   void setMqttStatus(bool status);
   void setRestStatus(bool status);
 
-  void onHistoryDataReady(QVector<int> &timestamps,
-                          QVector<double> &temperatures);
   void onSensorLiveDataReceived(EgSensorData &sensorData);
+  void onMapMarkerClicked(int vehicleId);
+  void onHistoryDataReady(EgTemperatureListData &tempListData);
 private slots:
   void onVehiclesModelDataChanged(const QModelIndex &topLeft,
                                   const QModelIndex &bottomRight,
@@ -80,5 +80,7 @@ private:
   DialogAssignSensor *m_dialogAssignSensor;
   DialogEditVehicles *m_dialogEditVehicles;
   void historyDataAutoRescale();
+  QModelIndex getVehicleModelIndexById(const int vehicleId);
+  void updateLiveEditFields(const QModelIndex &index);
 };
 #endif // MAINWINDOW_H

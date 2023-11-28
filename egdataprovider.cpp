@@ -49,7 +49,7 @@ void EgDataProvider::assignVehicleToDevice(EgDeviceData *selectedDevice,
 }
 
 void EgDataProvider::requestVehicleHistoryData(int vehicleId, QDate &date) {
-  m_restDataSource->requestVehicleHistoryData(vehicleId, date);
+  m_restDataSource->requestTemperatureHistoryData(vehicleId, date);
 }
 
 const EgDevicesListData &EgDataProvider::getDevicesList() {

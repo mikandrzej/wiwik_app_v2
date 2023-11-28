@@ -41,7 +41,8 @@ public:
     RoleMarkerType,
   };
 
-public slots:
+  QModelIndex getRowByVehicleId(int vehicleId);
+  public slots:
   void onSensorDataReceived(EgSensorData &sensorData);
   void onSensorsDataReceived(EgSensorsData &sensorsData);
   void onVehiclesDataReceived(EgVehiclesData &vehiclesData);

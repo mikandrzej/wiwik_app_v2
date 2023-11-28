@@ -66,6 +66,9 @@ MainWindow::MainWindow(QWidget *parent)
 
   m_liveVehModel = new LiveVehiclesProxyModel(this);
   m_historyVehModel = new HistoryVehiclesProxyModel(this);
+
+  connect(m_mapWidget, &EgVehiclesMap::mapMarkerClicked, this,
+          &MainWindow::onMapMarkerClicked);
 }
 
 MainWindow::~MainWindow() { delete ui; }
@@ -131,20 +134,7 @@ void MainWindow::setRestStatus(bool status) {
 }
 
 void MainWindow::onLiveVehicleListClicked(const QModelIndex &index) {
-  ui->l_vehName->setText(
-      m_vehModel
-          ->data(index.siblingAtColumn(m_vehModel->ColumnName), Qt::DisplayRole)
-          .toString());
-  ui->l_plateNo->setText(
-      m_vehModel
-          ->data(index.siblingAtColumn(m_vehModel->ColumnPlateNo),
-                 Qt::DisplayRole)
-          .toString());
-  ui->l_vehTemp->setText(
-      m_vehModel
-          ->data(index.siblingAtColumn(m_vehModel->ColumnTemperature),
-                 Qt::DisplayRole)
-          .toString());
+  updateLiveEditFields(index);
 }
 
 void MainWindow::onHistoryVehicleListClicked(const QModelIndex &index) {
@@ -167,18 +157,29 @@ void MainWindow::plotHistoryData() {
   emit vehicleHistoryDataRequested(vehicleId, date);
 }
 
-void MainWindow::onHistoryDataReady(QVector<int> &timestamps,
-                                    QVector<double> &temperatures) {
-  QVector<double> x;
-  x.reserve(timestamps.length());
-  for (auto timestamp : timestamps) {
-    x.append(timestamp);
-  }
+void MainWindow::onHistoryDataReady(EgTemperatureListData &tempListData) {
   m_historyPlot->clearGraphs();
-  auto chart = m_historyPlot->addGraph("unknown");
-  chart->setData(x, temperatures);
+  for (auto &sensor_ref : tempListData.sensors.keys()) {
+    auto &sensor = tempListData.sensors[sensor_ref];
+
+    auto chart = m_historyPlot->addGraph(sensor->sensor_address,
+                                         sensor->sensor_name + " / " +
+                                             sensor->sensor_address);
+    chart->setData(sensor->timestamps, sensor->values);
+  }
   m_historyPlot->rescaleAxis(Qt::XAxis);
   m_historyPlot->rescaleAxis(Qt::YAxis);
+
+  //  QVector<double> x;
+  //  x.reserve(timestamps.length());
+  //  for (auto timestamp : timestamps) {
+  //    x.append(timestamp);
+  //  }
+  //  m_historyPlot->clearGraphs();
+  //  auto chart = m_historyPlot->addGraph("unknown");
+  //  chart->setData(x, temperatures);
+  //  m_historyPlot->rescaleAxis(Qt::XAxis);
+  //  m_historyPlot->rescaleAxis(Qt::YAxis);
 }
 
 void MainWindow::historyDataAutoRescale() {
@@ -188,31 +189,67 @@ void MainWindow::historyDataAutoRescale() {
   }
 }
 
+void MainWindow::updateLiveEditFields(const QModelIndex &index) {
+  if (!index.isValid())
+    return;
+  ui->l_vehName->setText(
+      m_vehModel
+          ->data(index.siblingAtColumn(m_vehModel->ColumnName), Qt::DisplayRole)
+          .toString());
+  ui->l_plateNo->setText(
+      m_vehModel
+          ->data(index.siblingAtColumn(m_vehModel->ColumnPlateNo),
+                 Qt::DisplayRole)
+          .toString());
+  ui->l_vehTemp->setText(
+      m_vehModel
+          ->data(index.siblingAtColumn(m_vehModel->ColumnTemperature),
+                 Qt::DisplayRole)
+          .toString());
+}
+
+QModelIndex MainWindow::getVehicleModelIndexById(const int vehicleId) {
+  return m_vehModel->getRowByVehicleId(vehicleId);
+}
+
 void MainWindow::onSensorLiveDataReceived(EgSensorData &sensorData) {
-  //  if (sensorData.dataType != EgSensorDataType::Temperature1) {
-  //    return;
-  //  }
-  //  double value = sensorData.temperature;
+  if (sensorData.dataType != EgSensorDataType::Temperature) {
+    return;
+  }
+  double timestamp = sensorData.timestamp.toSecsSinceEpoch();
+  double value = sensorData.temperature;
 
-  //  if (!m_historyVehicleListSelectedIndex.isValid()) {
-  //    return;
-  //  }
-  //  auto vehicle =
-  //      m_vehModel->getData().vehicles[m_historyVehicleListSelectedIndex.row()];
-  //  if (sensorData.vehicleId != vehicle->id) {
-  //    return;
-  //  }
+  auto date_a = sensorData.timestamp.date();
+  auto date_b = ui->de_history->date();
+  if (date_a != date_b) {
+    return;
+  }
 
-  //  auto date_a = sensorData.timestamp.date();
-  //  auto date_b = ui->de_history->date();
-  //  if (date_a != date_b) {
-  //    return;
-  //  }
+  m_historyPlot->addData(timestamp, value, sensorData.sensorAddress);
+  historyDataAutoRescale();
 
-  //  m_historyPlot->appendPoint(sensorData.timestamp.toSecsSinceEpoch(),
-  //  value);
+  //    auto vehicle =
+  //        m_vehModel->getData().vehicles[m_historyVehicleListSelectedIndex.row()];
+  //    if (sensorData.vehicleId != vehicle->id) {
+  //      return;
+  //    }
 
-  //  historyDataAutoRescale();
+  //    auto date_a = sensorData.timestamp.date();
+  //    auto date_b = ui->de_history->date();
+  //    if (date_a != date_b) {
+  //      return;
+  //    }
+
+  //    m_historyPlot->appendPoint(sensorData.timestamp.toSecsSinceEpoch(),
+  //    value);
+
+  //    historyDataAutoRescale();
+}
+
+void MainWindow::onMapMarkerClicked(int vehicleId) {
+  qDebug() << "Marker clicked: " << vehicleId;
+  auto index = getVehicleModelIndexById(vehicleId);
+  updateLiveEditFields(index);
 }
 
 void MainWindow::onVehiclesModelDataChanged(const QModelIndex &topLeft,

@@ -6,14 +6,12 @@
 static QColor getRandomColor() {
   constexpr QColor color_map[] = {
       QColorConstants::Black,       QColorConstants::DarkGray,
-      QColorConstants::Gray,        QColorConstants::LightGray,
-      QColorConstants::Red,         QColorConstants::Green,
-      QColorConstants::Blue,        QColorConstants::Cyan,
-      QColorConstants::Magenta,     QColorConstants::Yellow,
+      QColorConstants::LightGray,   QColorConstants::Red,
+      QColorConstants::Green,       QColorConstants::Blue,
+      QColorConstants::Cyan,        QColorConstants::Magenta,
       QColorConstants::DarkRed,     QColorConstants::DarkGreen,
       QColorConstants::DarkBlue,    QColorConstants::DarkCyan,
       QColorConstants::DarkMagenta, QColorConstants::DarkYellow,
-      QColorConstants::Transparent,
   };
   constexpr int color_cnt = sizeof(color_map) / sizeof(color_map[0]);
 
@@ -35,10 +33,16 @@ ChartWidget::ChartWidget(QWidget *parent) {
 
   m_cp->setLocale(QLocale(QLocale::Polish, QLocale::Poland));
   m_cp->legend->setVisible(true);
+
+  QSharedPointer<QCPAxisTickerDateTime> dateTicker(new QCPAxisTickerDateTime);
+  dateTicker->setDateTimeFormat("hh:mm");
+  m_cp->xAxis->setLabel("Godzina");
+  m_cp->xAxis->setTicker(dateTicker);
+  dateTicker->setTickCount(24);
 }
 
-GraphData *ChartWidget::addGraph(QString name) {
-  auto graphData = new GraphData(this);
+GraphData *ChartWidget::addGraph(QString &reference, QString name) {
+  auto graphData = new GraphData(this, reference);
   m_graphsData.append(graphData);
 
   auto graph = m_cp->addGraph();
@@ -52,6 +56,15 @@ GraphData *ChartWidget::addGraph(QString name) {
   graph->setName(name);
 
   return graphData;
+}
+
+void ChartWidget::addData(double x, double y, QString chart_ref) {
+  for (auto &graphData : m_graphsData) {
+    if (graphData->reference() == chart_ref) {
+      graphData->appendData(x, y);
+      break;
+    }
+  }
 }
 
 void ChartWidget::setAxisRange(Qt::Axis axis, QVariant min, QVariant max) {
@@ -135,7 +148,8 @@ void ChartWidget::clearGraphs() {
   m_graphsData.clear();
 }
 
-GraphData::GraphData(ChartWidget *parent) : parent(parent) {}
+GraphData::GraphData(ChartWidget *parent, QString &chartRef)
+    : parent(parent), m_reference(chartRef) {}
 
 void GraphData::appendData(double x, double y, bool replot) {
   graph->addData(x, y);
@@ -151,5 +165,7 @@ void GraphData::setData(QVector<double> &x, QVector<double> &y, bool replot) {
   if (replot)
     parent->replot();
 }
+
+QString GraphData::reference() const { return m_reference; }
 
 void GraphData::clearData() { graph->setData({}, {}, true); }

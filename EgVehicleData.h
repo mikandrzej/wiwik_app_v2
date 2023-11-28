@@ -12,9 +12,11 @@ struct EgVehicleData {
   QString plateNo;
 };
 
-enum class EgSensorDataType { Temperature1, BatteryVoltage, GpsPosition };
+enum class EgSensorDataType { Temperature, BatteryVoltage, GpsPosition };
 
 struct EgSensorData {
+  QString sensorAddress;
+  QString deviceAddress;
   int vehicleId;
   EgSensorDataType dataType;
   QDateTime timestamp;

@@ -16,6 +16,7 @@ public:
 
 signals:
   void vehiclesModelChanged();
+  void mapMarkerClicked(int vehicleId);
 
 private:
   VehiclesModel *m_vehiclesModel;

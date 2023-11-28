@@ -21,7 +21,7 @@ signals:
   void sensorLiveDataReceived(EgSensorData &sensorData);
   void mqttServerStateChanged(bool state);
   void restServerStateChanged(bool state);
-  void vehiclesHistoryDataReady(QVector<int> &, QVector<double> &);
+  void vehiclesHistoryDataReady(EgTemperatureListData &tempListData);
   void onAddNewVehicle(QString &vehName, QString &plateNo);
   void onEditVehicle(int id, QString &vehName, QString &plateNo);
 

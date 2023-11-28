@@ -15,8 +15,7 @@ public:
   explicit App(MainWindow *mainWindow, QObject *parent = nullptr);
 
 signals:
-  void historyDataReady(QVector<int> &timestamps,
-                        QVector<double> &temperatures);
+  void historyDataReady(EgTemperatureListData &tempListData);
 private slots:
   void onSensorDataReceived(EgSensorData &sensorData);
   void onRestServerStateChanged(bool state);

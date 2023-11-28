@@ -24,7 +24,7 @@ void DialogAssignSensor::setDevicesList(
   m_deviceListData = deviceListData;
   ui->lst_devices->clear();
   foreach (auto device, m_deviceListData.devices) {
-    ui->lst_devices->addItem(device->id);
+    ui->lst_devices->addItem(device->name + " / " + device->serial_no);
   }
 }
 
@@ -36,34 +36,22 @@ void DialogAssignSensor::on_DialogAssignSensor_finished(int result) {
   if (!result) {
     return;
   }
-  auto selectedDevices = ui->lst_devices->selectedItems();
-  auto selectedVehicles = ui->lst_vehicles->selectedItems();
-  if (selectedDevices.empty()) {
-    return;
-  }
-  EgDeviceData *selectedDevice = nullptr;
 
-  for (int k = 0; k < m_deviceListData.devices.count(); k++) {
-    auto dev = m_deviceListData.devices[k];
-    if (selectedDevices[0]->text() == dev->id) {
-      selectedDevice = dev;
-      break;
-    }
-  }
-  if (!selectedDevice) {
+  auto selectedDevices = ui->lst_devices->selectedItems();
+  if (selectedDevices.empty()) {
     return;
   }
 
   EgVehicleData *selectedVehicle = nullptr;
+  auto selectedVehicles = ui->lst_vehicles->selectedItems();
   if (!selectedVehicles.empty()) {
-    for (int k = 0; k < m_vehicleListData.vehicles.count(); k++) {
-      auto veh = m_vehicleListData.vehicles[k];
-      if (selectedVehicles[0]->text() == veh->name) {
-        selectedVehicle = veh;
-        break;
-      }
-    }
+    int selectedVehicleRow = ui->lst_vehicles->row(selectedVehicles.first());
+    selectedVehicle = m_vehicleListData.vehicles[selectedVehicleRow];
   }
+
+  EgDeviceData *selectedDevice = nullptr;
+  int selectedDeviceRow = ui->lst_devices->row(selectedDevices.first());
+  selectedDevice = m_deviceListData.devices[selectedDeviceRow];
 
   emit selectionFinished(selectedDevice, selectedVehicle);
 }

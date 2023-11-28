@@ -7,12 +7,15 @@
 #include <QGeoCoordinate>
 #include <QObject>
 
-enum EgCarMapMarkerType { Circle, Icon };
+enum EgCarMapMarkerType { Circle, Icon, Marker };
 
 class EgCarMapModel : public QObject {
   Q_OBJECT
 public:
   explicit EgCarMapModel(QObject *parent = nullptr);
+
+  int id() const;
+  void setId(int newId);
 
   QString name() const;
   void setName(const QString &newName);
@@ -56,7 +59,10 @@ signals:
 
   void markerTypeChanged();
 
+  void idChanged();
+
 private:
+  int m_id;
   QString m_name;
   QColor m_polylineColor;
   int m_polylineWidth;
@@ -66,6 +72,7 @@ private:
   QGeoCoordinate m_markerPosition;
   QVariantList m_polylinePath;
   EgCarMapMarkerType m_markerType;
+  Q_PROPERTY(int id READ id WRITE setId NOTIFY idChanged)
   Q_PROPERTY(QString name READ name NOTIFY nameChanged)
   Q_PROPERTY(
       QColor polylineColor READ polylineColor NOTIFY polylineColorChanged)
@@ -95,7 +102,8 @@ public slots:
 
 private:
   enum RoleNames {
-    RoleName = Qt::UserRole,
+    RoleId = Qt::UserRole,
+    RoleName,
     RolePolylineColor,
     RolePolylineWidth,
     RoleCircleRadius,

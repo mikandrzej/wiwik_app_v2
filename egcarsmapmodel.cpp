@@ -29,6 +29,7 @@ void EgCarsMapModel::onSensorDataReceived(EgSensorData &sensorData) {
 
 QHash<int, QByteArray> EgCarsMapModel::roleNames() const {
   const QHash<int, QByteArray> roles = {
+      {RoleId, "id"},
       {RoleName, "name"},
       {RolePolylineColor, "polylineColor"},
       {RolePolylineWidth, "polylineWidth"},
@@ -56,6 +57,8 @@ QVariant EgCarsMapModel::data(const QModelIndex &index, int role) const {
     return QVariant();
   }
   switch (role) {
+  case RoleId:
+    return m_carModels[index.row()]->id();
   case RoleName:
     return m_carModels[index.row()]->name();
   case RolePolylineColor:
@@ -106,7 +109,8 @@ void EgCarMapModel::clearPath() {
 QString EgCarMapModel::markerType() const {
   const QHash<EgCarMapMarkerType, QString> mapper = {
       {EgCarMapMarkerType::Circle, "circle"},
-      {EgCarMapMarkerType::Icon, "icon"}};
+      {EgCarMapMarkerType::Icon, "icon"},
+      {EgCarMapMarkerType::Marker, "marker"}};
   return mapper.value(m_markerType);
 }
 
@@ -118,6 +122,15 @@ void EgCarMapModel::setMarkerType(EgCarMapMarkerType newMarkerType) {
 }
 
 EgCarMapModel::EgCarMapModel(QObject *parent) {}
+
+int EgCarMapModel::id() const { return m_id; }
+
+void EgCarMapModel::setId(int newId) {
+  if (m_id == newId)
+    return;
+  m_id = newId;
+  emit idChanged();
+}
 
 QString EgCarMapModel::name() const { return m_name; }
 

@@ -7,10 +7,13 @@ import Qt.labs.qmlmodels 1.0
 import QtGraphicalEffects 1.15
 
 Item {
+    id: item
+    signal mapPointClicked(vehicleId: int)
+
     Plugin
     {
         id: mapPlugin
-        name: "osm"
+        name: "mapboxgl"
     }
 
     Map
@@ -28,6 +31,21 @@ Item {
         MouseArea {
             anchors.fill: parent
             onClicked: rectInfo.visible = false
+        }
+        GeocodeModel {
+            id: geocodeModel
+            plugin: map.plugin
+            onStatusChanged: {
+                if ((status == GeocodeModel.Ready) || (status == GeocodeModel.Error))
+                    map.geocodeFinished()
+            }
+            onLocationsChanged:
+            {
+                if (count == 1) {
+                    map.center.latitude = get(0).coordinate.latitude
+                    map.center.longitude = get(0).coordinate.longitude
+                }
+            }
         }
 
 
@@ -57,6 +75,7 @@ Item {
             model: app.vehiclesModel
             delegate:
                 MapQuickItem{
+                    property int vehicleId : model.id
                     coordinate: QtPositioning.coordinate(model.markerPosition.latitude,
                                                      model.markerPosition.longitude)
                     sourceItem: Image {
@@ -98,7 +117,12 @@ Item {
                     MouseArea {
                         cursorShape: "PointingHandCursor"
                         anchors.fill: parent
-                        onClicked: rectInfo.visible = true
+                        onClicked:
+                            function() {
+                                item.mapPointClicked(vehicleId)
+                                console.log("map point clicked. Id:", vehicleId)
+                            }
+
                     }
             }
         }

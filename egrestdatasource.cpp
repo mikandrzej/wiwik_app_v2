@@ -45,12 +45,12 @@ void EgRestDataSource::getDevicesList() {
   });
 }
 
-void EgRestDataSource::requestVehicleHistoryData(int vehicleId, QDate &date) {
+void EgRestDataSource::requestTemperatureHistoryData(int vehicleId,
+                                                     QDate &date) {
 
-  QUrl url(m_serverPath + m_getVehicleHistoryDataPath);
+  QUrl url(m_serverPath + m_getTemperatureDataSubpath);
   QUrlQuery query;
-  query.addQueryItem("date",
-                     QString::number(date.startOfDay().toSecsSinceEpoch()));
+  query.addQueryItem("date", date.toString("yyyy-MM-dd"));
   query.addQueryItem("vehicle_id", QString::number(vehicleId));
   url.setQuery(query);
 
@@ -63,41 +63,60 @@ void EgRestDataSource::requestVehicleHistoryData(int vehicleId, QDate &date) {
 
     QJsonDocument jsonDoc = QJsonDocument::fromJson(replyData);
 
-    QVector<int> x;
-    QVector<double> y;
+    EgTemperatureListData tempList;
 
     if (!jsonDoc.isNull()) {
       if (jsonDoc.isArray()) {
         auto pointArray = jsonDoc.array();
 
-        x.reserve(pointArray.count());
-        y.reserve(pointArray.count());
-
         foreach (auto point, pointArray) {
-          if (!point["measure_timestamp"].isDouble()) {
+          if (!point["timestamp"].isDouble()) {
             qWarning() << "Not found timestamp key";
             return;
           }
-          auto timestamp = point["measure_timestamp"].toInt(-1);
+          auto timestamp = point["timestamp"].toInt(-1);
           if (timestamp < 0) {
             qWarning() << "invalid timestamp value: "
-                       << point["measure_timestamp"].toString();
+                       << point["timestamp"].toString();
             return;
           }
-          if (!point["measure_value"].isDouble()) {
-            qWarning() << "invalid measure_value value: "
-                       << point["measure_value"].toString();
-            return;
-          }
-          auto value = point["measure_value"].toDouble(-1001);
 
-          x.append(timestamp);
-          y.append(value);
+          if (!point["value"].isDouble()) {
+            qWarning() << "Not found value key";
+            return;
+          }
+          auto value = point["value"].toDouble(-10010.);
+          if (value < -1000.0) {
+            qWarning() << "invalid value value: " << point["value"].toString();
+            return;
+          }
+
+          if (!point["sensor_name"].isString()) {
+            qWarning() << "Not found sensor_name key";
+            return;
+          }
+          auto sensor_name = point["sensor_name"].toString();
+
+          if (!point["sensor_addr"].isString()) {
+            qWarning() << "Not found sensor_addr key";
+            return;
+          }
+          auto sensor_addr = point["sensor_addr"].toString();
+
+          auto pack = tempList.sensors[sensor_addr];
+          if (!pack) {
+            pack = new EgTemperatureData();
+            pack->sensor_name = sensor_name;
+            pack->sensor_address = sensor_addr;
+            tempList.sensors[sensor_addr] = pack;
+          }
+          pack->timestamps.append(timestamp);
+          pack->values.append(value);
         }
       }
     }
 
-    emit vehiclesHistoryDataReady(x, y);
+    emit vehiclesHistoryDataReady(tempList);
   });
 }
 
@@ -105,9 +124,8 @@ void EgRestDataSource::onAddNewVehicle(QString &vehName, QString &plateNo) {
   QUrl url(m_serverPath + m_addVehiclePath);
   QUrlQuery uq;
 
-  uq.addQueryItem("veh_name", vehName);
-  uq.addQueryItem("plate_no", plateNo);
-  uq.addQueryItem("user_id", QString::number(1));
+  uq.addQueryItem("name", vehName);
+  uq.addQueryItem("plate", plateNo);
 
   url.setQuery(uq);
   QNetworkRequest request(url);
@@ -130,13 +148,12 @@ void EgRestDataSource::onAddNewVehicle(QString &vehName, QString &plateNo) {
 
 void EgRestDataSource::onEditVehicle(int id, QString &vehName,
                                      QString &plateNo) {
-  QUrl url(m_serverPath + m_editVehiclePath);
+  QUrl url(m_serverPath + m_setVehicleDataSubpath);
   QUrlQuery uq;
 
-  uq.addQueryItem("id", QString::number(id));
-  uq.addQueryItem("veh_name", vehName);
-  uq.addQueryItem("plate_no", plateNo);
-  uq.addQueryItem("user_id", QString::number(1));
+  uq.addQueryItem("vehicle_id", QString::number(id));
+  uq.addQueryItem("name", vehName);
+  uq.addQueryItem("plate", plateNo);
 
   url.setQuery(uq);
   QNetworkRequest request(url);
@@ -159,18 +176,17 @@ void EgRestDataSource::onEditVehicle(int id, QString &vehName,
 
 void EgRestDataSource::assignVehicleToDevice(EgDeviceData *selectedDevice,
                                              EgVehicleData *selectedVehicle) {
-  QString devId = selectedDevice->id;
+  QString devId = QString::number(selectedDevice->id);
   QString vehId = "";
   if (selectedVehicle) {
     vehId = QString::number(selectedVehicle->id);
   }
 
-  QUrl url(m_serverPath + m_assignDeviceToVehiclesSubpath);
+  QUrl url(m_serverPath + m_setDeviceDataSubpath);
   QUrlQuery uq;
 
   uq.addQueryItem("device_id", devId);
   uq.addQueryItem("vehicle_id", vehId);
-  uq.addQueryItem("user_id", QString::number(1));
 
   url.setQuery(uq);
   QNetworkRequest request(url);
@@ -248,9 +264,9 @@ void EgRestDataSource::onVehicleListRequestReady(QByteArray &replyData) {
   foreach (auto jsonVeh, vehArray) {
     auto vehData = new EgVehicleData();
 
-    vehData->id = jsonVeh["vehicle_id"].toInt(-1);
-    vehData->name = jsonVeh["vehicle_name"].toString("Unknown");
-    vehData->plateNo = jsonVeh["vehicle_plate"].toString("Unknown");
+    vehData->id = jsonVeh["id"].toInt(-1);
+    vehData->name = jsonVeh["name"].toString("Unknown");
+    vehData->plateNo = jsonVeh["plate"].toString("Unknown");
 
     qDebug() << "Parsed vehicle data: " << vehData->id << vehData->name
              << vehData->plateNo;
@@ -275,13 +291,16 @@ void EgRestDataSource::onDevicesListRequestReady(QByteArray &replyData) {
   foreach (auto jsonDev, devArray) {
     auto devData = new EgDeviceData();
 
-    devData->id = jsonDev["device_id"].toString("Unknown");
-    devData->type = jsonDev["device_type"].toString("Unknown");
+    devData->id = jsonDev["id"].toInt(-1);
+    devData->serial_no = jsonDev["serial_no"].toString("");
+    devData->name = jsonDev["name"].toString("");
+    devData->type = jsonDev["type"].toString("");
     devData->vehicle_id = jsonDev["vehicle_id"].toInt(-1);
-    devData->user_id = jsonDev["user_id"].toInt(-1);
+    devData->user_id = 1;
 
-    qDebug() << "Parsed device data: " << devData->id << " " << devData->type
-             << " " << devData->vehicle_id << " " << devData->user_id;
+    qDebug() << "Parsed device data: " << devData->id << " " << devData->name
+             << " " << devData->type << " " << devData->vehicle_id << " "
+             << devData->user_id;
 
     devicesList.devices.append(devData);
   }

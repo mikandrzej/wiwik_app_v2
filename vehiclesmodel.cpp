@@ -25,7 +25,10 @@ QVariant VehiclesModel::data(const QModelIndex &index, int role) const {
   case ColumnId:
     switch (role) {
     case Qt::DisplayRole:
+    case RoleId:
       return item->id();
+    case RoleName:
+      return item->name();
     case RoleColor:
       return QColorConstants::Red;
     case RoleCircleRadius:
@@ -137,6 +140,15 @@ QHash<int, QByteArray> VehiclesModel::roleNames() const {
   };
 }
 
+QModelIndex VehiclesModel::getRowByVehicleId(int vehicleId) {
+  try {
+    int row = m_vehicleRowByModel[m_vehiclesById[vehicleId]];
+    return createIndex(row, 0);
+  } catch (...) {
+    return QModelIndex();
+  }
+}
+
 void VehiclesModel::onSensorDataReceived(EgSensorData &sensorData) {
   if (!m_vehiclesById.contains(sensorData.vehicleId))
     return;
@@ -145,7 +157,7 @@ void VehiclesModel::onSensorDataReceived(EgSensorData &sensorData) {
   auto row = m_vehicleRowByModel[model];
 
   switch (sensorData.dataType) {
-  case EgSensorDataType::Temperature1:
+  case EgSensorDataType::Temperature:
     model->temperatureModel()->insert(sensorData.timestamp.toSecsSinceEpoch(),
                                       sensorData.temperature);
     emit dataChanged(index(row, ColumnTemperature),
@@ -168,7 +180,7 @@ void VehiclesModel::onSensorsDataReceived(EgSensorsData &sensorsData) {
   for (auto sensorData : sensorsData.sensors) {
     auto model = m_vehiclesById[sensorData->vehicleId];
     switch (sensorData->dataType) {
-    case EgSensorDataType::Temperature1:
+    case EgSensorDataType::Temperature:
       model->temperatureModel()->insert(
           sensorData->timestamp.toSecsSinceEpoch(), sensorData->temperature);
       break;
