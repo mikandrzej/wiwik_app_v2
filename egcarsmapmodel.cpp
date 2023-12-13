@@ -21,7 +21,7 @@ void EgCarsMapModel::removeCar(EgCarMapModel *carModel) {
   }
 }
 
-void EgCarsMapModel::onSensorDataReceived(EgSensorData &sensorData) {
+void EgCarsMapModel::onSensorDataReceived(EgVehicleSensorData &sensorData) {
   if (sensorData.dataType != EgSensorDataType::GpsPosition) {
     return;
   }

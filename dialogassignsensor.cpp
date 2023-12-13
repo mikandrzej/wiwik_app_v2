@@ -1,6 +1,6 @@
 #include "dialogassignsensor.h"
-#include "EgDeviceData.h"
-#include "EgVehicleData.h"
+#include "DataSource/EgDeviceData.h"
+#include "DataSource/EgVehicleData.h"
 #include "ui_dialogassignsensor.h"
 
 DialogAssignSensor::DialogAssignSensor(QWidget *parent)

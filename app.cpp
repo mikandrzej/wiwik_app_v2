@@ -6,26 +6,49 @@
 #include <QPushButton>
 #include <QTableView>
 
+#include "DataSource/datacontainer.h"
+#include "DataSource/egdataprovider.h"
+
 App::App(MainWindow *mainWindow, QObject *parent)
     : QObject{parent}, m_mainWindow(mainWindow) {
   bindGui();
 
   connect(&m_dataProvider, &EgDataProvider::sensorLiveDataReceived,
           &m_carsMapModel, &EgCarsMapModel::onSensorDataReceived);
-
   connect(&m_dataProvider, &EgDataProvider::sensorLiveDataReceived,
           &m_vehiclesModel, &VehiclesModel::onSensorDataReceived);
+
   connect(&m_dataProvider, &EgDataProvider::vehiclesDataReceived,
           &m_vehiclesModel, &VehiclesModel::onVehiclesDataReceived);
+  connect(&m_dataProvider, &EgDataProvider::vehiclesDataReceived,
+          &m_liveViewModel, &LiveViewModel::onVehiclesDataReceived);
+  connect(
+      &m_dataProvider, &EgDataProvider::vehiclesDataReceived, this,
+      [this](EgVehiclesData &) { this->m_dataProvider.requestDevicesData(); });
+
+  connect(&m_dataProvider, &EgDataProvider::devicesDataReceived,
+          &m_liveViewModel, &LiveViewModel::onDevicesDataReceived);
+  connect(&m_dataProvider, &EgDataProvider::devicesDataReceived, this,
+          [this](EgDevicesListData &) {
+            this->m_dataProvider.requestSensorsData();
+          });
+
+  connect(&m_dataProvider, &EgDataProvider::sensorsDataReceived,
+          &m_liveViewModel, &LiveViewModel::onSensorsDataReceived);
+  connect(&m_dataProvider, &EgDataProvider::sensorLiveDataReceived,
+          &m_liveViewModel, &LiveViewModel::onSensorLiveDataReceived);
 
   connect(&m_dataProvider, &EgDataProvider::restServerStateChanged, this,
           &App::onRestServerStateChanged);
+
+  connect(DataContainer::instance(), &DataContainer::sensorsDataNeedsUpdate, &m_dataProvider, &EgDataProvider::requestSensorsData);
 }
 
 void App::bindGui() {
 
   m_mainWindow->setVehModel(&m_vehiclesModel);
   m_vehiclesEditModel.setSourceModel(&m_vehiclesModel);
+  m_mainWindow->setLiveViewModel(&m_liveViewModel);
 
   connect(&m_dataProvider, &EgDataProvider::mqttServerStateChanged,
           m_mainWindow, &MainWindow::setMqttStatus);
@@ -51,6 +74,19 @@ void App::bindGui() {
           &EgDataProvider::onAddNewVehicle);
   connect(m_mainWindow->dialogEditVehicles(), &DialogEditVehicles::editVehicle,
           &m_dataProvider, &EgDataProvider::onEditVehicle);
+
+  m_mainWindow->setMainVehicleModel(&m_mainVehicleModel);
+
+  connect(&m_dataProvider, &EgDataProvider::vehiclesDataReceived,
+          &m_mainVehicleModel, [this](EgVehiclesData &vehiclesData) {
+            for (auto &veh : vehiclesData.vehicles) {
+              auto data = new MainVehicleModelData();
+              data->setId(veh->id);
+              data->setName(veh->name);
+              data->setPlateNo(veh->plateNo);
+              m_mainVehicleModel.onNewVehicleData(data);
+            }
+          });
 }
 
 void App::onSensorDataReceived(EgSensorData &sensorData) {
@@ -60,7 +96,6 @@ void App::onSensorDataReceived(EgSensorData &sensorData) {
 void App::onRestServerStateChanged(bool state) {
   if (state == true) {
     m_dataProvider.requestVehiclesData();
-    m_dataProvider.requestDevicesData();
   }
 }
 void App::onAssignSensorClicked(bool checked) {

@@ -39,6 +39,7 @@ ChartWidget::ChartWidget(QWidget *parent) {
   m_cp->xAxis->setLabel("Godzina");
   m_cp->xAxis->setTicker(dateTicker);
   dateTicker->setTickCount(24);
+  m_cp->yAxis->setLabel("Temperatura");
 }
 
 GraphData *ChartWidget::addGraph(QString &reference, QString name) {

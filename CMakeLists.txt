@@ -19,12 +19,7 @@ set(PROJECT_SOURCES
         mainwindow.ui
         app.h app.cpp
         egsettings.h egsettings.cpp
-        egdataprovider.h egdataprovider.cpp
-        egmqttdatasource.h egmqttdatasource.cpp
-        egrestdatasource.h egrestdatasource.cpp
-        EgVehicleData.h
         dialogassignsensor.h dialogassignsensor.cpp dialogassignsensor.ui
-        EgDeviceData.h
         eghistoryvehiclesmodel.h eghistoryvehiclesmodel.cpp
         dialogeditvehicles.h dialogeditvehicles.cpp dialogeditvehicles.ui
         egvehiclesmap.h egvehiclesmap.cpp
@@ -39,6 +34,10 @@ set(PROJECT_SOURCES
         historyvehiclesproxymodel.h historyvehiclesproxymodel.cpp
         chartwidget.h chartwidget.cpp
         vehicleseditmodel.h vehicleseditmodel.cpp
+        liveviewmodel.h liveviewmodel.cpp
+        treeitem.h treeitem.cpp
+        resources.qrc
+        vehicleeditmodel.h vehicleeditmodel.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -67,11 +66,56 @@ endif()
 add_library(CustomPlot SHARED
     QCustomPlot/qcustomplot.cpp QCustomPlot/qcustomplot.h
 )
-
 target_link_libraries(CustomPlot PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::PrintSupport)
 
 
-target_link_libraries(wiwik_app_widgets_5 PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Mqtt Qt${QT_VERSION_MAJOR}::Quick Qt${QT_VERSION_MAJOR}::Location CustomPlot)
+add_library(Configuration STATIC
+    Configuration/configuration.h Configuration/configuration.cpp
+)
+target_link_libraries(Configuration PRIVATE Qt${QT_VERSION_MAJOR}::Core)
+
+
+add_library(DataModels STATIC
+    DataModels/mainvehiclemodel.h DataModels/mainvehiclemodel.cpp
+    DataModels/maindevicemodel.h DataModels/maindevicemodel.cpp
+    DataModels/vehmodeltreeitem.h DataModels/vehmodeltreeitem.cpp
+
+    DataModels/vehicle.h DataModels/vehicle.cpp
+    DataModels/device.h DataModels/device.cpp
+    DataModels/sensor.h DataModels/sensor.cpp
+    DataModels/measure.h DataModels/measure.cpp
+
+    DataModels/gpsmeasure.h DataModels/gpsmeasure.cpp
+)
+target_link_libraries(DataModels PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Location Configuration)
+
+
+add_library(DataSource STATIC
+    DataSource/egdataprovider.cpp DataSource/egdataprovider.h
+    DataSource/egmqttdatasource.cpp DataSource/egmqttdatasource.h
+    DataSource/egrestdatasource.cpp DataSource/egrestdatasource.h
+
+    DataSource/EgVehicleData.h
+    DataSource/EgDeviceData.h
+    DataSource/datacontainer.h DataSource/datacontainer.cpp
+)
+target_link_libraries(DataSource PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Location Qt${QT_VERSION_MAJOR}::Mqtt DataModels Configuration)
+
+add_library(AbstractDataModels STATIC
+    AbstractDataModels/vehicletablemodel.h AbstractDataModels/vehicletablemodel.cpp
+    AbstractDataModels/devicetablemodel.h AbstractDataModels/devicetablemodel.cpp
+    AbstractDataModels/sensortablemodel.h AbstractDataModels/sensortablemodel.cpp
+
+    AbstractDataModels/vehicletreemodel.h AbstractDataModels/vehicletreemodel.cpp
+)
+target_link_libraries(AbstractDataModels PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Location DataSource)
+
+target_link_libraries(wiwik_app_widgets_5 PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Quick Qt${QT_VERSION_MAJOR}::Location
+    CustomPlot
+    DataModels
+    DataSource
+    AbstractDataModels
+)
 
 set_target_properties(wiwik_app_widgets_5 PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com

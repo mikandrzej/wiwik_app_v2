@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons8-car-50.png</file>
+        <file>icons8-temperature.gif</file>
+        <file>icons8-temperature-50.png</file>
+        <file>icons8-gps-50.png</file>
+        <file>icons8-battery-60.png</file>
+        <file>geomap.qml</file>
+        <file>map_pin.png</file>
+    </qresource>
+</RCC>

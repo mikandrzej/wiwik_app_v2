@@ -1,7 +1,7 @@
 #ifndef VEHICLESMODEL_H
 #define VEHICLESMODEL_H
 
-#include "EgVehicleData.h"
+#include "DataSource/EgVehicleData.h"
 #include "onevehiclemodel.h"
 #include <QAbstractTableModel>
 
@@ -42,8 +42,8 @@ public:
   };
 
   QModelIndex getRowByVehicleId(int vehicleId);
-  public slots:
-  void onSensorDataReceived(EgSensorData &sensorData);
+public slots:
+  void onSensorDataReceived(EgVehicleSensorData &sensorData);
   void onSensorsDataReceived(EgSensorsData &sensorsData);
   void onVehiclesDataReceived(EgVehiclesData &vehiclesData);
 

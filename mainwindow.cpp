@@ -1,7 +1,12 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
+#include "AbstractDataModels/devicetablemodel.h"
+#include "AbstractDataModels/sensortablemodel.h"
+#include "AbstractDataModels/vehicletablemodel.h"
+#include "DataModels/mainvehiclemodel.h"
 #include "chartwidget.h"
 #include "egvehiclesmap.h"
+#include "liveviewmodel.h"
 
 #include <QCalendarWidget>
 #include <QQuickView>
@@ -47,7 +52,7 @@ MainWindow::MainWindow(QWidget *parent)
   m_dialogAssignSensor = new DialogAssignSensor(this);
   m_dialogEditVehicles = new DialogEditVehicles(this);
 
-  connect(ui->tv_cars, &QTableView::clicked, this,
+  connect(ui->tv_liveData, &QTreeView::clicked, this,
           &MainWindow::onLiveVehicleListClicked);
   connect(ui->lv_historyVehicles, &QListView::clicked, this,
           &MainWindow::onHistoryVehicleListClicked);
@@ -69,6 +74,10 @@ MainWindow::MainWindow(QWidget *parent)
 
   connect(m_mapWidget, &EgVehiclesMap::mapMarkerClicked, this,
           &MainWindow::onMapMarkerClicked);
+
+  ui->tv_vehicleConfig->setModel(&vehicleTableModel);
+  ui->tv_DeviceConfig->setModel(&deviceTableModel);
+  ui->tv_SensorConfig->setModel(&sensorTableModel);
 }
 
 MainWindow::~MainWindow() { delete ui; }
@@ -95,7 +104,6 @@ void MainWindow::setVehModel(VehiclesModel *newVehModel) {
   m_vehModel = newVehModel;
 
   m_liveVehModel->setSourceModel(m_vehModel);
-  ui->tv_cars->setModel(m_liveVehModel);
   m_historyVehModel->setSourceModel(newVehModel);
   ui->lv_historyVehicles->setModel(m_historyVehModel);
 
@@ -103,6 +111,12 @@ void MainWindow::setVehModel(VehiclesModel *newVehModel) {
 
   connect(m_vehModel, &QAbstractItemModel::dataChanged, this,
           &MainWindow::onVehiclesModelDataChanged);
+
+  //  ui->tv_vehicleConfig->setModel(m_vehModel);
+}
+
+void MainWindow::setLiveViewModel(LiveViewModel *newLiveViewModel) {
+  ui->tv_liveData->setModel(newLiveViewModel);
 }
 
 void MainWindow::setMqttStatus(bool status) {
@@ -190,29 +204,35 @@ void MainWindow::historyDataAutoRescale() {
 }
 
 void MainWindow::updateLiveEditFields(const QModelIndex &index) {
-  if (!index.isValid())
-    return;
-  ui->l_vehName->setText(
-      m_vehModel
-          ->data(index.siblingAtColumn(m_vehModel->ColumnName), Qt::DisplayRole)
-          .toString());
-  ui->l_plateNo->setText(
-      m_vehModel
-          ->data(index.siblingAtColumn(m_vehModel->ColumnPlateNo),
-                 Qt::DisplayRole)
-          .toString());
-  ui->l_vehTemp->setText(
-      m_vehModel
-          ->data(index.siblingAtColumn(m_vehModel->ColumnTemperature),
-                 Qt::DisplayRole)
-          .toString());
+  //  if (!index.isValid())
+  //    return;
+  //  ui->l_vehName->setText(
+  //      m_vehModel
+  //          ->data(index.siblingAtColumn(m_vehModel->ColumnName),
+  //          Qt::DisplayRole) .toString());
+  //  ui->l_plateNo->setText(
+  //      m_vehModel
+  //          ->data(index.siblingAtColumn(m_vehModel->ColumnPlateNo),
+  //                 Qt::DisplayRole)
+  //          .toString());
+  //  ui->l_vehTemp->setText(
+  //      m_vehModel
+  //          ->data(index.siblingAtColumn(m_vehModel->ColumnTemperature),
+  //                 Qt::DisplayRole)
+  //          .toString());
+}
+
+void MainWindow::setMainVehicleModel(MainVehicleModel *newMainVehicleModel) {
+  m_mainVehicleModel = newMainVehicleModel;
+
+  //  ui->tv_vehicleConfig->setModel(m_mainVehicleModel);
 }
 
 QModelIndex MainWindow::getVehicleModelIndexById(const int vehicleId) {
   return m_vehModel->getRowByVehicleId(vehicleId);
 }
 
-void MainWindow::onSensorLiveDataReceived(EgSensorData &sensorData) {
+void MainWindow::onSensorLiveDataReceived(EgVehicleSensorData &sensorData) {
   if (sensorData.dataType != EgSensorDataType::Temperature) {
     return;
   }

@@ -8,11 +8,14 @@
 #include "egvehiclesmap.h"
 #include "historyvehiclesproxymodel.h"
 #include "livevehiclesproxymodel.h"
+#include "liveviewmodel.h"
 #include "vehiclesmodel.h"
 #include <QLabel>
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
+
+class MainVehicleModel;
 namespace Ui {
 class MainWindow;
 }
@@ -26,6 +29,7 @@ public:
   ~MainWindow();
 
   void setVehModel(VehiclesModel *newVehModel);
+  void setLiveViewModel(LiveViewModel *newLiveViewModel);
 
   DialogAssignSensor *dialogAssignSensor() const;
   QPushButton *pbAssignSensor() const;
@@ -34,11 +38,13 @@ public:
 
   QPushButton *pbEditVehicles() const;
   ChartWidget *historyPlot();
+  void setMainVehicleModel(MainVehicleModel *newMainVehicleModel);
+
 public slots:
   void setMqttStatus(bool status);
   void setRestStatus(bool status);
 
-  void onSensorLiveDataReceived(EgSensorData &sensorData);
+  void onSensorLiveDataReceived(EgVehicleSensorData &sensorData);
   void onMapMarkerClicked(int vehicleId);
   void onHistoryDataReady(EgTemperatureListData &tempListData);
 private slots:
@@ -82,5 +88,8 @@ private:
   void historyDataAutoRescale();
   QModelIndex getVehicleModelIndexById(const int vehicleId);
   void updateLiveEditFields(const QModelIndex &index);
+
+  // data models
+  MainVehicleModel *m_mainVehicleModel;
 };
 #endif // MAINWINDOW_H

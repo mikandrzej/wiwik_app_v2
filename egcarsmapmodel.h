@@ -1,7 +1,7 @@
 #ifndef EGCARSMAPMODEL_H
-#include "EgVehicleData.h"
 #define EGCARSMAPMODEL_H
 
+#include "DataSource/EgVehicleData.h"
 #include <QAbstractListModel>
 #include <QColor>
 #include <QGeoCoordinate>
@@ -98,7 +98,7 @@ public:
 
 signals:
 public slots:
-  void onSensorDataReceived(EgSensorData &sensorData);
+  void onSensorDataReceived(EgVehicleSensorData &sensorData);
 
 private:
   enum RoleNames {

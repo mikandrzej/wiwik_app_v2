@@ -9,7 +9,7 @@ EgVehiclesMap::EgVehiclesMap(QWidget *parent) : QWidget{parent} {
   m_quickView = new QQuickView();
   m_quickView->setResizeMode(QQuickView::SizeRootObjectToView);
   m_quickView->setSource(QUrl(QString::fromUtf8(
-      "file:///H:/Projects/C++/Qt/wiwik_app_widgets_5/geomap.qml")));
+      "qrc:/geomap.qml")));
 
   QWidget *container = QWidget::createWindowContainer(m_quickView);
   container->setMinimumSize(m_quickView->size());

@@ -149,7 +149,7 @@ QModelIndex VehiclesModel::getRowByVehicleId(int vehicleId) {
   }
 }
 
-void VehiclesModel::onSensorDataReceived(EgSensorData &sensorData) {
+void VehiclesModel::onSensorDataReceived(EgVehicleSensorData &sensorData) {
   if (!m_vehiclesById.contains(sensorData.vehicleId))
     return;
 

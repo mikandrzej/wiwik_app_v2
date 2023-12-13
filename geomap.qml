@@ -13,6 +13,9 @@ Item {
     Plugin
     {
         id: mapPlugin
+        // name: "esri"
+        // name: "osm"
+
         name: "mapboxgl"
     }
 
@@ -34,7 +37,6 @@ Item {
         }
         GeocodeModel {
             id: geocodeModel
-            plugin: map.plugin
             onStatusChanged: {
                 if ((status == GeocodeModel.Ready) || (status == GeocodeModel.Error))
                     map.geocodeFinished()
@@ -80,7 +82,7 @@ Item {
                                                      model.markerPosition.longitude)
                     sourceItem: Image {
                         id: image
-                        source: "map_pin.png"
+                        source: "qrc:/map_pin.png"
                         width: 30
                         height: 30
                         layer.enabled: true
@@ -122,8 +124,14 @@ Item {
                                 item.mapPointClicked(vehicleId)
                                 console.log("map point clicked. Id:", vehicleId)
                             }
-
                     }
+//                    HoverHandler {
+//                        id: hover
+//                        target: Text {
+//                            text: "test"
+//                            visible: hover.hovered
+//                        }
+//                    }
             }
         }
     }

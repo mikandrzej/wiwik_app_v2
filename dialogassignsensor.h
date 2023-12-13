@@ -1,8 +1,8 @@
 #ifndef DIALOGASSIGNSENSOR_H
 #define DIALOGASSIGNSENSOR_H
 
-#include "EgDeviceData.h"
-#include "EgVehicleData.h"
+#include "DataSource/EgDeviceData.h"
+#include "DataSource/EgVehicleData.h"
 
 #include <QDialog>
 #include <QListWidgetItem>
