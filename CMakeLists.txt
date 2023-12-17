@@ -59,6 +59,8 @@ else()
     else()
         add_executable(wiwik_app_widgets_5
             ${PROJECT_SOURCES}
+            mapWidget.qml
+            Forms/formgpshistory.h Forms/formgpshistory.cpp Forms/formgpshistory.ui
         )
     endif()
 endif()
@@ -107,14 +109,26 @@ add_library(AbstractDataModels STATIC
     AbstractDataModels/sensortablemodel.h AbstractDataModels/sensortablemodel.cpp
 
     AbstractDataModels/vehicletreemodel.h AbstractDataModels/vehicletreemodel.cpp
+    AbstractDataModels/liveviewtreemodel.h AbstractDataModels/liveviewtreemodel.cpp
+    AbstractDataModels/vehicletreenode.h AbstractDataModels/vehicletreenode.cpp
+    AbstractDataModels/mapmodel.h AbstractDataModels/mapmodel.cpp
+    AbstractDataModels/vehiclelistmodel.h AbstractDataModels/vehiclelistmodel.cpp
+
 )
 target_link_libraries(AbstractDataModels PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Location DataSource)
+
+add_library(Widgets STATIC
+    mapwidget.h mapwidget.cpp
+
+)
+target_link_libraries(Widgets PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Quick)
 
 target_link_libraries(wiwik_app_widgets_5 PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Quick Qt${QT_VERSION_MAJOR}::Location
     CustomPlot
     DataModels
     DataSource
     AbstractDataModels
+    Widgets
 )
 
 set_target_properties(wiwik_app_widgets_5 PROPERTIES

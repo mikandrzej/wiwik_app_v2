@@ -84,9 +84,17 @@ void Vehicle::setChangesPending(bool newChangesPending) {
 void Vehicle::addDevice(Device *device)
 {
     m_devices.append(device);
+    emit deviceAdded(device, m_devices.indexOf(device));
 }
 
 void Vehicle::removeDevice(Device *device)
 {
-    m_devices.removeAll(device);
+    int removedIndex = m_devices.indexOf(device);
+    m_devices.removeOne(device);
+    emit deviceRemoved(removedIndex);
+}
+
+QList<Device *> Vehicle::devices() const
+{
+    return m_devices;
 }

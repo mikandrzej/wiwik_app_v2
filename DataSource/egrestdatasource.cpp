@@ -9,10 +9,13 @@
 #include <QNetworkAccessManager>
 #include <QTimer>
 
+#include <QTimeZone>
+
 #include "../DataModels/device.h"
 #include "../DataModels/sensor.h"
 #include "../DataModels/vehicle.h"
 #include "datacontainer.h"
+#include "qgeoaddress.h"
 
 EgRestDataSource::EgRestDataSource(QObject *parent) : QObject{parent} {
   m_netAccMgr = new QNetworkAccessManager(this);
@@ -71,7 +74,12 @@ void EgRestDataSource::requestTemperatureHistoryData(int vehicleId,
 
   QUrl url(m_serverPath + m_getTemperatureDataSubpath);
   QUrlQuery query;
-  query.addQueryItem("date", date.toString("yyyy-MM-dd"));
+  auto now = QDateTime::currentDateTime();
+  auto offset = now.timeZone().offsetFromUtc(now);
+  auto dateTimeFrom = date.startOfDay().addSecs(-offset);
+  auto dateTimeTo = dateTimeFrom.addDays(1);
+  query.addQueryItem("time_from", dateTimeFrom.toString("yyyy-MM-dd hh:mm:ss"));
+  query.addQueryItem("time_to", dateTimeTo.toString("yyyy-MM-dd hh:mm:ss"));
   query.addQueryItem("vehicle_id", QString::number(vehicleId));
   url.setQuery(query);
 
@@ -136,8 +144,84 @@ void EgRestDataSource::requestTemperatureHistoryData(int vehicleId,
       }
     }
 
-    emit vehiclesHistoryDataReady(tempList);
+    emit vehiclesTemperatureHistoryDataReady(tempList);
   });
+}
+
+void EgRestDataSource::requestGpsHistoryData(int vehicleId, QDate &date)
+{
+    QUrl url(m_serverPath + m_getGpsDataSubpath);
+    QUrlQuery query;
+    //calculate utc offset
+    auto now = QDateTime::currentDateTime();
+    auto offset = now.timeZone().offsetFromUtc(now);
+    //calculate time boundaries
+    auto dateTimeFrom = date.startOfDay().addSecs(-offset);
+    auto dateTimeTo = dateTimeFrom.addDays(1);
+    // prepare query
+    query.addQueryItem("time_from", dateTimeFrom.toString("yyyy-MM-dd hh:mm:ss"));
+    query.addQueryItem("time_to", dateTimeTo.toString("yyyy-MM-dd hh:mm:ss"));
+    query.addQueryItem("vehicle_id", QString::number(vehicleId));
+    url.setQuery(query);
+
+    QNetworkRequest request(url);
+
+    QNetworkReply *reply = m_netAccMgr->get(request);
+
+    connect(reply, &QNetworkReply::finished, reply, [reply, this]() {
+        auto replyData = reply->readAll();
+
+        QJsonDocument jsonDoc = QJsonDocument::fromJson(replyData);
+
+        EgGpsListData tempList;
+
+        if (!jsonDoc.isNull()) {
+            if (jsonDoc.isArray()) {
+                auto dbEntries = jsonDoc.array();
+
+                foreach (auto dbEntry, dbEntries) {
+                    auto deviceName = dbEntry["device_name"].toString();
+                    auto address = dbEntry["address"].toString();
+                    auto timestampRaw = dbEntry["timestamp"].toInt();
+                    auto timestamp = QDateTime::fromMSecsSinceEpoch(timestampRaw);
+                    auto latitude = dbEntry["latitude"].toDouble();
+                    auto longitude = dbEntry["longitude"].toDouble();
+                    auto precision = dbEntry["precision"].toDouble();
+                    auto sensorAddress = dbEntry["sensor_addr"].toString();
+                    auto sensorName = dbEntry["sensor_name"].toString();
+                    auto speed = dbEntry["speed"];
+
+                    auto pack = tempList.sensors[sensorAddress];
+                    if (!pack) {
+                        pack = new EgGpsData();
+                        pack->sensor_name = sensorName;
+                        pack->sensor_address = sensorAddress;
+                        tempList.sensors[sensorAddress] = pack;
+                    }
+                    QGeoLocation geoLocation;
+                    geoLocation.setCoordinate(QGeoCoordinate(latitude, longitude));
+                    if (!address.isEmpty()) {
+                        auto addressComponents = address.split(", ");
+                        if (addressComponents.length() == 8) {
+                            QGeoAddress geoAddress;
+                            geoAddress.setStreet(addressComponents[1]);
+                            geoAddress.setCity(addressComponents[2]);
+                            geoAddress.setState(addressComponents[5]);
+                            geoAddress.setPostalCode(addressComponents[6]);
+                            geoAddress.setCountry(addressComponents[7]);
+
+                            geoLocation.setAddress(geoAddress);
+                        }
+                    }
+
+                    pack->timestamps.push_back(timestamp);
+                    pack->geolocations.push_back(geoLocation);
+                }
+            }
+        }
+
+        emit vehiclesGpsHistoryDataReady(tempList);
+    });
 }
 
 void EgRestDataSource::onAddNewVehicle(QString &vehName, QString &plateNo) {

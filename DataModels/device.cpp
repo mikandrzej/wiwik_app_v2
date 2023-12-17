@@ -54,11 +54,14 @@ void Device::setChangesPending(bool newChangesPending) {
 void Device::addSensor(Sensor *sensor)
 {
     m_sensors.append(sensor);
+    emit sensorAdded(sensor, m_sensors.indexOf(sensor));
 }
 
 void Device::removeSensor(Sensor *sensor)
 {
-    m_sensors.removeAll(sensor);
+    auto index = m_sensors.indexOf(sensor);
+    m_sensors.removeOne(sensor);
+    emit sensorRemoved(index);
 }
 
 Vehicle *Device::vehicle() const

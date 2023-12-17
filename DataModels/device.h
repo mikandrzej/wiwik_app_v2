@@ -47,6 +47,9 @@ public:
 
   void vehicleChanged();
 
+  void sensorAdded(Sensor *sensor, int newIndex);
+  void sensorRemoved(int index);
+
   private:
   int m_id = -1;
   QString m_serialNo = "";
@@ -59,7 +62,7 @@ public:
 
   QList<Sensor *> m_sensors;
 
-  Vehicle *m_vehicle;
+  Vehicle *m_vehicle = nullptr;
 
   QNetworkAccessManager *m_netAccMgr = nullptr;
 

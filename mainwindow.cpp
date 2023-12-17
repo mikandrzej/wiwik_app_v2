@@ -1,8 +1,10 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 #include "AbstractDataModels/devicetablemodel.h"
+#include "AbstractDataModels/mapmodel.h"
 #include "AbstractDataModels/sensortablemodel.h"
 #include "AbstractDataModels/vehicletablemodel.h"
+#include "AbstractDataModels/vehicletreemodel.h"
 #include "DataModels/mainvehiclemodel.h"
 #include "chartwidget.h"
 #include "egvehiclesmap.h"
@@ -15,6 +17,10 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
   ui->setupUi(this);
 
+  //include external ui's
+  m_formGpsHistory = new FormGPSHistory(this);
+  ui->tab_gpsHistory->layout()->addWidget(m_formGpsHistory);
+
   m_statusBarMqttLabel = new QLabel(ui->statusbar);
   m_statusBarMqttLabel->setAutoFillBackground(true);
   ui->statusbar->addPermanentWidget(m_statusBarMqttLabel);
@@ -26,36 +32,18 @@ MainWindow::MainWindow(QWidget *parent)
   setRestStatus(false);
 
   auto wg_chart = ui->wg_chart;
-  //  m_historyPlot = new QCustomPlot(wg_chart);
   auto historyPlotLayout = new QVBoxLayout(wg_chart);
-  //  m_historyPlot = new EgTemperatureChart();
-  //  historyPlotLayout->addWidget(m_historyPlot->instance());
-
   m_historyPlot = new ChartWidget();
   historyPlotLayout->addWidget(m_historyPlot);
-  //  auto chart = m_historyPlot->addGraph("testowy");
-  //  chart->appendData(0, 10);
-  //  chart->appendData(5, 7);
-  //  chart->appendData(10, 13);
-  //  chart = m_historyPlot->addGraph("testowy2");
-  //  chart->appendData(50, 6);
-  //  chart->appendData(60, 7);
-  //  chart->appendData(70, 11);
-  //  plot->setAxisRange(Qt::XAxis, 0, 10);
-  //  plot->setAxisRange(Qt::YAxis, 0, 20);
-  //  m_historyPlot->rescaleAxis(Qt::XAxis);
-  //  m_historyPlot->rescaleAxis(Qt::YAxis);
-
-  //  m_historyPlot->instance()->setLocale(
-  //      QLocale(QLocale::Polish, QLocale::Poland));
 
   m_dialogAssignSensor = new DialogAssignSensor(this);
   m_dialogEditVehicles = new DialogEditVehicles(this);
 
-  connect(ui->tv_liveData, &QTreeView::clicked, this,
-          &MainWindow::onLiveVehicleListClicked);
-  connect(ui->lv_historyVehicles, &QListView::clicked, this,
-          &MainWindow::onHistoryVehicleListClicked);
+  connect(ui->tv_liveData, &QTreeView::clicked, this, &MainWindow::onLiveVehicleListClicked);
+  connect(ui->lv_historyVehicles_temperature,
+          &QListView::clicked,
+          this,
+          &MainWindow::onTemperatureHistoryVehicleListClicked);
 
   connect(ui->pb_historyToday, &QPushButton::clicked, this,
           &MainWindow::onPbHistoryTodayClicked);
@@ -72,12 +60,13 @@ MainWindow::MainWindow(QWidget *parent)
   m_liveVehModel = new LiveVehiclesProxyModel(this);
   m_historyVehModel = new HistoryVehiclesProxyModel(this);
 
-  connect(m_mapWidget, &EgVehiclesMap::mapMarkerClicked, this,
-          &MainWindow::onMapMarkerClicked);
+  connect(m_mapWidget, &EgVehiclesMap::mapMarkerClicked, this, &MainWindow::onMapMarkerClicked);
 
   ui->tv_vehicleConfig->setModel(&vehicleTableModel);
   ui->tv_DeviceConfig->setModel(&deviceTableModel);
   ui->tv_SensorConfig->setModel(&sensorTableModel);
+
+  ui->tv_vehicleTreeView->setModel(&vehicleTreeModel);
 }
 
 MainWindow::~MainWindow() { delete ui; }
@@ -105,7 +94,8 @@ void MainWindow::setVehModel(VehiclesModel *newVehModel) {
 
   m_liveVehModel->setSourceModel(m_vehModel);
   m_historyVehModel->setSourceModel(newVehModel);
-  ui->lv_historyVehicles->setModel(m_historyVehModel);
+  ui->lv_historyVehicles_temperature->setModel(m_historyVehModel);
+  // ui->lv_historyVehicles_gps->setModel(m_historyVehModel);
 
   m_mapWidget->setVehiclesModel(newVehModel);
 
@@ -151,10 +141,12 @@ void MainWindow::onLiveVehicleListClicked(const QModelIndex &index) {
   updateLiveEditFields(index);
 }
 
-void MainWindow::onHistoryVehicleListClicked(const QModelIndex &index) {
-  m_historyVehicleListSelectedIndex = index;
-  plotHistoryData();
+void MainWindow::onTemperatureHistoryVehicleListClicked(const QModelIndex &index)
+{
+    m_historyVehicleListSelectedIndex = index;
+    plotHistoryData();
 }
+void MainWindow::onGpsHistoryVehicleListClicked(const QModelIndex &index) {}
 
 void MainWindow::plotHistoryData() {
   if (!m_historyVehicleListSelectedIndex.isValid()) {
@@ -233,20 +225,23 @@ QModelIndex MainWindow::getVehicleModelIndexById(const int vehicleId) {
 }
 
 void MainWindow::onSensorLiveDataReceived(EgVehicleSensorData &sensorData) {
-  if (sensorData.dataType != EgSensorDataType::Temperature) {
-    return;
-  }
-  double timestamp = sensorData.timestamp.toSecsSinceEpoch();
-  double value = sensorData.temperature;
+    if (sensorData.dataType == EgSensorDataType::Temperature) {
+        double timestamp = sensorData.timestamp.toSecsSinceEpoch();
+        double value = sensorData.temperature;
 
-  auto date_a = sensorData.timestamp.date();
-  auto date_b = ui->de_history->date();
-  if (date_a != date_b) {
-    return;
-  }
+        auto date_a = sensorData.timestamp.date();
+        auto date_b = ui->de_history->date();
+        if (date_a != date_b) {
+            return;
+        }
 
-  m_historyPlot->addData(timestamp, value, sensorData.sensorAddress);
-  historyDataAutoRescale();
+        m_historyPlot->addData(timestamp, value, sensorData.sensorAddress);
+        historyDataAutoRescale();
+    } else if (sensorData.dataType == EgSensorDataType::GpsPosition) {
+        mapLiveModel.addMarker(sensorData.vehicleId);
+        auto coordinate = sensorData.geoPosition.coordinate();
+        mapLiveModel.updatePosition(sensorData.vehicleId, coordinate);
+    }
 
   //    auto vehicle =
   //        m_vehModel->getData().vehicles[m_historyVehicleListSelectedIndex.row()];
@@ -266,10 +261,22 @@ void MainWindow::onSensorLiveDataReceived(EgVehicleSensorData &sensorData) {
   //    historyDataAutoRescale();
 }
 
-void MainWindow::onMapMarkerClicked(int vehicleId) {
-  qDebug() << "Marker clicked: " << vehicleId;
-  auto index = getVehicleModelIndexById(vehicleId);
-  updateLiveEditFields(index);
+void MainWindow::onMapMarkerClicked(int vehicleId)
+{
+    qDebug() << "Marker clicked: " << vehicleId;
+    auto index = getVehicleModelIndexById(vehicleId);
+    updateLiveEditFields(index);
+}
+void MainWindow::onHistoryMapMarkerClicked(int vehicleId)
+{
+    qDebug() << "Marker clicked: " << vehicleId;
+    auto index = getVehicleModelIndexById(vehicleId);
+    updateLiveEditFields(index);
+}
+
+FormGPSHistory *MainWindow::formGpsHistory() const
+{
+    return m_formGpsHistory;
 }
 
 void MainWindow::onVehiclesModelDataChanged(const QModelIndex &topLeft,

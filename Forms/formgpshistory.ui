@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>FormGPSHistory</class>
+ <widget class="QWidget" name="FormGPSHistory">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>956</width>
+    <height>714</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout_2">
+   <item>
+    <widget class="QListView" name="listView_vehicles">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="selectionBehavior">
+      <enum>QAbstractItemView::SelectRows</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QDateEdit" name="dateEdit">
+         <property name="wrapping">
+          <bool>false</bool>
+         </property>
+         <property name="buttonSymbols">
+          <enum>QAbstractSpinBox::UpDownArrows</enum>
+         </property>
+         <property name="accelerated">
+          <bool>false</bool>
+         </property>
+         <property name="showGroupSeparator" stdset="0">
+          <bool>false</bool>
+         </property>
+         <property name="minimumDateTime">
+          <datetime>
+           <hour>1</hour>
+           <minute>0</minute>
+           <second>0</second>
+           <year>2023</year>
+           <month>10</month>
+           <day>1</day>
+          </datetime>
+         </property>
+         <property name="displayFormat">
+          <string>dddd dd MMMM yyyy</string>
+         </property>
+         <property name="calendarPopup">
+          <bool>true</bool>
+         </property>
+         <property name="timeSpec">
+          <enum>Qt::LocalTime</enum>
+         </property>
+         <property name="date">
+          <date>
+           <year>2023</year>
+           <month>12</month>
+           <day>17</day>
+          </date>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSlider" name="horizontalSlider">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QWidget" name="widget_map" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

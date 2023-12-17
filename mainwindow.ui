@@ -21,7 +21,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>3</number>
       </property>
       <property name="elideMode">
        <enum>Qt::ElideNone</enum>
@@ -274,7 +274,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>2</number>
           </property>
           <property name="elideMode">
            <enum>Qt::ElideNone</enum>
@@ -297,6 +297,9 @@
               </property>
               <property name="defaultDropAction">
                <enum>Qt::MoveAction</enum>
+              </property>
+              <property name="alternatingRowColors">
+               <bool>true</bool>
               </property>
               <property name="selectionMode">
                <enum>QAbstractItemView::SingleSelection</enum>
@@ -359,6 +362,9 @@
               <property name="defaultDropAction">
                <enum>Qt::MoveAction</enum>
               </property>
+              <property name="alternatingRowColors">
+               <bool>true</bool>
+              </property>
               <property name="selectionMode">
                <enum>QAbstractItemView::SingleSelection</enum>
               </property>
@@ -385,6 +391,9 @@
               <property name="defaultDropAction">
                <enum>Qt::MoveAction</enum>
               </property>
+              <property name="alternatingRowColors">
+               <bool>true</bool>
+              </property>
               <property name="selectionMode">
                <enum>QAbstractItemView::SingleSelection</enum>
               </property>
@@ -408,194 +417,220 @@
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
-         <widget class="QListView" name="lv_historyVehicles">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
+         <widget class="QTabWidget" name="tabWidget_3">
+          <property name="currentIndex">
+           <number>1</number>
           </property>
-          <property name="maximumSize">
-           <size>
-            <width>200</width>
-            <height>16777215</height>
-           </size>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <layout class="QVBoxLayout" name="verticalLayout">
-          <item>
-           <layout class="QGridLayout" name="gridLayout_2">
-            <property name="spacing">
-             <number>2</number>
-            </property>
-            <item row="0" column="7">
-             <widget class="QPushButton" name="pb_historyReset">
-              <property name="text">
-               <string>Reset</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="QPushButton" name="pb_historyDateMinus">
+          <widget class="QWidget" name="tab_9">
+           <attribute name="title">
+            <string>Temperatura</string>
+           </attribute>
+           <layout class="QHBoxLayout" name="horizontalLayout_6">
+            <item>
+             <widget class="QListView" name="lv_historyVehicles_temperature">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
               <property name="maximumSize">
                <size>
-                <width>30</width>
+                <width>200</width>
                 <height>16777215</height>
                </size>
               </property>
-              <property name="text">
-               <string>&lt;</string>
-              </property>
              </widget>
             </item>
-            <item row="0" column="5">
-             <spacer name="horizontalSpacer_2">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="0" column="3">
-             <widget class="QPushButton" name="pb_historyDatePlus">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>30</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>&gt;</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="6">
-             <widget class="QCheckBox" name="cb_autoReset">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="text">
-               <string>Auto Reset</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="4">
-             <widget class="QPushButton" name="pb_historyToday">
-              <property name="text">
-               <string>Dzisiaj</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QDateEdit" name="de_history">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>120</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>120</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="wrapping">
-               <bool>false</bool>
-              </property>
-              <property name="frame">
-               <bool>true</bool>
-              </property>
-              <property name="buttonSymbols">
-               <enum>QAbstractSpinBox::NoButtons</enum>
-              </property>
-              <property name="accelerated">
-               <bool>false</bool>
-              </property>
-              <property name="minimumDateTime">
-               <datetime>
-                <hour>0</hour>
-                <minute>0</minute>
-                <second>0</second>
-                <year>2019</year>
-                <month>12</month>
-                <day>24</day>
-               </datetime>
-              </property>
-              <property name="displayFormat">
-               <string>ddd dd-MM-yyyy</string>
-              </property>
-              <property name="timeSpec">
-               <enum>Qt::UTC</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="2">
-             <widget class="QPushButton" name="pb_historySelectDate">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>30</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>30</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>...</string>
-              </property>
-             </widget>
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout">
+              <item>
+               <layout class="QGridLayout" name="gridLayout_2">
+                <property name="spacing">
+                 <number>2</number>
+                </property>
+                <item row="0" column="1">
+                 <widget class="QDateEdit" name="de_history">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>120</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>120</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <property name="wrapping">
+                   <bool>false</bool>
+                  </property>
+                  <property name="frame">
+                   <bool>true</bool>
+                  </property>
+                  <property name="buttonSymbols">
+                   <enum>QAbstractSpinBox::NoButtons</enum>
+                  </property>
+                  <property name="accelerated">
+                   <bool>false</bool>
+                  </property>
+                  <property name="minimumDateTime">
+                   <datetime>
+                    <hour>0</hour>
+                    <minute>0</minute>
+                    <second>0</second>
+                    <year>2019</year>
+                    <month>12</month>
+                    <day>20</day>
+                   </datetime>
+                  </property>
+                  <property name="displayFormat">
+                   <string>ddd dd-MM-yyyy</string>
+                  </property>
+                  <property name="timeSpec">
+                   <enum>Qt::UTC</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="0">
+                 <widget class="QPushButton" name="pb_historyDateMinus">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>30</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>&lt;</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="3">
+                 <widget class="QPushButton" name="pb_historyDatePlus">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>30</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>&gt;</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="5">
+                 <spacer name="horizontalSpacer_2">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item row="0" column="7">
+                 <widget class="QPushButton" name="pb_historyReset">
+                  <property name="text">
+                   <string>Reset</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="4">
+                 <widget class="QPushButton" name="pb_historyToday">
+                  <property name="text">
+                   <string>Dzisiaj</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="6">
+                 <widget class="QCheckBox" name="cb_autoReset">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="text">
+                   <string>Auto Reset</string>
+                  </property>
+                  <property name="checked">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="2">
+                 <widget class="QPushButton" name="pb_historySelectDate">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>30</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>30</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>...</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <widget class="QWidget" name="wg_chart" native="true">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
            </layout>
-          </item>
-          <item>
-           <widget class="QWidget" name="wg_chart" native="true">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-           </widget>
-          </item>
-         </layout>
+          </widget>
+          <widget class="QWidget" name="tab_gpsHistory">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>6</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <attribute name="title">
+            <string>GPS</string>
+           </attribute>
+           <layout class="QHBoxLayout" name="horizontalLayout_7"/>
+          </widget>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -604,6 +639,28 @@
         <string>Testy</string>
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <item>
+         <widget class="QTreeView" name="tv_vehicleTreeView">
+          <property name="alternatingRowColors">
+           <bool>true</bool>
+          </property>
+          <property name="indentation">
+           <number>10</number>
+          </property>
+          <property name="uniformRowHeights">
+           <bool>true</bool>
+          </property>
+          <property name="animated">
+           <bool>true</bool>
+          </property>
+          <attribute name="headerCascadingSectionResizes">
+           <bool>false</bool>
+          </attribute>
+          <attribute name="headerDefaultSectionSize">
+           <number>200</number>
+          </attribute>
+         </widget>
+        </item>
         <item>
          <spacer name="horizontalSpacer">
           <property name="orientation">

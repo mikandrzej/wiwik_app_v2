@@ -21,6 +21,7 @@ public:
 
 public slots:
   void requestTemperatureHistoryData(int vehicleId, QDate &date);
+  void requestGpsHistoryData(int vehicleId, QDate &date);
   void onAddNewVehicle(QString &vehName, QString &plateNo);
   void onEditVehicle(int id, QString &vehName, QString &plateNo);
 signals:
@@ -28,22 +29,25 @@ signals:
   void deviceListReady(EgDevicesListData &vehicleListData);
   void sensorListReady(EgSensorsListData &sensorListData);
   void serverStateChanged(bool state);
-  void vehiclesHistoryDataReady(EgTemperatureListData &);
+  void vehiclesTemperatureHistoryDataReady(EgTemperatureListData &);
+  void vehiclesGpsHistoryDataReady(EgGpsListData &);
 
-private slots:
+  private slots:
   void serverTimeout();
 
-private:
+  private:
   QNetworkAccessManager *m_netAccMgr;
 
   //  QString m_serverPath = "http://iot.2canit.pl:5000";
-  QString m_serverPath = "http://10.22.1.57:14999";
+  // QString m_serverPath = "http://10.22.1.57:14999";
+  QString m_serverPath = "http://127.0.0.1:5000";
   QString m_getVehiclesSubpath = "/api/getVehicles";
   QString m_getDevicesSubpath = "/api/getDevices";
   QString m_getSensorsSubpath = "/api/getSensors";
   QString m_setDeviceDataSubpath = "/api/setDeviceData";
   QString m_getUptimeSubpath = "/api/getUptime";
   QString m_getTemperatureDataSubpath = "/api/getTemperatureData";
+  QString m_getGpsDataSubpath = "/api/getGpsData";
   QString m_addVehiclePath = "/api/addVehicle";
   QString m_setVehicleDataSubpath = "/api/setVehicleData";
 

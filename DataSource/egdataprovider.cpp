@@ -29,7 +29,9 @@ EgDataProvider::EgDataProvider(QObject *parent) : QObject{parent} {
   connect(m_restDataSource, &EgRestDataSource::serverStateChanged, this,
           &EgDataProvider::restServerStateChanged);
 
-  connect(m_restDataSource, &EgRestDataSource::vehiclesHistoryDataReady, this,
+  connect(m_restDataSource,
+          &EgRestDataSource::vehiclesTemperatureHistoryDataReady,
+          this,
           &EgDataProvider::vehiclesHistoryDataReady);
   connect(this, &EgDataProvider::onAddNewVehicle, m_restDataSource,
           &EgRestDataSource::onAddNewVehicle);
@@ -63,5 +65,15 @@ const EgDevicesListData &EgDataProvider::getDevicesList() {
 }
 
 const EgVehiclesData &EgDataProvider::getVehiclesList() {
-  return m_vehicleList;
+    return m_vehicleList;
+}
+
+EgMqttDataSource *EgDataProvider::mqttDataSource() const
+{
+    return m_mqttDataSource;
+}
+
+EgRestDataSource *EgDataProvider::restDataSource() const
+{
+    return m_restDataSource;
 }

@@ -43,11 +43,16 @@ void EgMqttDataSource::onMqttConnected() {
           });
 
   auto subsServer = m_mqttClient->subscribe(QMqttTopicFilter("server/#"));
-  connect(subsServer, &QMqttSubscription::messageReceived, this,
-          [this](QMqttMessage msg) {
-            this->onMqttServerMessageReceived(msg.payload(),
-                                              msg.topic().levels());
-          });
+  connect(subsServer, &QMqttSubscription::messageReceived, this, [this](QMqttMessage msg) {
+      this->onMqttServerMessageReceived(msg.payload(), msg.topic().levels());
+  });
+
+  auto subsIrvine = m_mqttClient->subscribe(QMqttTopicFilter("irvine/#"));
+  connect(subsIrvine, &QMqttSubscription::messageReceived, this, [this](QMqttMessage msg) {
+      auto topicLevels = msg.topic().levels();
+      topicLevels.removeFirst();
+      this->onMqttDeviceMessageReceived(msg.payload(), topicLevels);
+  });
 }
 
 void EgMqttDataSource::onMqttDisconnected() {
@@ -123,8 +128,8 @@ void EgMqttDataSource::parseVehicleMessage(int vehicle_id,
         emit sensorDataReceived(sensorData);
         /////////
 
-        Measure measure(sensorData.timestamp, temperature);
-        DataContainer::instance()->insertNewMeasure(sensorData.sensorAddress, measure);
+        // Measure measure(sensorData.timestamp, temperature);
+        // DataContainer::instance()->insertNewMeasure(sensorData.sensorAddress, measure);
 
         ///////
       } else if (sensorType == "battery") {
@@ -145,8 +150,8 @@ void EgMqttDataSource::parseVehicleMessage(int vehicle_id,
 
         /////////
 
-        Measure measure(sensorData.timestamp, battery);
-        DataContainer::instance()->insertNewMeasure(sensorData.sensorAddress, measure);
+        // Measure measure(sensorData.timestamp, battery);
+        // DataContainer::instance()->insertNewMeasure(sensorData.sensorAddress, measure);
 
         ///////
       } else if (sensorType == "gps") {
@@ -178,8 +183,8 @@ void EgMqttDataSource::parseVehicleMessage(int vehicle_id,
 
         /////////
 
-        Measure measure(sensorData.timestamp, QVariant::fromValue(positionInfo));
-        DataContainer::instance()->insertNewMeasure(sensorData.sensorAddress, measure);
+        // Measure measure(sensorData.timestamp, QVariant::fromValue(positionInfo));
+        // DataContainer::instance()->insertNewMeasure(sensorData.sensorAddress, measure);
 
         ///////
       }
@@ -216,6 +221,80 @@ void EgMqttDataSource::onMqttServerMessageReceived(const QByteArray &msg,
   } else {
     qWarning() << "Unsupported service server parameter: " << topic[1];
   }
+}
+
+void EgMqttDataSource::onMqttDeviceMessageReceived(const QByteArray &msg, const QStringList &topic)
+{
+    if (topic.length() < 3)
+        return;
+    auto deviceAddress = topic[0];
+    auto sensorType = topic[1];
+    auto sensorAddress = topic[2];
+
+    QJsonParseError parseErr;
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(msg, &parseErr);
+    if (QJsonParseError::NoError != parseErr.error) {
+        qWarning() << "Unable to parse json: " << parseErr.errorString();
+        return;
+    }
+    auto jsonObj = jsonDoc.object();
+    if (!jsonObj.contains("timestamp")) {
+        qWarning() << "Json value for message type:" << sensorType
+                   << " should contain key \"timestamp\"";
+        return;
+    }
+    // auto timestamp = QDateTime::fromSecsSinceEpoch(jsonObj["timestamp"].toInt());
+    auto timestampStr = jsonObj["timestamp"].toString();
+    auto splTimestampStr = timestampStr.split(" GMT");
+    if (splTimestampStr.length() != 2) {
+        qWarning() << "Invalid timestamp str: \"" << timestampStr << "\" for device "
+                   << deviceAddress;
+        return;
+    }
+    auto dateTimeStr = splTimestampStr[0];
+    auto hourOffset = splTimestampStr[1].toInt();
+    auto timestamp = QDateTime::fromString(dateTimeStr, "yyyy-MM-dd hh:mm:ss");
+    timestamp.setOffsetFromUtc(hourOffset * 60 * 60);
+
+    Measure *measure = nullptr;
+
+    if (sensorType == "temperature") {
+        if (!jsonObj.contains("value")) {
+            qWarning() << "Json value for message type:" << sensorType
+                       << " should contain key \"value\"";
+            return;
+        }
+        double temperature = jsonObj["value"].toDouble();
+        measure = new Measure(timestamp, temperature);
+    } else if (sensorType == "battery") {
+        if (!jsonObj.contains("value")) {
+            qWarning() << "Json value for message type:" << sensorType
+                       << " should contain key \"value\"";
+            return;
+        }
+        double battery = jsonObj["value"].toDouble();
+        measure = new Measure(timestamp, battery);
+    } else if (sensorType == "gps") {
+        double latitude = jsonObj["latitude"].toDouble();
+        double longitude = jsonObj["longitude"].toDouble();
+        double precision = jsonObj["precision"].toDouble();
+        double speed = jsonObj["speed"].toDouble();
+        auto gps_timestamp = QDateTime::fromSecsSinceEpoch(jsonObj["gps_timestamp"].toInt());
+
+        QGeoPositionInfo positionInfo;
+        positionInfo.setCoordinate(QGeoCoordinate(latitude, longitude));
+        positionInfo.setAttribute(QGeoPositionInfo::GroundSpeed, speed);
+        positionInfo.setAttribute(QGeoPositionInfo::HorizontalAccuracy, precision);
+        positionInfo.setTimestamp(gps_timestamp);
+    } else {
+        qWarning() << "Unknown sensor type: " << sensorType;
+        return;
+    }
+
+    if (measure != nullptr) {
+        DataContainer::instance()->insertNewMeasure(sensorAddress, *measure);
+        delete measure;
+    }
 }
 
 void EgMqttDataSource::serverTimeout() {

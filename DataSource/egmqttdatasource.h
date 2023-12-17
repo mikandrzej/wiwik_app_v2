@@ -20,7 +20,8 @@ private slots:
                                           const QStringList &topic);
   void onMqttServerMessageReceived(const QByteArray &msg,
                                    const QStringList &topic);
-signals:
+  void onMqttDeviceMessageReceived(const QByteArray &msg, const QStringList &topic);
+  signals:
   void sensorDataReceived(EgVehicleSensorData &sensorData);
   void serverStateChanged(bool state);
 
@@ -36,7 +37,8 @@ private:
   void parseServiceServerMesssage(QString &parameter,
                                   const QByteArray &message);
   void setServerState(bool newServerState);
-  void parseVehicleMessage(int vehicle_id, const QStringList &topicLevels,
+  void parseVehicleMessage(int vehicle_id,
+                           const QStringList &topicLevels,
                            const QByteArray &message);
 };
 

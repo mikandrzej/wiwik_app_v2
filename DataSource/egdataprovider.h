@@ -36,7 +36,11 @@ public:
   const EgDevicesListData &getDevicesList();
   const EgVehiclesData &getVehiclesList();
 
-private:
+  EgMqttDataSource *mqttDataSource() const;
+
+  EgRestDataSource *restDataSource() const;
+
+  private:
   EgMqttDataSource *m_mqttDataSource;
   EgRestDataSource *m_restDataSource;
   EgDevicesListData m_deviceList;

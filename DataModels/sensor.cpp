@@ -1,5 +1,6 @@
 #include "sensor.h"
 #include "../Configuration/configuration.h"
+#include <QGeoPositionInfo>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QNetworkAccessManager>
@@ -75,6 +76,27 @@ void Sensor::commitChanges() {
 }
 
 Measure *Sensor::lastMeasure() const { return m_lastMeasure; }
+
+QString Sensor::lastMeasureString() const
+{
+    if(m_lastMeasure != nullptr)
+    {
+        if(m_type == "temperature")
+        {
+            return m_lastMeasure->value().toString() + "'C";
+        }
+        else if(m_type == "battery")
+        {
+            return m_lastMeasure->value().toString() + "mV";
+        }
+        else if(m_type == "gps")
+        {
+            auto geoposition = m_lastMeasure->value().value<QGeoPositionInfo>();
+            return "lat: " + QString::number(geoposition.coordinate().latitude(), 'f', 4) + "long: " + QString::number(geoposition.coordinate().longitude(), 'f', 4);
+        }
+    }
+    return "";
+}
 
 void Sensor::addMeasure(Measure &newMeasure) {
   if (m_measures.contains(newMeasure.timestamp()))

@@ -36,6 +36,7 @@ ChartWidget::ChartWidget(QWidget *parent) {
 
   QSharedPointer<QCPAxisTickerDateTime> dateTicker(new QCPAxisTickerDateTime);
   dateTicker->setDateTimeFormat("hh:mm");
+  dateTicker->setTimeZone(QTimeZone::systemTimeZone());
   m_cp->xAxis->setLabel("Godzina");
   m_cp->xAxis->setTicker(dateTicker);
   dateTicker->setTickCount(24);
@@ -82,8 +83,8 @@ void ChartWidget::setAxisRange(Qt::Axis axis, QVariant min, QVariant max) {
     m_cp->xAxis->setRange(min_value, max_value);
     break;
   case Qt::YAxis:
-    m_cp->yAxis->setRange(min_value, max_value);
-    break;
+      m_cp->yAxis->setRange(min_value - 2, max_value + 2);
+      break;
   default:
     throw std::invalid_argument("Invalid axis argument");
     break;
@@ -133,6 +134,8 @@ void ChartWidget::rescaleAxis(Qt::Axis axis) {
         range.expand(graph_data->graph->getValueRange(found, QCP::sdBoth));
       }
     }
+    range.lower -= 2;
+    range.upper += 2;
     m_cp->yAxis->setRange(range);
     m_cp->replot();
     break;

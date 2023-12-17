@@ -29,14 +29,18 @@ public:
   void addDevice(Device *device);
   void removeDevice(Device *device);
 
-signals:
+  QList<Device *> devices() const;
+
+  signals:
   void nameChanged();
 
   void plateNoChanged();
 
   void changesPendingChanged();
+  void deviceAdded(Device *device, int index);
+  void deviceRemoved(int index);
 
-private:
+  private:
   int m_id;
   QString m_name;
   QString m_plateNo;

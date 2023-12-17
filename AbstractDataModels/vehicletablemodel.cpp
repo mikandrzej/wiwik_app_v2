@@ -101,20 +101,19 @@ QVariant VehicleTableModel::headerData(int section, Qt::Orientation orientation,
 }
 
 Qt::ItemFlags VehicleTableModel::flags(const QModelIndex &index) const {
-  Qt::ItemFlags flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+    Qt::ItemFlags flags = Qt::ItemIsSelectable;
 
-  const auto *vehicle =
-      DataContainer::instance()->getVehicleByIndex(index.row());
-  switch (static_cast<Columns>(index.column())) {
-  case ColumnName:
-  case ColumnPlateNo:
-    flags |= Qt::ItemIsEditable;
-    break;
-  case ColumnCommit:
-    if (vehicle)
-      if (vehicle->changesPending())
-        flags |= Qt::ItemIsUserCheckable | Qt::ItemIsEditable;
-    break;
+    const auto *vehicle = DataContainer::instance()->getVehicleByIndex(index.row());
+    switch (static_cast<Columns>(index.column())) {
+    case ColumnName:
+    case ColumnPlateNo:
+        flags |= Qt::ItemIsEditable | Qt::ItemIsEnabled;
+        break;
+    case ColumnCommit:
+        if (vehicle)
+            if (vehicle->changesPending())
+                flags |= Qt::ItemIsUserCheckable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
+        break;
   }
 
   return flags;

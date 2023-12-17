@@ -114,20 +114,20 @@ QVariant DeviceTableModel::headerData(int section, Qt::Orientation orientation,
 }
 
 Qt::ItemFlags DeviceTableModel::flags(const QModelIndex &index) const {
-  Qt::ItemFlags flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+    Qt::ItemFlags flags = Qt::ItemIsSelectable;
 
-  const auto *device = DataContainer::instance()->getDeviceByIndex(index.row());
-  switch (static_cast<Columns>(index.column())) {
-  case ColumnName:
-  case ColumnVehicle:
-    flags |= Qt::ItemIsEditable;
-    break;
-  case ColumnCommit:
-    if (device)
-      if (device->changesPending())
-        flags |= Qt::ItemIsUserCheckable | Qt::ItemIsEditable;
-    break;
-  }
+    const auto *device = DataContainer::instance()->getDeviceByIndex(index.row());
+    switch (static_cast<Columns>(index.column())) {
+    case ColumnName:
+    case ColumnVehicle:
+        flags |= Qt::ItemIsEditable | Qt::ItemIsEnabled;
+        break;
+    case ColumnCommit:
+        if (device)
+            if (device->changesPending())
+                flags |= Qt::ItemIsUserCheckable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
+        break;
+    }
 
   return flags;
 }

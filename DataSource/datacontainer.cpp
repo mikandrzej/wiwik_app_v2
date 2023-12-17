@@ -104,6 +104,11 @@ QList<Vehicle *> DataContainer::getVehicleList() { return m_vehiclesList; }
 
 QList<Device *> DataContainer::getDeviceList() { return m_devicesList; }
 
+QList<Sensor *> DataContainer::getSensorsList()
+{
+    return m_sensorsList;
+}
+
 Vehicle *DataContainer::getVehicleByIndex(int index) {
   if (index >= m_vehiclesList.count())
     return nullptr;
@@ -244,7 +249,7 @@ void DataContainer::addDevice(Device *device) {
     emit deviceDataChanged(m_devicesList.indexOf(newDevice));
   });
 
-  emit deviceDataInsertDone();
+  emit deviceDataInsertDone(newIdx);
 }
 
 void DataContainer::updateDevice(Device *device) {
@@ -306,7 +311,7 @@ void DataContainer::addVehicle(Vehicle *vehicle) {
       emit vehicleDataChanged(m_vehiclesList.indexOf(newVehicle));
   });
 
-  emit vehicleDataInsertDone();
+  emit vehicleDataInsertDone(newIdx);
 }
 
 void DataContainer::removeVehicle(int id) {
@@ -389,5 +394,5 @@ void DataContainer::addSensor(Sensor *sensor) {
     emit sensorDataChanged(m_sensorsList.indexOf(newSensor));
   });
 
-  emit sensorDataInsertDone();
+  emit sensorDataInsertDone(newIdx);
 }

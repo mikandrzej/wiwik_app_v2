@@ -25,6 +25,7 @@ public:
 
   void commitChanges();
   Measure *lastMeasure() const;
+  QString lastMeasureString() const;
 
   QMap<QDateTime, Measure *> measures() const;
   void setMeasures(const QMap<QDateTime, Measure *> &newMeasures);

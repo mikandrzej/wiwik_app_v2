@@ -28,8 +28,8 @@ void OneVehicleTemperatureModel::insert(int timestamp, double value) {
       int elements = afterElement - beforeElement;
       if (elements == 1) {
         newIndex = beforeElement + 1;
-        if (m_data[newIndex]->timestamp == timestamp) {
-          return;
+        if (m_data[beforeElement]->timestamp == timestamp) {
+            return;
         }
         break;
       }

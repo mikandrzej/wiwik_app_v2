@@ -8,18 +8,25 @@
 
 #include "DataSource/datacontainer.h"
 #include "DataSource/egdataprovider.h"
+#include "Forms/formgpshistory.h"
 
 App::App(MainWindow *mainWindow, QObject *parent)
     : QObject{parent}, m_mainWindow(mainWindow) {
   bindGui();
 
-  connect(&m_dataProvider, &EgDataProvider::sensorLiveDataReceived,
-          &m_carsMapModel, &EgCarsMapModel::onSensorDataReceived);
-  connect(&m_dataProvider, &EgDataProvider::sensorLiveDataReceived,
-          &m_vehiclesModel, &VehiclesModel::onSensorDataReceived);
+  connect(&m_dataProvider,
+          &EgDataProvider::sensorLiveDataReceived,
+          &m_carsMapModel,
+          &EgCarsMapModel::onSensorDataReceived);
+  connect(&m_dataProvider,
+          &EgDataProvider::sensorLiveDataReceived,
+          &m_vehiclesModel,
+          &VehiclesModel::onSensorDataReceived);
 
-  connect(&m_dataProvider, &EgDataProvider::vehiclesDataReceived,
-          &m_vehiclesModel, &VehiclesModel::onVehiclesDataReceived);
+  connect(&m_dataProvider,
+          &EgDataProvider::vehiclesDataReceived,
+          &m_vehiclesModel,
+          &VehiclesModel::onVehiclesDataReceived);
   connect(&m_dataProvider, &EgDataProvider::vehiclesDataReceived,
           &m_liveViewModel, &LiveViewModel::onVehiclesDataReceived);
   connect(
@@ -42,6 +49,16 @@ App::App(MainWindow *mainWindow, QObject *parent)
           &App::onRestServerStateChanged);
 
   connect(DataContainer::instance(), &DataContainer::sensorsDataNeedsUpdate, &m_dataProvider, &EgDataProvider::requestSensorsData);
+
+  //gps history
+  connect(mainWindow->formGpsHistory(),
+          &FormGPSHistory::requestGpsHistoryData,
+          m_dataProvider.restDataSource(),
+          &EgRestDataSource::requestGpsHistoryData);
+  connect(m_dataProvider.restDataSource(),
+          &EgRestDataSource::vehiclesGpsHistoryDataReady,
+          mainWindow->formGpsHistory(),
+          &FormGPSHistory::onGpsDataReady);
 }
 
 void App::bindGui() {

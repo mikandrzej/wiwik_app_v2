@@ -2,6 +2,9 @@
 #define MAINWINDOW_H
 
 // #include "QCustomPlot/qcustomplot.h"
+#include <QLabel>
+#include <QMainWindow>
+#include "Forms/formgpshistory.h"
 #include "chartwidget.h"
 #include "dialogassignsensor.h"
 #include "dialogeditvehicles.h"
@@ -9,9 +12,8 @@
 #include "historyvehiclesproxymodel.h"
 #include "livevehiclesproxymodel.h"
 #include "liveviewmodel.h"
+#include "mapwidget.h"
 #include "vehiclesmodel.h"
-#include <QLabel>
-#include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
 
@@ -40,7 +42,9 @@ public:
   ChartWidget *historyPlot();
   void setMainVehicleModel(MainVehicleModel *newMainVehicleModel);
 
-public slots:
+  FormGPSHistory *formGpsHistory() const;
+
+  public slots:
   void setMqttStatus(bool status);
   void setRestStatus(bool status);
 
@@ -54,7 +58,7 @@ private slots:
   void onLiveVehicleListClicked(const QModelIndex &index);
 
   void onPbHistoryTodayClicked(bool state);
-  void onHistoryVehicleListClicked(const QModelIndex &index);
+  void onTemperatureHistoryVehicleListClicked(const QModelIndex &index);
   void plotHistoryData();
 
   void on_pb_editVehicles_clicked();
@@ -68,11 +72,16 @@ private slots:
 
   void on_pb_historySelectDate_clicked();
 
-signals:
+  void onGpsHistoryVehicleListClicked(const QModelIndex &index);
+  void onHistoryMapMarkerClicked(int vehicleId);
+
+  signals:
   void vehicleHistoryDataRequested(int, QDate &);
 
 private:
   Ui::MainWindow *ui;
+  FormGPSHistory *m_formGpsHistory = nullptr;
+
   QLabel *m_statusBarMqttLabel;
   QLabel *m_statusBarRestLabel;
   ChartWidget *m_historyPlot;
@@ -83,6 +92,7 @@ private:
   LiveVehiclesProxyModel *m_liveVehModel;
   HistoryVehiclesProxyModel *m_historyVehModel;
   EgVehiclesMap *m_mapWidget;
+  MapWidget *m_mapHistoryWidget;
   DialogAssignSensor *m_dialogAssignSensor;
   DialogEditVehicles *m_dialogEditVehicles;
   void historyDataAutoRescale();

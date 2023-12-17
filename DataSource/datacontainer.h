@@ -22,6 +22,7 @@ public:
   int getSensorsCount();
   QList<Vehicle *> getVehicleList();
   QList<Device *> getDeviceList();
+  QList<Sensor *> getSensorsList();
 
   Vehicle *getVehicleByIndex(int index);
   int getIndexByVehicle(Vehicle *vehicle);
@@ -41,15 +42,15 @@ public:
   static DataContainer *instance();
 signals:
   void vehicleDataToBeInserted(int newIndex);
-  void vehicleDataInsertDone();
+  void vehicleDataInsertDone(int newIndex);
   void vehicleDataChanged(int idx);
 
   void deviceDataToBeInserted(int newIndex);
-  void deviceDataInsertDone();
+  void deviceDataInsertDone(int newIndex);
   void deviceDataChanged(int idx);
 
   void sensorDataToBeInserted(int newIndex);
-  void sensorDataInsertDone();
+  void sensorDataInsertDone(int newIndex);
   void sensorDataChanged(int idx);
 
   void sensorsDataNeedsUpdate();
