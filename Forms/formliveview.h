@@ -6,26 +6,27 @@
 class Sensor;
 class MapWidget;
 
-namespace Ui {
-class FormLiveView;
+namespace Ui
+{
+    class FormLiveView;
 }
 
 class FormLiveView : public QWidget
 {
     Q_OBJECT
 
-public:
-    explicit FormLiveView(QWidget *parent = nullptr);
+  public:
+    explicit FormLiveView(QWidget* parent = nullptr);
     ~FormLiveView();
 
-public slots:
+  public slots:
 
-private slots:
-    void sensorPositionDataChanged(Sensor *sensor);
+  private slots:
+    void sensorPositionDataChanged(Sensor* sensor);
 
-private:
-    Ui::FormLiveView *ui;
-    MapWidget *m_mapLiveWidget;
+  private:
+    Ui::FormLiveView* ui;
+    MapWidget* m_mapLiveWidget;
 };
 
-#endif // FORMLIVEVIEW_H
+#endif   // FORMLIVEVIEW_H

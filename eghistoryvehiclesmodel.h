@@ -4,17 +4,17 @@
 #include <QIdentityProxyModel>
 #include <QObject>
 
-class EgHistoryVehiclesModel : public QIdentityProxyModel {
-  Q_OBJECT
-public:
-  explicit EgHistoryVehiclesModel(QObject *parent = nullptr);
-
-  // QAbstractProxyModel interface
-public:
-
-  // QAbstractItemModel interface
+class EgHistoryVehiclesModel : public QIdentityProxyModel
+{
+    Q_OBJECT
   public:
-  QVariant data(const QModelIndex &index, int role) const override;
+    explicit EgHistoryVehiclesModel(QObject* parent = nullptr);
+
+    // QAbstractProxyModel interface
+  public:
+    // QAbstractItemModel interface
+  public:
+    QVariant data(const QModelIndex& index, int role) const override;
 };
 
-#endif // EGHISTORYVEHICLESMODEL_H
+#endif   // EGHISTORYVEHICLESMODEL_H

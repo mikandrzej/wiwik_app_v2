@@ -1,34 +1,38 @@
 #include "onevehiclepositionmodel.h"
 #include "qvariant.h"
 
-OneVehiclePositionModel::OneVehiclePositionModel(QObject *parent)
-    : QObject{parent} {}
+OneVehiclePositionModel::OneVehiclePositionModel(QObject* parent) : QObject {parent} {}
 
-QGeoPositionInfo OneVehiclePositionModel::lastValue() const {
-  if (m_data.count() > 0) {
-    auto value = m_data.last()->value;
-    return value;
-  }
-  return QGeoPositionInfo();
+QGeoPositionInfo OneVehiclePositionModel::lastValue() const
+{
+    if (m_data.count() > 0)
+    {
+        auto value = m_data.last()->value;
+        return value;
+    }
+    return QGeoPositionInfo();
 }
 
-void OneVehiclePositionModel::insert(int timestamp, QGeoPositionInfo &value) {
-  if (m_data.contains(timestamp))
-    return;
-  m_data[timestamp] = new PositionData{timestamp, value};
-  emit dataChanged();
+void OneVehiclePositionModel::insert(int timestamp, QGeoPositionInfo& value)
+{
+    if (m_data.contains(timestamp))
+        return;
+    m_data[timestamp] = new PositionData {timestamp, value};
+    emit dataChanged();
 
-  if (m_data.lastKey() == timestamp)
-    emit lastValueChanged();
+    if (m_data.lastKey() == timestamp)
+        emit lastValueChanged();
 }
 
-QVariantList OneVehiclePositionModel::path() {
-  QVariantList list;
+QVariantList OneVehiclePositionModel::path()
+{
+    QVariantList list;
 
-  foreach (auto point, m_data.values()) {
-    list.append(QVariant::fromValue(point->value.coordinate()));
-  }
+    foreach (auto point, m_data.values())
+    {
+        list.append(QVariant::fromValue(point->value.coordinate()));
+    }
 
-  //    m_data.lowerBound() << wyszukiwanie najbliższego
-  return list;
+    //    m_data.lowerBound() << wyszukiwanie najbliższego
+    return list;
 }

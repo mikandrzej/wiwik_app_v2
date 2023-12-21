@@ -1,4 +1,3 @@
 #include "livevehiclesproxymodel.h"
 
-LiveVehiclesProxyModel::LiveVehiclesProxyModel(QObject *parent)
-    : QSortFilterProxyModel{parent} {}
+LiveVehiclesProxyModel::LiveVehiclesProxyModel(QObject* parent) : QSortFilterProxyModel {parent} {}

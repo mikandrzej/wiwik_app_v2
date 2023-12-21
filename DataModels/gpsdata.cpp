@@ -5,7 +5,7 @@ QGeoCoordinate GpsData::coordinate() const
     return m_coordinate;
 }
 
-void GpsData::setCoordinate(const QGeoCoordinate &newCoordinate)
+void GpsData::setCoordinate(const QGeoCoordinate& newCoordinate)
 {
     if (m_coordinate == newCoordinate)
         return;
@@ -17,7 +17,7 @@ QGeoAddress GpsData::address() const
     return m_address;
 }
 
-void GpsData::setAddress(const QGeoAddress &newAddress)
+void GpsData::setAddress(const QGeoAddress& newAddress)
 {
     if (m_address == newAddress)
         return;
@@ -53,7 +53,7 @@ QDateTime GpsData::gpsTimestamp() const
     return m_gpsTimestamp;
 }
 
-void GpsData::setGpsTimestamp(const QDateTime &newGpsTimestamp)
+void GpsData::setGpsTimestamp(const QDateTime& newGpsTimestamp)
 {
     if (m_gpsTimestamp == newGpsTimestamp)
         return;

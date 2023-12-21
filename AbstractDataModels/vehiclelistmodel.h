@@ -7,19 +7,22 @@
 class VehicleListModel : public QAbstractListModel
 {
     Q_OBJECT
-public:
-    explicit VehicleListModel(QObject *parent = nullptr);
+  public:
+    explicit VehicleListModel(QObject* parent = nullptr);
 
     // QAbstractItemModel interface
-public:
-    int rowCount(const QModelIndex &parent) const;
-    QVariant data(const QModelIndex &index, int role) const;
+  public:
+    int rowCount(const QModelIndex& parent) const;
+    QVariant data(const QModelIndex& index, int role) const;
 
-    enum roles { RoleVehicleId = Qt::UserRole };
+    enum roles
+    {
+        RoleVehicleId = Qt::UserRole
+    };
 
-private:
+  private:
 };
 
 extern VehicleListModel vehicleListModel;
 
-#endif // VEHICLELISTMODEL_H
+#endif   // VEHICLELISTMODEL_H

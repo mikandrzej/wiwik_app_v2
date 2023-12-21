@@ -5,30 +5,32 @@
 #include <QMap>
 #include <QObject>
 
-class OneVehiclePositionModel : public QObject {
-  Q_OBJECT
-public:
-  explicit OneVehiclePositionModel(QObject *parent = nullptr);
+class OneVehiclePositionModel : public QObject
+{
+    Q_OBJECT
+  public:
+    explicit OneVehiclePositionModel(QObject* parent = nullptr);
 
-  QGeoPositionInfo lastValue() const;
+    QGeoPositionInfo lastValue() const;
 
-  QVariantList path();
+    QVariantList path();
 
-public slots:
-  void insert(int timestamp, QGeoPositionInfo &value);
+  public slots:
+    void insert(int timestamp, QGeoPositionInfo& value);
 
-signals:
+  signals:
 
-  void lastValueChanged();
-  void dataChanged();
+    void lastValueChanged();
+    void dataChanged();
 
-private:
-  struct PositionData {
-    int timestamp;
-    QGeoPositionInfo value;
-  };
-  QMap<int, PositionData *> m_data;
-  Q_PROPERTY(QGeoPositionInfo lastValue READ lastValue NOTIFY lastValueChanged)
+  private:
+    struct PositionData
+    {
+        int timestamp;
+        QGeoPositionInfo value;
+    };
+    QMap<int, PositionData*> m_data;
+    Q_PROPERTY(QGeoPositionInfo lastValue READ lastValue NOTIFY lastValueChanged)
 };
 
-#endif // ONEVEHICLEPOSITIONMODEL_H
+#endif   // ONEVEHICLEPOSITIONMODEL_H

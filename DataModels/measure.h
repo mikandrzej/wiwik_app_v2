@@ -4,22 +4,22 @@
 #include <QDateTime>
 #include <QObject>
 #include <QVariant>
-class Measure : public QObject {
-  Q_OBJECT
-public:
-  explicit Measure(QDateTime &timestamp, QVariant value,
-                   QObject *parent = nullptr);
-  explicit Measure(Measure *measure, QObject *parent = nullptr);
+class Measure : public QObject
+{
+    Q_OBJECT
+  public:
+    explicit Measure(QDateTime& timestamp, QVariant value, QObject* parent = nullptr);
+    explicit Measure(Measure* measure, QObject* parent = nullptr);
 
-  QVariant value() const;
+    QVariant value() const;
 
-  QDateTime timestamp() const;
+    QDateTime timestamp() const;
 
-signals:
+  signals:
 
-private:
-  QVariant m_value;
-  QDateTime m_timestamp;
+  private:
+    QVariant m_value;
+    QDateTime m_timestamp;
 };
 
-#endif // MEASURE_H
+#endif   // MEASURE_H

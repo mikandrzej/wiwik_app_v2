@@ -9,12 +9,12 @@
 
 struct GpsData
 {
-public:
+  public:
     QGeoCoordinate coordinate() const;
-    void setCoordinate(const QGeoCoordinate &newCoordinate);
+    void setCoordinate(const QGeoCoordinate& newCoordinate);
 
     QGeoAddress address() const;
-    void setAddress(const QGeoAddress &newAddress);
+    void setAddress(const QGeoAddress& newAddress);
 
     double speed() const;
     void setSpeed(double newSpeed);
@@ -23,9 +23,9 @@ public:
     void setAccuracy(double newAccuracy);
 
     QDateTime gpsTimestamp() const;
-    void setGpsTimestamp(const QDateTime &newGpsTimestamp);
+    void setGpsTimestamp(const QDateTime& newGpsTimestamp);
 
-signals:
+  signals:
 
     void coordinateChanged();
 
@@ -37,7 +37,7 @@ signals:
 
     void gpsTimestampChanged();
 
-private:
+  private:
     QGeoCoordinate m_coordinate;
     QGeoAddress m_address;
     double m_speed = 0.0;
@@ -47,4 +47,4 @@ private:
 
 Q_DECLARE_METATYPE(GpsData)
 
-#endif // GPSDATA_H
+#endif   // GPSDATA_H
