@@ -1,7 +1,7 @@
 #ifndef EGVEHICLEDATA_H
 #define EGVEHICLEDATA_H
 
-#include "qgeopositioninfo.h"
+#include <QGeoPositionInfo>
 #include <QColor>
 #include <QDateTime>
 #include <QList>

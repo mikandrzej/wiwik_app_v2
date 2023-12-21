@@ -1,7 +1,7 @@
 #ifndef TREEITEM_H
 #define TREEITEM_H
 
-#include "qfont.h"
+#include <QFont>
 #include <QList>
 #include <QVariant>
 

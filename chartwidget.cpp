@@ -71,13 +71,14 @@ GraphData* ChartWidget::addGraph(QString& reference, const QString& name)
 
 void ChartWidget::addData(double x, double y, const QString& chart_ref)
 {
-    for (auto& graphData : m_graphsData)
+    // c++17 if statement
+    auto it = std::find_if(std::begin(m_graphsData), std::end(m_graphsData), [&chart_ref](const auto* graph_data){
+        return graph_data->reference() == chart_ref;
+    });
+
+    if(it != std::end(m_graphsData))
     {
-        if (graphData->reference() == chart_ref)
-        {
-            graphData->appendData(x, y);
-            break;
-        }
+        (*it)->appendData(x, y);
     }
 }
 

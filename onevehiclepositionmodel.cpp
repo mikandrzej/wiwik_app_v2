@@ -1,5 +1,5 @@
 #include "onevehiclepositionmodel.h"
-#include "qvariant.h"
+#include <QVariant>
 
 OneVehiclePositionModel::OneVehiclePositionModel(QObject* parent) : QObject {parent} {}
 

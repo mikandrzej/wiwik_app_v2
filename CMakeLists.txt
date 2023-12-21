@@ -13,6 +13,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 include(CMake/collect-sources.cmake)
 include(CMake/format.cmake)
 include(CMake/tidy.cmake)
+include(CMake/cppcheck.cmake)
 
 if (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
     add_compile_options (-fdiagnostics-color=always)

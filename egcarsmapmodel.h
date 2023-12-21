@@ -68,7 +68,7 @@ class EgCarMapModel : public QObject
     void idChanged();
 
   private:
-    int m_id;
+    int m_id {0};
     QString m_name;
     QColor m_polylineColor;
     int m_polylineWidth;

@@ -4,7 +4,7 @@
 #include "../DataModels/gpsdata.h"
 #include "../DataSource/datacontainer.h"
 #include "../mapwidget.h"
-#include "qgeopositioninfo.h"
+#include <QGeoPositionInfo>
 #include "ui_formliveview.h"
 
 FormLiveView::FormLiveView(QWidget* parent) : QWidget(parent), ui(new Ui::FormLiveView)

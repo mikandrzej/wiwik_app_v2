@@ -42,7 +42,7 @@ class OneVehicleModel : public QObject
     void idChanged();
 
   private:
-    int m_id;
+    int m_id {0};
     QString m_name;
     QString m_plateNo;
     OneVehicleTemperatureModel* m_temperatureModel = new OneVehicleTemperatureModel(this);

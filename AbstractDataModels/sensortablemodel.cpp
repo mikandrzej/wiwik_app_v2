@@ -80,7 +80,6 @@ QVariant SensorTableModel::data(const QModelIndex& index, int role) const
                                 return gpsData.address().text();
                             }
                             return val.toString();
-                            break;
                         }
                         default:
                             break;

@@ -11,7 +11,7 @@ class MapModelData : public QObject
 {
     Q_OBJECT
   public:
-    MapModelData(int id, QObject* parent = nullptr);
+    explicit MapModelData(int id, QObject* parent = nullptr);
 
     int id() const;
     void setId(int newId);
