@@ -13,7 +13,7 @@ EgVehiclesMap::EgVehiclesMap(QWidget* parent) : QWidget {parent}
     container->setMinimumSize(m_quickView->size());
     container->setFocusPolicy(Qt::TabFocus);
 
-    QVBoxLayout* layout = new QVBoxLayout(container);
+    auto* layout = new QVBoxLayout(container);
     this->setLayout(layout);
     layout->addWidget(container);
 

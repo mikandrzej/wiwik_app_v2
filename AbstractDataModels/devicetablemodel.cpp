@@ -29,7 +29,7 @@ QVariant DeviceTableModel::data(const QModelIndex& index, int role) const
 {
     const auto* device = DataContainer::instance()->getDeviceByIndex(index.row());
     if (nullptr == device)
-        return QVariant();
+        return {};
 
     const auto column = index.column();
     if (Qt::DisplayRole == role || Qt::EditRole == role)
@@ -79,7 +79,7 @@ QVariant DeviceTableModel::data(const QModelIndex& index, int role) const
                 break;
         }
     }
-    return QVariant();
+    return {};
 }
 
 bool DeviceTableModel::setData(const QModelIndex& index, const QVariant& value, int role)
@@ -132,7 +132,7 @@ QVariant DeviceTableModel::headerData(int section, Qt::Orientation orientation, 
         }
     }
 
-    return QVariant();
+    return {};
 }
 
 Qt::ItemFlags DeviceTableModel::flags(const QModelIndex& index) const

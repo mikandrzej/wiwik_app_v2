@@ -29,7 +29,7 @@ QModelIndex VehicleTreeModel::index(int row, int column, const QModelIndex& pare
         auto* childNode = parentNode->childs().at(row);
         return createIndex(row, column, childNode);
     }
-    return QModelIndex();
+    return {};
 }
 
 QModelIndex VehicleTreeModel::parent(const QModelIndex& child) const
@@ -38,11 +38,11 @@ QModelIndex VehicleTreeModel::parent(const QModelIndex& child) const
     auto* parentNode = childNode->parent();
     if (parentNode == m_rootNode)
     {
-        return QModelIndex();
+        return {};
     }
     int row = rowForNode(parentNode);
     if (row < 0)
-        return QModelIndex();
+        return {};
     int column = 0;
     return createIndex(row, column, parentNode);
 }
@@ -67,13 +67,13 @@ QVariant VehicleTreeModel::data(const QModelIndex& index, int role) const
         auto* node = nodeForIndex(index);
         return node->data(index.column(), role);
     }
-    return QVariant();
+    return {};
 }
 
 QModelIndex VehicleTreeModel::indexForNode(VehicleTreeNode* node) const
 {
     if (node == m_rootNode)
-        return QModelIndex();
+        return {};
     int row = rowForNode(node);
     int column = 0;
     return createIndex(row, column, node);
@@ -137,5 +137,5 @@ QVariant VehicleTreeModel::headerData(int section, Qt::Orientation orientation, 
         }
     }
 
-    return QVariant();
+    return {};
 }

@@ -106,13 +106,13 @@ class MapModel : public QAbstractListModel
     void setMarkerPathColor(int id, const QColor& color);
     void setMarkerPathWidth(int id, int width);
     void updatePosition(int id, QGeoCoordinate& coordinate, bool update = true);
-    void setPath(int id, QList<QGeoCoordinate> path);
+    void setPath(int id, const QList<QGeoCoordinate>& path);
 
     // QAbstractItemModel interface
   public:
-    int rowCount(const QModelIndex& parent) const;
-    QVariant data(const QModelIndex& index, int role) const;
-    QHash<int, QByteArray> roleNames() const;
+    int rowCount(const QModelIndex& parent) const override;
+    QVariant data(const QModelIndex& index, int role) const override;
+    QHash<int, QByteArray> roleNames() const override;
 
   private:
     enum

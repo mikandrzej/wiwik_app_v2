@@ -7,13 +7,14 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QUrlQuery>
+#include <utility>
 
-Sensor::Sensor(int id, const QString& name, const QString& address, const QString& type, int deviceId, QObject* parent) :
+Sensor::Sensor(int id, QString name, QString address, QString type, int deviceId, QObject* parent) :
     QObject(parent),
     m_id(id),
-    m_name(name),
-    m_address(address),
-    m_type(type),
+    m_name(std::move(name)),
+    m_address(std::move(address)),
+    m_type(std::move(type)),
     m_deviceId(deviceId)
 {
 }
@@ -28,7 +29,7 @@ Sensor::Sensor(const Sensor& sensor, QObject* parent) :
 {
 }
 
-Sensor::Sensor(const QString& address, QObject* parent) : QObject {parent}, m_address(address) {}
+Sensor::Sensor(QString address, QObject* parent) : QObject {parent}, m_address(std::move(address)) {}
 
 QString Sensor::name() const
 {

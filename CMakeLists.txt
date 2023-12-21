@@ -8,9 +8,11 @@ set(CMAKE_AUTORCC ON)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 include(CMake/collect-sources.cmake)
 include(CMake/format.cmake)
+include(CMake/tidy.cmake)
 
 if (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
     add_compile_options (-fdiagnostics-color=always)

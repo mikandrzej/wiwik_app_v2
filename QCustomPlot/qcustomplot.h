@@ -23,6 +23,7 @@
 **          Version: 2.1.1                                                **
 ****************************************************************************/
 
+// NOLINTBEGIN
 #ifndef QCUSTOMPLOT_H
 #define QCUSTOMPLOT_H
 
@@ -7772,3 +7773,4 @@ private:
 
 #endif // QCUSTOMPLOT_H
 
+// NOLINTEND

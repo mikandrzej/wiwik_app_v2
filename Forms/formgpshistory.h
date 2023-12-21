@@ -17,7 +17,7 @@ class FormGPSHistory : public QWidget
 
   public:
     explicit FormGPSHistory(QWidget* parent = nullptr);
-    ~FormGPSHistory();
+    ~FormGPSHistory() override;
 
   public slots:
     void onGpsDataReady(EgGpsListData& gpsList);

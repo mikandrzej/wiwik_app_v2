@@ -61,11 +61,11 @@ QVariant EgCarsMapModel::data(const QModelIndex& index, int role) const
 {
     if (!index.isValid())
     {
-        return QVariant();
+        return {};
     }
     if (index.row() >= m_carModels.count())
     {
-        return QVariant();
+        return {};
     }
     switch (role)
     {
@@ -90,7 +90,7 @@ QVariant EgCarsMapModel::data(const QModelIndex& index, int role) const
         case RoleMarkerType:
             return m_carModels[index.row()]->markerType();
         default:
-            return QVariant();
+            return {};
     }
 }
 

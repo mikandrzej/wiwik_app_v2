@@ -28,7 +28,7 @@ QVariant VehicleTableModel::data(const QModelIndex& index, int role) const
 {
     const auto* vehicle = DataContainer::instance()->getVehicleByIndex(index.row());
     if (nullptr == vehicle)
-        return QVariant();
+        return {};
 
     const auto column = index.column();
     if (Qt::DisplayRole == role || Qt::EditRole == role)
@@ -72,7 +72,7 @@ QVariant VehicleTableModel::data(const QModelIndex& index, int role) const
                 break;
         }
     }
-    return QVariant();
+    return {};
 }
 
 bool VehicleTableModel::setData(const QModelIndex& index, const QVariant& value, int role)
@@ -123,7 +123,7 @@ QVariant VehicleTableModel::headerData(int section, Qt::Orientation orientation,
         }
     }
 
-    return QVariant();
+    return {};
 }
 
 Qt::ItemFlags VehicleTableModel::flags(const QModelIndex& index) const

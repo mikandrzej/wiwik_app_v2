@@ -12,9 +12,9 @@ class Sensor : public QObject
 {
     Q_OBJECT
   public:
-    explicit Sensor(int id, const QString& name, const QString& address, const QString& type, int deviceId, QObject* parent = nullptr);
+    explicit Sensor(int id, QString name, QString address, QString type, int deviceId, QObject* parent = nullptr);
     explicit Sensor(const Sensor& sensor, QObject* parent = nullptr);
-    explicit Sensor(const QString& address, QObject* parent = nullptr);
+    explicit Sensor(QString address, QObject* parent = nullptr);
 
     QString name() const;
     void setName(const QString& newName);

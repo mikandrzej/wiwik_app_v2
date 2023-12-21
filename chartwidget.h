@@ -14,16 +14,16 @@ class ChartWidget : public QWidget
     Q_OBJECT
   public:
     explicit ChartWidget(QWidget* parent = nullptr);
-    GraphData* addGraph(QString& sensor_addr, QString name);
+    GraphData* addGraph(QString& sensor_addr, const QString& name);
 
-    void setAxisRange(Qt::Axis axis, QVariant min, QVariant max);
+    void setAxisRange(Qt::Axis axis, const QVariant& min, const QVariant& max);
 
     void replot();
     void rescaleAxis(Qt::Axis axis);
-    void setAxisTitle(Qt::Axis axis, QString title);
+    void setAxisTitle(Qt::Axis axis, const QString& title);
     void clearGraphs();
 
-    void addData(double x, double y, QString chart_ref);
+    void addData(double x, double y, const QString& chart_ref);
 
   private:
     QCustomPlot* m_cp;

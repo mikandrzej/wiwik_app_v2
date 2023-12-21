@@ -96,11 +96,11 @@ QVariant VehicleTreeNode::data(int column, int role)
             return sensorData(column, role);
             break;
         case NodeType::Root:
-            return QVariant();
+            return {};
             break;
     }
 
-    return QVariant();
+    return {};
 }
 
 int VehicleTreeNode::columnCount()
@@ -166,7 +166,7 @@ QVariant VehicleTreeNode::vehicleData(int column, int role)
             }
             break;
     }
-    return QVariant();
+    return {};
 }
 
 QVariant VehicleTreeNode::deviceData(int column, int role)
@@ -194,7 +194,7 @@ QVariant VehicleTreeNode::deviceData(int column, int role)
             }
             break;
     }
-    return QVariant();
+    return {};
 }
 
 QVariant VehicleTreeNode::sensorData(int column, int role)
@@ -219,7 +219,7 @@ QVariant VehicleTreeNode::sensorData(int column, int role)
                     else if (m_sensor->type() == "gps")
                         return locationIcon;
                     else
-                        return QVariant();
+                        return {};
                     break;
             }
             break;
@@ -231,7 +231,7 @@ QVariant VehicleTreeNode::sensorData(int column, int role)
             }
             break;
     }
-    return QVariant();
+    return {};
 }
 
 QList<VehicleTreeNode*> VehicleTreeNode::childs()
@@ -244,7 +244,7 @@ VehicleTreeNode* VehicleTreeNode::parent() const
     return m_parent;
 }
 
-QIcon VehicleTreeNode::TransformIconColor(QColor newColor, QIcon originalIcon)
+QIcon VehicleTreeNode::TransformIconColor(const QColor& newColor, const QIcon& originalIcon)
 {
     // Get the original pixmap from the original icon
     QPixmap originalPixmap = originalIcon.pixmap(originalIcon.availableSizes().first());

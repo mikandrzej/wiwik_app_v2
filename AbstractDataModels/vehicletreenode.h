@@ -59,7 +59,7 @@ class VehicleTreeNode : public QObject
 
     VehicleTreeNode* m_parent = nullptr;
     QList<VehicleTreeNode*> m_childs;
-    QIcon TransformIconColor(QColor newColor, QIcon originalIcon);
+    QIcon TransformIconColor(const QColor& newColor, const QIcon& originalIcon);
 };
 
 #endif   // VEHICLETREENODE_H

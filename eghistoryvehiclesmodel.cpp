@@ -10,5 +10,5 @@ QVariant EgHistoryVehiclesModel::data(const QModelIndex& index, int role) const
         QString plateNo = sourceModel()->data(index.siblingAtColumn(1), Qt::DisplayRole).toString();
         return QString("%1 / %2").arg(plateNo, vehName);
     }
-    return QVariant();
+    return {};
 }

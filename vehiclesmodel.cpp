@@ -1,7 +1,7 @@
 #include "vehiclesmodel.h"
-#include "math.h"
 #include <QColor>
 #include <QSet>
+#include <cmath>
 
 VehiclesModel::VehiclesModel(QObject* parent) : QAbstractTableModel {parent} {}
 
@@ -20,7 +20,7 @@ int VehiclesModel::columnCount(const QModelIndex& /*parent*/) const
 QVariant VehiclesModel::data(const QModelIndex& index, int role) const
 {
     if (!index.isValid())
-        return QVariant();
+        return {};
 
     auto* item = m_vehicles[index.row()];
 
@@ -72,7 +72,7 @@ QVariant VehiclesModel::data(const QModelIndex& index, int role) const
                 case Qt::DisplayRole:
                 {
                     auto value = item->temperatureModel()->lastValue();
-                    if (isnan(value))
+                    if (std::isnan(value))
                         return "-";
                     else
                         return QString("%1℃").arg(QString::number(value, 'f', 2));
@@ -97,7 +97,7 @@ QVariant VehiclesModel::data(const QModelIndex& index, int role) const
                         case Qt::DisplayRole:
                         {
                             auto value = item->batteryModel()->lastValue();
-                            if (isnan(value))
+                            if (std::isnan(value))
                                 return "-";
                             else
                                 return QString("%1mV").arg(QString::number(value, 'f', 2));
@@ -106,7 +106,7 @@ QVariant VehiclesModel::data(const QModelIndex& index, int role) const
                     break;
             }
     }
-    return QVariant();
+    return {};
 }
 
 QVariant VehiclesModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -130,15 +130,15 @@ QVariant VehiclesModel::headerData(int section, Qt::Orientation orientation, int
                 case ColumnBattery:
                     return "Bateria";
                 default:
-                    return QVariant();
+                    return {};
             }
         }
         else
         {
-            return QVariant();
+            return {};
         }
     }
-    return QVariant();
+    return {};
 }
 
 QHash<int, QByteArray> VehiclesModel::roleNames() const
@@ -167,7 +167,7 @@ QModelIndex VehiclesModel::getRowByVehicleId(int vehicleId)
     }
     catch (...)
     {
-        return QModelIndex();
+        return {};
     }
 }
 

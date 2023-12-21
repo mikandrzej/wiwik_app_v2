@@ -13,7 +13,7 @@ QModelIndex MainVehicleModel::index(int row, int column, const QModelIndex& /*pa
 
 QModelIndex MainVehicleModel::parent(const QModelIndex& /*child*/) const
 {
-    return QModelIndex();
+    return {};
 }
 
 int MainVehicleModel::rowCount(const QModelIndex& parent) const
@@ -34,7 +34,7 @@ int MainVehicleModel::columnCount(const QModelIndex& parent) const
 {
     if (parent.isValid())
     {
-        VehModelTreeItem* item = static_cast<VehModelTreeItem*>(parent.internalPointer());
+        auto* item = static_cast<VehModelTreeItem*>(parent.internalPointer());
         switch (item->data().itemType)
         {
             case TreeItemType::Vehicle:
@@ -57,12 +57,12 @@ int MainVehicleModel::columnCount(const QModelIndex& parent) const
 QVariant MainVehicleModel::data(const QModelIndex& index, int role) const
 {
     if (!index.isValid())
-        return QVariant();
+        return {};
 
     if (role != Qt::DisplayRole)
-        return QVariant();
+        return {};
 
-    VehModelTreeItem* item = static_cast<VehModelTreeItem*>(index.internalPointer());
+    auto* item = static_cast<VehModelTreeItem*>(index.internalPointer());
 
     switch (item->data().itemType)
     {
@@ -79,7 +79,7 @@ QVariant MainVehicleModel::data(const QModelIndex& index, int role) const
                     return item->data().vehicleData->active();
                 case VehicleColumnMax:
                 default:
-                    return QVariant();
+                    return {};
             }
 
         case TreeItemType::Device:
@@ -88,7 +88,7 @@ QVariant MainVehicleModel::data(const QModelIndex& index, int role) const
             break;
     }
 
-    return QVariant();
+    return {};
 }
 
 void MainVehicleModel::onNewVehicleData(const MainVehicleModelData& vehicleData)
@@ -254,11 +254,11 @@ QVariant MainVehicleModel::headerData(int section, Qt::Orientation orientation, 
                     return "Aktywny";
                 default:
                 case VehicleColumnMax:
-                    return QVariant();
+                    return {};
             }
         }
     }
-    return QVariant();
+    return {};
 }
 
 bool MainVehicleModel::setData(const QModelIndex& /*index*/, const QVariant& /*value*/, int /*role*/)

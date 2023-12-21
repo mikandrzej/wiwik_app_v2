@@ -1,7 +1,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-// #include "QCustomPlot/qcustomplot.h"
 #include "Forms/formgpshistory.h"
 #include "Forms/formliveview.h"
 #include "Forms/formtemperaturehistory.h"
@@ -32,7 +31,7 @@ class MainWindow : public QMainWindow
 
   public:
     MainWindow(QWidget* parent = nullptr);
-    ~MainWindow();
+    ~MainWindow() override;
 
     DialogAssignSensor* dialogAssignSensor() const;
     QPushButton* pbAssignSensor() const;

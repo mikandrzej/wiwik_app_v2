@@ -10,7 +10,7 @@ QGeoPositionInfo OneVehiclePositionModel::lastValue() const
         auto value = m_data.last()->value;
         return value;
     }
-    return QGeoPositionInfo();
+    return {};
 }
 
 void OneVehiclePositionModel::insert(int timestamp, QGeoPositionInfo& value)

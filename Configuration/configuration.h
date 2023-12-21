@@ -21,8 +21,8 @@ class Configuration
         MqttPassword
     };
 
-    QVariant getConfiguration(QString type);
-    void setConfiguration(ConfigType type, QVariant value);
+    QVariant getConfiguration(const QString& type);
+    void setConfiguration(ConfigType type, const QVariant& value);
 
     bool validated() const;
     void setValidated(bool newValidated);

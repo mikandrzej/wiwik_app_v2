@@ -33,13 +33,16 @@ void EgMqttDataSource::onMqttConnected()
     qDebug() << "Connected";
 
     auto subsVeh = m_mqttClient->subscribe(QMqttTopicFilter("vehicles/#"));
-    connect(subsVeh, &QMqttSubscription::messageReceived, this, [this](QMqttMessage msg) { this->onMqttVehiclesTopicMessageReceived(msg.payload(), msg.topic().levels()); });
+    connect(subsVeh, &QMqttSubscription::messageReceived, this, [this](const QMqttMessage& msg) {
+        this->onMqttVehiclesTopicMessageReceived(msg.payload(), msg.topic().levels());
+    });
 
     auto subsServer = m_mqttClient->subscribe(QMqttTopicFilter("server/#"));
-    connect(subsServer, &QMqttSubscription::messageReceived, this, [this](QMqttMessage msg) { this->onMqttServerMessageReceived(msg.payload(), msg.topic().levels()); });
+    connect(
+        subsServer, &QMqttSubscription::messageReceived, this, [this](const QMqttMessage& msg) { this->onMqttServerMessageReceived(msg.payload(), msg.topic().levels()); });
 
     auto subsIrvine = m_mqttClient->subscribe(QMqttTopicFilter("devices/#"));
-    connect(subsIrvine, &QMqttSubscription::messageReceived, this, [this](QMqttMessage msg) {
+    connect(subsIrvine, &QMqttSubscription::messageReceived, this, [this](const QMqttMessage& msg) {
         auto topicLevels = msg.topic().levels();
         topicLevels.removeFirst();
         this->onMqttDeviceMessageReceived(msg.payload(), topicLevels);
@@ -91,11 +94,11 @@ void EgMqttDataSource::parseVehicleMessage(int vehicle_id, const QStringList& to
 
     if (topicLevels[2] == "devices")
     {
-        auto deviceAddress = topicLevels[3];
+        const auto& deviceAddress = topicLevels[3];
         if (topicLevels[4] == "sensors")
         {
-            auto sensorType = topicLevels[5];
-            auto sensorAddress = topicLevels[6];
+            const auto& sensorType = topicLevels[5];
+            const auto& sensorAddress = topicLevels[6];
 
             auto jsonObj = jsonDoc.object();
 
@@ -229,8 +232,8 @@ void EgMqttDataSource::onMqttDeviceMessageReceived(const QByteArray& msg, const 
 {
     if (topic.length() < 3)
         return;
-    auto deviceAddress = topic[0];
-    auto sensorType = topic[1];
+    const auto& deviceAddress = topic[0];
+    const auto& sensorType = topic[1];
     auto sensorAddress = topic[2];
 
     QJsonParseError parseErr;

@@ -31,7 +31,7 @@ QVariant SensorTableModel::data(const QModelIndex& index, int role) const
 {
     const auto* sensor = DataContainer::instance()->getSensorByIndex(index.row());
     if (nullptr == sensor)
-        return QVariant();
+        return {};
 
     const auto column = index.column();
     if (Qt::DisplayRole == role || Qt::EditRole == role)
@@ -76,7 +76,7 @@ QVariant SensorTableModel::data(const QModelIndex& index, int role) const
                             auto tname = QString(val.typeName());
                             if (tname == "GpsData")
                             {
-                                GpsData gpsData = val.value<GpsData>();
+                                auto gpsData = val.value<GpsData>();
                                 return gpsData.address().text();
                             }
                             return val.toString();
@@ -115,7 +115,7 @@ QVariant SensorTableModel::data(const QModelIndex& index, int role) const
                 break;
         }
     }
-    return QVariant();
+    return {};
 }
 
 bool SensorTableModel::setData(const QModelIndex& index, const QVariant& value, int role)
@@ -160,7 +160,7 @@ QVariant SensorTableModel::headerData(int section, Qt::Orientation orientation, 
         }
     }
 
-    return QVariant();
+    return {};
 }
 
 Qt::ItemFlags SensorTableModel::flags(const QModelIndex& index) const

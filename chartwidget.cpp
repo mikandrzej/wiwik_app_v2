@@ -1,6 +1,6 @@
 #include "chartwidget.h"
-#include "QCustomPlot/qcustomplot.h"
 #include <QList>
+#include "QCustomPlot/qcustomplot.h"
 
 static QColor getRandomColor()
 {
@@ -51,7 +51,7 @@ ChartWidget::ChartWidget(QWidget* parent)
     m_cp->yAxis->setLabel("Temperatura");
 }
 
-GraphData* ChartWidget::addGraph(QString& reference, QString name)
+GraphData* ChartWidget::addGraph(QString& reference, const QString& name)
 {
     auto graphData = new GraphData(this, reference);
     m_graphsData.append(graphData);
@@ -69,7 +69,7 @@ GraphData* ChartWidget::addGraph(QString& reference, QString name)
     return graphData;
 }
 
-void ChartWidget::addData(double x, double y, QString chart_ref)
+void ChartWidget::addData(double x, double y, const QString& chart_ref)
 {
     for (auto& graphData : m_graphsData)
     {
@@ -81,7 +81,7 @@ void ChartWidget::addData(double x, double y, QString chart_ref)
     }
 }
 
-void ChartWidget::setAxisRange(Qt::Axis axis, QVariant min, QVariant max)
+void ChartWidget::setAxisRange(Qt::Axis axis, const QVariant& min, const QVariant& max)
 {
     bool ok;
     double min_value = {min.toDouble(&ok)};
@@ -104,7 +104,7 @@ void ChartWidget::setAxisRange(Qt::Axis axis, QVariant min, QVariant max)
     }
 }
 
-void ChartWidget::setAxisTitle(Qt::Axis axis, QString title)
+void ChartWidget::setAxisTitle(Qt::Axis axis, const QString& title)
 {
     switch (axis)
     {

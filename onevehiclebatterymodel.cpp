@@ -1,5 +1,5 @@
 #include "onevehiclebatterymodel.h"
-#include <math.h>
+#include <cmath>
 
 OneVehicleBatteryModel::OneVehicleBatteryModel(QObject* parent) : QObject {parent} {}
 

@@ -15,7 +15,7 @@ struct TreeItemData
 class TreeItem
 {
   public:
-    explicit TreeItem(const QList<TreeItemData*>& data, TreeItem* parentItem = 0, unsigned int id = 0);
+    explicit TreeItem(const QList<TreeItemData*>& data, TreeItem* parentItem = nullptr, unsigned int id = 0);
     ~TreeItem();
 
     void appendChild(TreeItem* child);

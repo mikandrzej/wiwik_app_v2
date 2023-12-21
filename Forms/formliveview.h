@@ -17,7 +17,7 @@ class FormLiveView : public QWidget
 
   public:
     explicit FormLiveView(QWidget* parent = nullptr);
-    ~FormLiveView();
+    ~FormLiveView() override;
 
   public slots:
 

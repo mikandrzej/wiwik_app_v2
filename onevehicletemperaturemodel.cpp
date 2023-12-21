@@ -1,5 +1,5 @@
 #include "onevehicletemperaturemodel.h"
-#include <math.h>
+#include <cmath>
 
 OneVehicleTemperatureModel::OneVehicleTemperatureModel(QObject* parent) : QAbstractTableModel {parent} {}
 
@@ -86,7 +86,7 @@ int OneVehicleTemperatureModel::columnCount(const QModelIndex& parent) const
 QVariant OneVehicleTemperatureModel::data(const QModelIndex& index, int role) const
 {
     if (!index.isValid())
-        return QVariant();
+        return {};
 
     switch (role)
     {
@@ -99,5 +99,5 @@ QVariant OneVehicleTemperatureModel::data(const QModelIndex& index, int role) co
                     return m_data[index.row()]->value;
             }
     }
-    return QVariant();
+    return {};
 }

@@ -120,10 +120,10 @@ void MapModel::updatePosition(int id, QGeoCoordinate& coordinate, bool update)
     }
 }
 
-void MapModel::setPath(int id, QList<QGeoCoordinate> path)
+void MapModel::setPath(int id, const QList<QGeoCoordinate>& path)
 {
     QVariantList variantList;
-    for (auto coord : path)
+    for (const auto& coord : path)
     {
         variantList.append(QVariant::fromValue(coord));
     }
@@ -146,9 +146,9 @@ int MapModel::rowCount(const QModelIndex& parent) const
 QVariant MapModel::data(const QModelIndex& index, int role) const
 {
     if (!index.isValid())
-        return QVariant();
+        return {};
     if (index.row() >= m_data.length())
-        return QVariant();
+        return {};
 
     switch (role)
     {
@@ -174,7 +174,7 @@ QVariant MapModel::data(const QModelIndex& index, int role) const
             return m_data[index.row()]->customDataString();
     }
 
-    return QVariant();
+    return {};
 }
 
 QHash<int, QByteArray> MapModel::roleNames() const

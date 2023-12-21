@@ -19,15 +19,15 @@ Configuration::Configuration()
     // dialog.show();
 }
 
-QVariant Configuration::getConfiguration(QString type)
+QVariant Configuration::getConfiguration(const QString& type)
 {
     if (m_settings->contains(type))
         return m_settings->value(type);
 
-    return QVariant();
+    return {};
 }
 
-void Configuration::setConfiguration(ConfigType /*type*/, QVariant /*value*/) {}
+void Configuration::setConfiguration(ConfigType /*type*/, const QVariant& /*value*/) {}
 
 bool Configuration::validated() const
 {

@@ -15,7 +15,7 @@ class DialogEditVehicles : public QDialog
 
   public:
     explicit DialogEditVehicles(QWidget* parent = nullptr);
-    ~DialogEditVehicles();
+    ~DialogEditVehicles() override;
 
     void setCarListModel(QAbstractItemModel* newCarListModel);
 

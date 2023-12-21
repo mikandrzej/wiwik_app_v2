@@ -17,7 +17,7 @@ class DialogAssignSensor : public QDialog
 
   public:
     explicit DialogAssignSensor(QWidget* parent = nullptr);
-    ~DialogAssignSensor();
+    ~DialogAssignSensor() override;
 
     void setVehiclesList(const EgVehiclesData& vehicleListData);
     void setDevicesList(const EgDevicesListData& deviceListData);

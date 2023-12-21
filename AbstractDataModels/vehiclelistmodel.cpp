@@ -22,10 +22,10 @@ int VehicleListModel::rowCount(const QModelIndex& /*parent*/) const
 QVariant VehicleListModel::data(const QModelIndex& index, int role) const
 {
     if (!index.isValid())
-        return QVariant();
+        return {};
     const auto* vehicle = DataContainer::instance()->getVehicleByIndex(index.row());
     if (nullptr == vehicle)
-        return QVariant();
+        return {};
     switch (role)
     {
         case Qt::DisplayRole:
@@ -34,5 +34,5 @@ QVariant VehicleListModel::data(const QModelIndex& index, int role) const
             return vehicle->id();
     }
 
-    return QVariant();
+    return {};
 }

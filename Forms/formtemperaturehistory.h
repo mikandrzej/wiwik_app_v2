@@ -17,7 +17,7 @@ class FormTemperatureHistory : public QWidget
 
   public:
     explicit FormTemperatureHistory(QWidget* parent = nullptr);
-    ~FormTemperatureHistory();
+    ~FormTemperatureHistory() override;
 
   public slots:
     void onTemperatureDataReady(EgTemperatureListData& temperatureData);

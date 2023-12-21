@@ -25,5 +25,5 @@ QVariant VehiclesEditModel::data(const QModelIndex& index, int role) const
                 break;
         }
     }
-    return QVariant();
+    return {};
 }
