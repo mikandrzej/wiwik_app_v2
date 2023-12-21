@@ -7,11 +7,11 @@ MainVehicleModel::MainVehicleModel(QObject *parent)
 }
 
 QModelIndex MainVehicleModel::index(int row, int column,
-                                    const QModelIndex &parent) const {
+                                    const QModelIndex & /*parent*/) const {
   return createIndex(row, column);
 }
 
-QModelIndex MainVehicleModel::parent(const QModelIndex &child) const {
+QModelIndex MainVehicleModel::parent(const QModelIndex &/*child*/) const {
   return QModelIndex();
 }
 
@@ -100,20 +100,20 @@ void MainVehicleModel::onNewVehicleData(
     m_vehiclesDataById.insert(data->id(), data);
 
     connect(data, &MainVehicleModelData::nameChanged, this,
-            [this, data, newIndex]() {
+            [this, newIndex]() {
               auto index = this->index(
                   newIndex, MainVehicleModel::VehicleColumnName, QModelIndex());
               emit this->dataChanged(index, index, {Qt::DisplayRole});
             });
     connect(data, &MainVehicleModelData::plateNoChanged, this,
-            [this, data, newIndex]() {
+            [this, newIndex]() {
               auto index =
                   this->index(newIndex, MainVehicleModel::VehicleColumnPlateNo,
                               QModelIndex());
               emit this->dataChanged(index, index, {Qt::DisplayRole});
             });
     connect(data, &MainVehicleModelData::activeChanged, this,
-            [this, data, newIndex]() {
+            [this, newIndex]() {
               auto index =
                   this->index(newIndex, MainVehicleModel::VehicleColumnActive,
                               QModelIndex());
@@ -143,34 +143,34 @@ void MainVehicleModel::onNewDeviceData(const MainDeviceModelData &deviceData) {
     m_devicesDataById.insert(data->id(), data);
 
     connect(data, &MainDeviceModelData::nameChanged, this,
-            [this, data, newIndex]() {
+            [this, newIndex]() {
               auto index = this->index(
                   newIndex, MainVehicleModel::DeviceColumnName, QModelIndex());
               emit this->dataChanged(index, index, {Qt::DisplayRole});
             });
     connect(data, &MainDeviceModelData::serialNoChanged, this,
-            [this, data, newIndex]() {
+            [this, newIndex]() {
               auto index =
                   this->index(newIndex, MainVehicleModel::DeviceColumnSerial,
                               QModelIndex());
               emit this->dataChanged(index, index, {Qt::DisplayRole});
             });
     connect(data, &MainDeviceModelData::activeChanged, this,
-            [this, data, newIndex]() {
+            [this, newIndex]() {
               auto index =
                   this->index(newIndex, MainVehicleModel::DeviceColumnActive,
                               QModelIndex());
               emit this->dataChanged(index, index, {Qt::DisplayRole});
             });
     connect(data, &MainDeviceModelData::vehicleIdChanged, this,
-            [this, data, newIndex]() {
+            [this, newIndex]() {
               auto index =
                   this->index(newIndex, MainVehicleModel::DeviceColumnVehicleId,
                               QModelIndex());
               emit this->dataChanged(index, index, {Qt::DisplayRole});
             });
     connect(data, &MainDeviceModelData::typeIdChanged, this,
-            [this, data, newIndex]() {
+            [this, newIndex]() {
               auto index =
                   this->index(newIndex, MainVehicleModel::DeviceColumnTypeId,
                               QModelIndex());
@@ -250,13 +250,13 @@ QVariant MainVehicleModel::headerData(int section, Qt::Orientation orientation,
   return QVariant();
 }
 
-bool MainVehicleModel::setData(const QModelIndex &index, const QVariant &value,
-                               int role) {
+bool MainVehicleModel::setData(const QModelIndex &/*index*/, const QVariant &/*value*/,
+                               int /*role*/) {
   return true;
 }
 
 MainDeviceModelData::MainDeviceModelData(
-    const MainDeviceModelData *sourceObject, QObject *parent) {
+    const MainDeviceModelData *sourceObject, QObject* /*parent*/) {
   if (sourceObject != nullptr) {
     m_id = sourceObject->id();
     m_serialNo = sourceObject->serialNo();

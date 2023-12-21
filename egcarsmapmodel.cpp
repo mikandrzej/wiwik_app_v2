@@ -45,7 +45,7 @@ QHash<int, QByteArray> EgCarsMapModel::roleNames() const {
   return roles;
 }
 
-int EgCarsMapModel::rowCount(const QModelIndex &parent) const {
+int EgCarsMapModel::rowCount(const QModelIndex & /*parent*/) const {
   return m_carModels.count();
 }
 
@@ -121,7 +121,7 @@ void EgCarMapModel::setMarkerType(EgCarMapMarkerType newMarkerType) {
   emit markerTypeChanged();
 }
 
-EgCarMapModel::EgCarMapModel(QObject *parent) {}
+EgCarMapModel::EgCarMapModel(QObject * /*parent*/) {}
 
 int EgCarMapModel::id() const { return m_id; }
 

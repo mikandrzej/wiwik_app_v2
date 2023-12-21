@@ -22,7 +22,7 @@ private:
   VehiclesModel *m_vehiclesModel;
   QQuickView *m_quickView;
   Q_PROPERTY(QObject *vehiclesModel READ vehiclesModel NOTIFY
-                 vehiclesModelChanged CONSTANT)
+                 vehiclesModelChanged)
 };
 
 #endif // EGVEHICLESMAP_H

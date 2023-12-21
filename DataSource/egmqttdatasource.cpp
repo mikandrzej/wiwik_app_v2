@@ -14,7 +14,7 @@
 #include "../DataModels/sensor.h"
 #include "../DataSource/datacontainer.h"
 
-EgMqttDataSource::EgMqttDataSource(QObject *parent) {
+EgMqttDataSource::EgMqttDataSource(QObject * /*parent*/) {
 
   m_mqttClient = new QMqttClient(this);
 
@@ -157,7 +157,6 @@ void EgMqttDataSource::parseVehicleMessage(int vehicle_id,
 
         ///////
       } else if (sensorType == "gps") {
-        int fix_mode = jsonObj["fix_mode"].toInt();
         int satellites = jsonObj["satellites"].toInt();
         double latitude = jsonObj["latitude"].toDouble();
         double longitude = jsonObj["longitude"].toDouble();

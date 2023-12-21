@@ -19,8 +19,6 @@ MapWidget::MapWidget(QWidget *parent)
     QVBoxLayout *layout = new QVBoxLayout(container);
     this->setLayout(layout);
     layout->addWidget(container);
-
-    QObject *map = m_quickView->findChild<QObject *>("map");
 }
 
 QAbstractItemModel *MapWidget::model() const

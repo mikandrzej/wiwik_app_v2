@@ -195,8 +195,8 @@ QHash<int, QByteArray> MapModel::roleNames() const
 }
 
 MapModelData::MapModelData(int id, QObject *parent)
-    : m_id{id}
-    , QObject{parent}
+    : QObject{parent}, m_id{id}
+    
 {}
 
 int MapModelData::id() const

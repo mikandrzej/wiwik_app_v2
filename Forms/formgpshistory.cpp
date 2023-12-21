@@ -103,12 +103,12 @@ void FormGPSHistory::repaintGpsData()
     emit requestGpsHistoryData(vehicleId, date);
 }
 
-void FormGPSHistory::on_dateEdit_userDateChanged(const QDate &date)
+void FormGPSHistory::on_dateEdit_userDateChanged(const QDate & /*date*/)
 {
     repaintGpsData();
 }
 
-void FormGPSHistory::on_horizontalSlider_sliderMoved(int position) {}
+void FormGPSHistory::on_horizontalSlider_sliderMoved(int /*position*/) {}
 
 void FormGPSHistory::on_horizontalSlider_valueChanged(int value)
 {

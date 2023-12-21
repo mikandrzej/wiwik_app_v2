@@ -60,12 +60,6 @@ App::App(MainWindow *mainWindow, QObject *parent)
           &EgRestDataSource::vehiclesTemperatureHistoryDataReady,
           mainWindow->formTemperatureHistory(),
           &FormTemperatureHistory::onTemperatureDataReady);
-
-  //live data
-  // connect(m_dataProvider.mqttDataSource(),
-  //         &EgMqttDataSource::sensorDataReceived,
-  //         mainWindow,
-  //         [mainWindow](EgVehicleSensorData &sensorData) {mainWindow->})
 }
 
 void App::bindGui() {
@@ -118,16 +112,13 @@ void App::bindGui() {
             });
 }
 
-void App::onSensorDataReceived(EgSensorData &sensorData) {
-  qDebug() << "Sensor data received";
-}
 
 void App::onRestServerStateChanged(bool state) {
   if (state == true) {
     m_dataProvider.requestVehiclesData();
   }
 }
-void App::onAssignSensorClicked(bool checked) {
+void App::onAssignSensorClicked(bool /*checked*/) {
   m_mainWindow->dialogAssignSensor()->setVehiclesList(
       this->m_dataProvider.getVehiclesList());
   m_mainWindow->dialogAssignSensor()->setDevicesList(
@@ -135,7 +126,7 @@ void App::onAssignSensorClicked(bool checked) {
   m_mainWindow->dialogAssignSensor()->open();
 }
 
-void App::onEditVehiclesClicked(bool checked) {
+void App::onEditVehiclesClicked(bool /*checked*/) {
   m_mainWindow->dialogEditVehicles()->setCarListModel(&m_vehiclesEditModel);
   m_mainWindow->dialogEditVehicles()->open();
 }

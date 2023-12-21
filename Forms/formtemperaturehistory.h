@@ -5,7 +5,7 @@
 #include <QWidget>
 
 class ChartWidget;
-class EgTemperatureListData;
+struct EgTemperatureListData;
 namespace Ui {
 class FormTemperatureHistory;
 }

@@ -21,11 +21,11 @@ VehicleTableModel::VehicleTableModel(QObject *parent)
           });
 }
 
-int VehicleTableModel::rowCount(const QModelIndex &parent) const {
+int VehicleTableModel::rowCount(const QModelIndex & /*parent*/) const {
   return DataContainer::instance()->getVehiclesCount();
 }
 
-int VehicleTableModel::columnCount(const QModelIndex &parent) const {
+int VehicleTableModel::columnCount(const QModelIndex &/*parent*/) const {
   return static_cast<int>(ColumnMax);
 }
 
@@ -45,8 +45,9 @@ QVariant VehicleTableModel::data(const QModelIndex &index, int role) const {
     case ColumnPlateNo:
         return vehicle->plateNo();
     case ColumnColor:
-        QColor color = vehicle->color();
         return vehicle->color();
+        default:
+        break;
     }
   } else if (Qt::BackgroundRole == role) {
     switch (static_cast<Columns>(column)) {
@@ -54,12 +55,17 @@ QVariant VehicleTableModel::data(const QModelIndex &index, int role) const {
       if (vehicle->changesPending()) {
         return QColorConstants::Magenta;
       }
+      break;
+      default:
+        break;
     }
   } else if (Qt::CheckStateRole == role) {
     switch (static_cast<Columns>(column)) {
     case ColumnCommit:
       if (vehicle->changesPending())
         return !vehicle->changesPending();
+            default:
+        break;
     }
   }
   return QVariant();
@@ -83,6 +89,8 @@ bool VehicleTableModel::setData(const QModelIndex &index, const QVariant &value,
     case ColumnColor:
         vehicle->setColor(value.value<QColor>());
         return true;
+            default:
+        break;
     }
   } else if (Qt::CheckStateRole == role) {
     if (ColumnCommit == static_cast<Columns>(column)) {
@@ -120,6 +128,8 @@ Qt::ItemFlags VehicleTableModel::flags(const QModelIndex &index) const {
         if (vehicle)
             if (vehicle->changesPending())
                 flags |= Qt::ItemIsUserCheckable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
+        break;
+        default:
         break;
   }
 

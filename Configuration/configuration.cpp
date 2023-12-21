@@ -29,7 +29,7 @@ QVariant Configuration::getConfiguration(QString type) {
     return QVariant();
 }
 
-void Configuration::setConfiguration(ConfigType type, QVariant value) {}
+void Configuration::setConfiguration(ConfigType /*type*/, QVariant /*value*/) {}
 
 bool Configuration::validated() const
 {

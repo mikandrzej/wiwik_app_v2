@@ -18,7 +18,6 @@ public:
 signals:
   void historyDataReady(EgTemperatureListData &tempListData);
 private slots:
-  void onSensorDataReceived(EgSensorData &sensorData);
   void onRestServerStateChanged(bool state);
 
   void onAssignSensorClicked(bool checked);

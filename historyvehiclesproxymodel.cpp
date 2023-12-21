@@ -1,7 +1,7 @@
 #include "historyvehiclesproxymodel.h"
 #include "vehiclesmodel.h"
 
-HistoryVehiclesProxyModel::HistoryVehiclesProxyModel(QObject *parent) {}
+HistoryVehiclesProxyModel::HistoryVehiclesProxyModel(QObject * /*parent*/) {}
 
 QVariant HistoryVehiclesProxyModel::data(const QModelIndex &index,
                                          int role) const {

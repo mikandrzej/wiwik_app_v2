@@ -72,8 +72,8 @@ enum class TreeItemType { Root, Vehicle, Device, Sensor };
 
 struct MainModelData {
   TreeItemType itemType;
-  MainVehicleModelData *vehicleData;
-  MainDeviceModelData *deviceData;
+  MainVehicleModelData *vehicleData {nullptr};
+  MainDeviceModelData *deviceData {nullptr};
 };
 
 class VehModelTreeItem {

@@ -1,8 +1,5 @@
 #include "gpsdata.h"
 
-GpsData::GpsData(QObject *parent)
-{}
-
 QGeoCoordinate GpsData::coordinate() const
 {
     return m_coordinate;

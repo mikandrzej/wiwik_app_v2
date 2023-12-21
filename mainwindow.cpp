@@ -90,7 +90,7 @@ void MainWindow::setRestStatus(bool status) {
   m_statusBarRestLabel->setText(text);
 }
 
-void MainWindow::onGpsHistoryVehicleListClicked(const QModelIndex &index) {}
+void MainWindow::onGpsHistoryVehicleListClicked(const QModelIndex & /*index*/) {}
 
 FormTemperatureHistory *MainWindow::formTemperatureHistory() const
 {
@@ -102,39 +102,6 @@ FormLiveView *MainWindow::formLiveView() const
     return m_formLiveView;
 }
 
-void MainWindow::plotHistoryData() {
-    // if (!m_historyVehicleListSelectedIndex.isValid()) {
-    //   return;
-    // }
-    // bool ok;
-    // // int vehicleId =
-    //     // m_vehModel->data(m_historyVehicleListSelectedIndex, Qt::DisplayRole)
-    // //         .toInt(&ok);
-    // if (!ok)
-    //   return;
-
-    // QDate date = ui->de_history->date();
-    // emit vehicleHistoryDataRequested(vehicleId, date);
-}
-
-void MainWindow::updateLiveEditFields(const QModelIndex &index) {
-  //  if (!index.isValid())
-  //    return;
-  //  ui->l_vehName->setText(
-  //      m_vehModel
-  //          ->data(index.siblingAtColumn(m_vehModel->ColumnName),
-  //          Qt::DisplayRole) .toString());
-  //  ui->l_plateNo->setText(
-  //      m_vehModel
-  //          ->data(index.siblingAtColumn(m_vehModel->ColumnPlateNo),
-  //                 Qt::DisplayRole)
-  //          .toString());
-  //  ui->l_vehTemp->setText(
-  //      m_vehModel
-  //          ->data(index.siblingAtColumn(m_vehModel->ColumnTemperature),
-  //                 Qt::DisplayRole)
-  //          .toString());
-}
 
 FormGPSHistory *MainWindow::formGpsHistory() const
 {

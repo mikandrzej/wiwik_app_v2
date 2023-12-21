@@ -26,8 +26,8 @@ VehicleTreeNode::VehicleTreeNode(QObject *parent)
 
 VehicleTreeNode::VehicleTreeNode(VehicleTreeNode *parent, Vehicle *vehicle)
     : QObject{parent}
-    , m_parent(parent)
-    , m_vehicle(vehicle)
+    
+    , m_vehicle(vehicle), m_parent(parent)
 {
     m_type = NodeType::Vehicle;
     connect(vehicle, &Vehicle::deviceAdded, this, [this](Device *device, int newIndex) {
@@ -47,9 +47,8 @@ VehicleTreeNode::VehicleTreeNode(VehicleTreeNode *parent, Vehicle *vehicle)
 }
 
 VehicleTreeNode::VehicleTreeNode(VehicleTreeNode *parent, Device *device)
-    : QObject{parent}
-    , m_parent(parent)
-    , m_device(device)
+    : QObject{parent},
+     m_device(device), m_parent(parent)
 {
     m_type = NodeType::Device;
 
@@ -71,8 +70,8 @@ VehicleTreeNode::VehicleTreeNode(VehicleTreeNode *parent, Device *device)
 
 VehicleTreeNode::VehicleTreeNode(VehicleTreeNode *parent, Sensor *sensor)
     : QObject{parent}
-    , m_parent(parent)
-    , m_sensor(sensor)
+    
+    , m_sensor(sensor) , m_parent(parent)
 {
     m_type = NodeType::Sensor;
 

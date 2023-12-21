@@ -11,7 +11,7 @@ int VehiclesModel::rowCount(const QModelIndex &parent) const {
   return m_vehicles.count();
 }
 
-int VehiclesModel::columnCount(const QModelIndex &parent) const {
+int VehiclesModel::columnCount(const QModelIndex & /*parent*/) const {
   return ColumnMax;
 }
 
@@ -80,6 +80,7 @@ QVariant VehiclesModel::data(const QModelIndex &index, int role) const {
             .arg(QString::number(position.coordinate().latitude()),
                  QString::number(position.coordinate().longitude()));
       }
+      break;
     }
     case ColumnBattery:
       switch (role) {
@@ -173,6 +174,8 @@ void VehiclesModel::onSensorDataReceived(EgVehicleSensorData &sensorData) {
                                    sensorData.geoPosition);
     emit dataChanged(index(row, ColumnPosition), index(row, ColumnPosition));
     break;
+    default:
+    break;
   }
 }
 
@@ -195,6 +198,8 @@ void VehiclesModel::onSensorsDataReceived(EgSensorsData &sensorsData) {
                        index(m_vehicleRowByModel[model], ColumnPosition),
                        {RoleMarkerPosition});
       break;
+          default:
+    break;
     }
   }
 }

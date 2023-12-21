@@ -7,14 +7,14 @@
 #include <QUrlQuery>
 
 Device::Device(int id, QString &serialNo, QString &name, int vehicleId,
-               QString &type, QObject *parent)
+               QString &type, QObject * /*parent*/)
 
     : m_id(id), m_serialNo(serialNo), m_name(name), m_vehicleId(vehicleId),
       m_type(type) {}
 
 Device::Device(const Device &device, QObject *parent)
-    : m_id(device.id()), m_serialNo(device.serialNo()), m_name(device.name()),
-      m_vehicleId(device.vehicleId()), m_type(device.type()), QObject{parent} {}
+    : QObject{parent}, m_id(device.id()), m_serialNo(device.serialNo()), m_name(device.name()),
+      m_vehicleId(device.vehicleId()), m_type(device.type()) {}
 
 int Device::id() const { return m_id; }
 

@@ -14,19 +14,19 @@ struct EgVehicleData {
   QColor color;
 };
 
-enum class EgSensorDataType { Temperature, BatteryVoltage, GpsPosition };
+enum class EgSensorDataType { NotDefined, Temperature, BatteryVoltage, GpsPosition };
 
 struct EgVehicleSensorData {
-  QString sensorAddress;
-  QString deviceAddress;
-  int vehicleId;
-  EgSensorDataType dataType;
-  QDateTime timestamp;
-  double battery;
-  double temperature;
-  int satellites;
-  QGeoPositionInfo geoPosition;
-  QString address;
+  QString sensorAddress {};
+  QString deviceAddress {};
+  int vehicleId {0};
+  EgSensorDataType dataType {EgSensorDataType::NotDefined};
+  QDateTime timestamp {};
+  double battery {0.0};
+  double temperature {0.0};
+  int satellites {0};
+  QGeoPositionInfo geoPosition {};
+  QString address {};
 };
 
 struct EgVehiclesData {

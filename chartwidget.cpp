@@ -163,7 +163,6 @@ void GraphData::appendData(double x, double y, bool replot) {
 }
 
 void GraphData::setData(QVector<double> &x, QVector<double> &y, bool replot) {
-  bool ok;
   graph->setData(x, y, true);
 
   if (replot)

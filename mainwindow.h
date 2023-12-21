@@ -51,7 +51,6 @@ public:
   void setRestStatus(bool status);
 
   private slots:
-  void plotHistoryData();
 
   void on_pb_editVehicles_clicked();
 
@@ -75,7 +74,6 @@ public:
   DialogEditVehicles *m_dialogEditVehicles;
   void historyDataAutoRescale();
   QModelIndex getVehicleModelIndexById(const int vehicleId);
-  void updateLiveEditFields(const QModelIndex &index);
 
   // data models
   MainVehicleModel *m_mainVehicleModel;

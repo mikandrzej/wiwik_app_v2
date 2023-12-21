@@ -25,11 +25,11 @@ SensorTableModel::SensorTableModel(QObject *parent)
           });
 }
 
-int SensorTableModel::rowCount(const QModelIndex &parent) const {
+int SensorTableModel::rowCount(const QModelIndex &/*parent*/) const {
   return DataContainer::instance()->getSensorsCount();
 }
 
-int SensorTableModel::columnCount(const QModelIndex &parent) const {
+int SensorTableModel::columnCount(const QModelIndex &/*parent*/) const {
   return static_cast<int>(ColumnMax);
 }
 
@@ -52,6 +52,7 @@ QVariant SensorTableModel::data(const QModelIndex &index, int role) const {
           DataContainer::instance()->getDeviceById(sensor->deviceId());
       if (device != nullptr)
         return QString::number(device->id()) + ": " + device->name();
+    break;
     }
     case ColumnType: {
       const QMap<QString, QString> typeMap = {{"temperature", "temperatura"},
@@ -65,13 +66,12 @@ QVariant SensorTableModel::data(const QModelIndex &index, int role) const {
       auto meas = sensor->lastMeasure();
       if (meas != nullptr) {
         auto val = meas->value();
-        auto type = val.type();
 
         switch (val.type()) {
         case QVariant::Double:
           return QString::number(val.toDouble(), 'f', 2);
         case QVariant::UserType: {
-          auto userType = val.userType();
+        //   auto userType = val.userType();
           auto tname = QString(val.typeName());
           if (tname == "GpsData") {
               GpsData gpsData = val.value<GpsData>();
@@ -80,9 +80,13 @@ QVariant SensorTableModel::data(const QModelIndex &index, int role) const {
           return val.toString();
           break;
         }
+        default:
+        break;
         }
       }
     }
+     default:
+        break;
     }
   } else if (Qt::BackgroundRole == role) {
     switch (static_cast<Columns>(column)) {
@@ -90,12 +94,16 @@ QVariant SensorTableModel::data(const QModelIndex &index, int role) const {
       if (sensor->changesPending()) {
         return QColorConstants::Magenta;
       }
+        default:
+        break;
     }
   } else if (Qt::CheckStateRole == role) {
     switch (static_cast<Columns>(column)) {
     case ColumnCommit:
       if (sensor->changesPending())
         return !sensor->changesPending();
+          default:
+        break;
     }
   }
   return QVariant();
@@ -113,6 +121,8 @@ bool SensorTableModel::setData(const QModelIndex &index, const QVariant &value,
     case ColumnName:
       sensor->setName(value.toString());
       return true;
+        default:
+        break;
     }
   } else if (Qt::CheckStateRole == role) {
     if (ColumnCommit == static_cast<Columns>(column)) {
@@ -150,6 +160,8 @@ Qt::ItemFlags SensorTableModel::flags(const QModelIndex &index) const {
         flags |=
             Qt::ItemIsUserCheckable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
     break;
+      default:
+        break;
   }
 
   return flags;

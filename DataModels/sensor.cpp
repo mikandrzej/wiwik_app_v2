@@ -14,10 +14,10 @@ Sensor::Sensor(int id, const QString &name, const QString &address,
       m_deviceId(deviceId) {}
 
 Sensor::Sensor(const Sensor &sensor, QObject *parent)
-    : m_id(sensor.id()), m_name(sensor.name()), m_address(sensor.address()),
-    m_type(sensor.type()), m_deviceId(sensor.deviceId()), QObject{parent} {}
+    : QObject{parent}, m_id(sensor.id()), m_name(sensor.name()), m_address(sensor.address()),
+    m_type(sensor.type()), m_deviceId(sensor.deviceId()) {}
 
-Sensor::Sensor(const QString &address, QObject *parent) : m_address(address), QObject{parent}
+Sensor::Sensor(const QString &address, QObject *parent) : QObject{parent}, m_address(address)
 {
 
 }

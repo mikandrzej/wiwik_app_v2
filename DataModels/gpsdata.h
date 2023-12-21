@@ -10,8 +10,6 @@
 struct GpsData
 {
 public:
-    explicit GpsData(QObject *parent = nullptr);
-
     QGeoCoordinate coordinate() const;
     void setCoordinate(const QGeoCoordinate &newCoordinate);
 

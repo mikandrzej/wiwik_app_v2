@@ -21,7 +21,7 @@ VehicleListModel::VehicleListModel(QObject *parent)
     });
 }
 
-int VehicleListModel::rowCount(const QModelIndex &parent) const
+int VehicleListModel::rowCount(const QModelIndex & /*parent*/) const
 {
     return DataContainer::instance()->getVehiclesCount();
 }

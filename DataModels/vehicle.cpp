@@ -8,19 +8,19 @@
 #include <QUrlQuery>
 
 Vehicle::Vehicle(int id, QString &name, QString &plateNo, QColor &color, QObject *parent)
-    : m_id(id)
+    : QObject(parent)
+    , m_id(id)
     , m_name(name)
     , m_plateNo(plateNo)
     , m_color(color)
-    , QObject(parent)
 {}
 
 Vehicle::Vehicle(const Vehicle &vehicle, QObject *parent)
-    : m_id(vehicle.id())
+    : QObject(parent)
+    , m_id(vehicle.id())
     , m_name(vehicle.name())
     , m_plateNo(vehicle.plateNo())
     , m_color(vehicle.color())
-    , QObject(parent)
 {}
 
 int Vehicle::id() const { return m_id; }

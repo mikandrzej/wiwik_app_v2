@@ -19,8 +19,6 @@ EgVehiclesMap::EgVehiclesMap(QWidget *parent) : QWidget{parent} {
   this->setLayout(layout);
   layout->addWidget(container);
 
-  QObject *map = m_quickView->findChild<QObject *>("map");
-
   connect(m_quickView->rootObject(), SIGNAL(mapPointClicked(int)), this,
           SIGNAL(mapMarkerClicked(int)));
 }

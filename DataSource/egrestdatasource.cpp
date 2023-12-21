@@ -186,7 +186,6 @@ void EgRestDataSource::requestGpsHistoryData(int vehicleId, QDate &date)
                     auto timestamp = QDateTime::fromSecsSinceEpoch(timestampRaw);
                     auto latitude = dbEntry["latitude"].toDouble();
                     auto longitude = dbEntry["longitude"].toDouble();
-                    auto precision = dbEntry["precision"].toDouble();
                     auto sensorAddress = dbEntry["sensor_addr"].toString();
                     auto sensorName = dbEntry["sensor_name"].toString();
                     auto speed = dbEntry["speed"];

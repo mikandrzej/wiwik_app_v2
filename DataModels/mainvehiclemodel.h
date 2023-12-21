@@ -50,7 +50,7 @@ public slots:
   void onNewDeviceData(const MainDeviceModelData &deviceData);
 
 private:
-  QList<MainVehicleModelData *> m_vehiclesData;
+  QList<MainVehicleModelData *> m_vehiclesData {};
   QMap<int, MainVehicleModelData *> m_vehiclesDataById;
   QList<MainDeviceModelData *> m_devicesData;
   QMap<int, MainDeviceModelData *> m_devicesDataById;

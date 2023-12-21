@@ -22,11 +22,11 @@ DeviceTableModel::DeviceTableModel(QObject *parent)
           });
 }
 
-int DeviceTableModel::rowCount(const QModelIndex &parent) const {
+int DeviceTableModel::rowCount(const QModelIndex & /*parent*/) const {
   return DataContainer::instance()->getDevicesCount();
 }
 
-int DeviceTableModel::columnCount(const QModelIndex &parent) const {
+int DeviceTableModel::columnCount(const QModelIndex &/*parent*/) const {
   return static_cast<int>(ColumnMax);
 }
 
@@ -53,19 +53,26 @@ QVariant DeviceTableModel::data(const QModelIndex &index, int role) const {
     }
     case ColumnType:
       return device->type();
+    default:
+    break;
     }
+
   } else if (Qt::BackgroundRole == role) {
     switch (static_cast<Columns>(column)) {
     case ColumnCommit:
       if (device->changesPending()) {
         return QColorConstants::Magenta;
       }
+        default:
+    break;
     }
   } else if (Qt::CheckStateRole == role) {
     switch (static_cast<Columns>(column)) {
     case ColumnCommit:
       if (device->changesPending())
         return !device->changesPending();
+          default:
+    break;
     }
   }
   return QVariant();
@@ -90,6 +97,8 @@ bool DeviceTableModel::setData(const QModelIndex &index, const QVariant &value,
         device->setVehicleId(id);
       return ok;
     }
+      default:
+      break;
     }
   } else if (Qt::CheckStateRole == role) {
     if (ColumnCommit == static_cast<Columns>(column)) {
@@ -127,6 +136,8 @@ Qt::ItemFlags DeviceTableModel::flags(const QModelIndex &index) const {
             if (device->changesPending())
                 flags |= Qt::ItemIsUserCheckable | Qt::ItemIsEditable | Qt::ItemIsEnabled;
         break;
+    default:
+    break;
     }
 
   return flags;

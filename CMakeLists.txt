@@ -6,8 +6,20 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+if (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
+    add_compile_options (-fdiagnostics-color=always)
+elseif (${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
+    add_compile_options (-fcolor-diagnostics)
+endif()
+
+if(MSVC)
+    add_compile_options(-W4 /WX)
+else()
+    add_compile_options(-Wall -Wextra -pedantic -Wno-unused-function -Werror)
+endif()
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Widgets Quick Location)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Mqtt PrintSupport Quick Location)
@@ -71,6 +83,7 @@ add_library(CustomPlot SHARED
     QCustomPlot/qcustomplot.cpp QCustomPlot/qcustomplot.h
 )
 target_link_libraries(CustomPlot PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::PrintSupport)
+target_compile_options(CustomPlot PRIVATE -Wno-deprecated-enum-enum-conversion -Wno-misleading-indentation)
 
 
 add_library(Configuration STATIC
@@ -81,7 +94,6 @@ target_link_libraries(Configuration PRIVATE Qt${QT_VERSION_MAJOR}::Core)
 
 add_library(DataModels STATIC
     DataModels/mainvehiclemodel.h DataModels/mainvehiclemodel.cpp
-    DataModels/maindevicemodel.h DataModels/maindevicemodel.cpp
     DataModels/vehmodeltreeitem.h DataModels/vehmodeltreeitem.cpp
 
     DataModels/vehicle.h DataModels/vehicle.cpp
