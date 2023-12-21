@@ -20,23 +20,27 @@ public:
                       int role) const override;
   Qt::ItemFlags flags(const QModelIndex &index) const override;
 
-private:
   enum Columns {
-    ColumnId,
-    ColumnName,
-    ColumnPlateNo,
-    ColumnCommit,
-    ColumnMax,
+      ColumnId,
+      ColumnName,
+      ColumnPlateNo,
+      ColumnColor,
+      ColumnCommit,
+      ColumnMax,
   };
-  struct ColumnData {
-    QString name;
+
+  private:
+  struct ColumnData
+  {
+      QString name;
   };
   QMap<int, ColumnData> m_columnData = {{ColumnId, {"id"}},
                                         {ColumnName, {"Nazwa"}},
                                         {ColumnPlateNo, {"Nr rej."}},
+                                        {ColumnColor, {"Kolor"}},
                                         {ColumnCommit, {"Zapisz"}}};
 
-private slots:
+  private slots:
   void onDataReset();
 };
 

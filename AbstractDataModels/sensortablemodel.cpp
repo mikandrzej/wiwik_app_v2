@@ -2,6 +2,7 @@
 #include "../DataSource/datacontainer.h"
 
 #include "../DataModels/device.h"
+#include "../DataModels/gpsdata.h"
 #include "../DataModels/sensor.h"
 #include "QtGui/qcolor.h"
 
@@ -72,10 +73,9 @@ QVariant SensorTableModel::data(const QModelIndex &index, int role) const {
         case QVariant::UserType: {
           auto userType = val.userType();
           auto tname = QString(val.typeName());
-          if (tname == "QGeoPositionInfo") {
-            QGeoPositionInfo pos = val.value<QGeoPositionInfo>();
-            return "Lat: " + QString::number(pos.coordinate().latitude()) +
-                   " Long: " + QString::number(pos.coordinate().longitude());
+          if (tname == "GpsData") {
+              GpsData gpsData = val.value<GpsData>();
+              return gpsData.address().text();
           }
           return val.toString();
           break;

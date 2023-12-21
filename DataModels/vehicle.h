@@ -1,6 +1,7 @@
 #ifndef VEHICLE_H
 #define VEHICLE_H
 
+#include <QColor>
 #include <QObject>
 
 class QNetworkAccessManager;
@@ -9,53 +10,59 @@ class Device;
 class Vehicle : public QObject {
   Q_OBJECT
 public:
-  explicit Vehicle(int id, QString &name, QString &plateNo,
-                   QObject *parent = nullptr);
-  explicit Vehicle(const Vehicle &vehicle, QObject *parent = nullptr);
+    explicit Vehicle(
+        int id, QString &name, QString &plateNo, QColor &color, QObject *parent = nullptr);
+    explicit Vehicle(const Vehicle &vehicle, QObject *parent = nullptr);
 
-  int id() const;
+    int id() const;
 
-  QString name() const;
-  void setName(const QString &newName);
+    QString name() const;
+    void setName(const QString &newName);
 
-  QString plateNo() const;
-  void setPlateNo(const QString &newPlateNo);
+    QString plateNo() const;
+    void setPlateNo(const QString &newPlateNo);
 
-  void commitChanges();
+    void commitChanges();
 
-  bool changesPending() const;
-  void setChangesPending(bool newChangesPending);
+    bool changesPending() const;
+    void setChangesPending(bool newChangesPending);
 
-  void addDevice(Device *device);
-  void removeDevice(Device *device);
+    void addDevice(Device *device);
+    void removeDevice(Device *device);
 
-  QList<Device *> devices() const;
+    QList<Device *> devices() const;
 
-  signals:
-  void nameChanged();
+    QColor color() const;
+    void setColor(const QColor &newColor);
 
-  void plateNoChanged();
+signals:
+    void nameChanged();
 
-  void changesPendingChanged();
-  void deviceAdded(Device *device, int index);
-  void deviceRemoved(int index);
+    void plateNoChanged();
 
-  private:
-  int m_id;
-  QString m_name;
-  QString m_plateNo;
+    void changesPendingChanged();
+    void deviceAdded(Device *device, int index);
+    void deviceRemoved(int index);
 
-  bool m_changesPending = false;
+    void colorChanged();
 
-  QList<Device *> m_devices = {};
+private:
+    int m_id;
+    QString m_name;
+    QString m_plateNo;
+    QColor m_color;
 
-  QNetworkAccessManager *m_netAccMgr = nullptr;
+    bool m_changesPending = false;
 
-  Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
-  Q_PROPERTY(
-      QString plateNo READ plateNo WRITE setPlateNo NOTIFY plateNoChanged)
-  Q_PROPERTY(bool changesPending READ changesPending WRITE setChangesPending
-                 NOTIFY changesPendingChanged)
+    QList<Device *> m_devices = {};
+
+    QNetworkAccessManager *m_netAccMgr = nullptr;
+
+    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
+    Q_PROPERTY(QString plateNo READ plateNo WRITE setPlateNo NOTIFY plateNoChanged)
+    Q_PROPERTY(bool changesPending READ changesPending WRITE setChangesPending NOTIFY
+                   changesPendingChanged)
+    Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged FINAL)
 };
 
 #endif // VEHICLE_H

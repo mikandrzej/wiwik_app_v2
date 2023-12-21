@@ -38,6 +38,8 @@ public:
   Vehicle *vehicle() const;
   void setVehicle(Vehicle *newVehicle);
 
+  QList<Sensor *> sensors() const;
+
   signals:
   void nameChanged();
 

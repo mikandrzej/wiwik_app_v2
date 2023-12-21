@@ -1,11 +1,12 @@
 #include "sensor.h"
-#include "../Configuration/configuration.h"
 #include <QGeoPositionInfo>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QUrlQuery>
+#include "../Configuration/configuration.h"
+#include "gpsdata.h"
 
 Sensor::Sensor(int id, const QString &name, const QString &address,
                const QString &type, int deviceId, QObject *parent)
@@ -87,12 +88,12 @@ QString Sensor::lastMeasureString() const
         }
         else if(m_type == "battery")
         {
-            return m_lastMeasure->value().toString() + "mV";
+            return QString::number(m_lastMeasure->value().toDouble(), 'f', 0) + "mV";
         }
         else if(m_type == "gps")
         {
-            auto geoposition = m_lastMeasure->value().value<QGeoPositionInfo>();
-            return "lat: " + QString::number(geoposition.coordinate().latitude(), 'f', 4) + "long: " + QString::number(geoposition.coordinate().longitude(), 'f', 4);
+            auto gpsData = m_lastMeasure->value().value<GpsData>();
+            return gpsData.address().text();
         }
     }
     return "";

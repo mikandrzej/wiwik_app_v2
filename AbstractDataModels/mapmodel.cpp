@@ -163,6 +163,8 @@ QVariant MapModel::data(const QModelIndex &index, int role) const
         return m_data[index.row()]->icon();
     case RolePath:
         return m_data[index.row()]->path();
+    case RolePathEnabled:
+        return m_data[index.row()]->pathEnabled();
     case RolePathColor:
         return m_data[index.row()]->pathColor();
     case RolePathWidth:
@@ -294,7 +296,7 @@ QMap<QString, QString> MapModelData::customData() const
 QString MapModelData::customDataString() const
 {
     QString result;
-    for (auto &key : m_customData) {
+    for (auto &key : m_customData.keys()) {
         result += key;
         result += ": ";
         result += m_customData[key];

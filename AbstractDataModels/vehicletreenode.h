@@ -50,6 +50,7 @@ private:
 
     VehicleTreeNode *m_parent = nullptr;
     QList<VehicleTreeNode *> m_childs;
+    QIcon TransformIconColor(QColor newColor, QIcon originalIcon);
 };
 
 #endif // VEHICLETREENODE_H

@@ -1,17 +1,18 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
+#include "AbstractDataModels/colordelegate.h"
 #include "AbstractDataModels/devicetablemodel.h"
 #include "AbstractDataModels/mapmodel.h"
 #include "AbstractDataModels/sensortablemodel.h"
 #include "AbstractDataModels/vehicletablemodel.h"
-#include "AbstractDataModels/vehicletreemodel.h"
 #include "DataModels/mainvehiclemodel.h"
 #include "chartwidget.h"
 #include "egvehiclesmap.h"
-#include "liveviewmodel.h"
+#include "qerrormessage.h"
 
 #include <QCalendarWidget>
 #include <QQuickView>
+#include <QWidget>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -20,7 +21,14 @@ MainWindow::MainWindow(QWidget *parent)
   //include external ui's
   m_formGpsHistory = new FormGPSHistory(this);
   ui->tab_gpsHistory->layout()->addWidget(m_formGpsHistory);
+  //
+  m_formLiveView = new FormLiveView(this);
+  ui->tab_liveView->layout()->addWidget(m_formLiveView);
+  //
+  m_formTemperatureHistory = new FormTemperatureHistory(this);
+  ui->tab_temperatureHistory->layout()->addWidget(m_formTemperatureHistory);
 
+  //
   m_statusBarMqttLabel = new QLabel(ui->statusbar);
   m_statusBarMqttLabel->setAutoFillBackground(true);
   ui->statusbar->addPermanentWidget(m_statusBarMqttLabel);
@@ -31,55 +39,20 @@ MainWindow::MainWindow(QWidget *parent)
   ui->statusbar->addPermanentWidget(m_statusBarRestLabel);
   setRestStatus(false);
 
-  auto wg_chart = ui->wg_chart;
-  auto historyPlotLayout = new QVBoxLayout(wg_chart);
-  m_historyPlot = new ChartWidget();
-  historyPlotLayout->addWidget(m_historyPlot);
-
   m_dialogAssignSensor = new DialogAssignSensor(this);
   m_dialogEditVehicles = new DialogEditVehicles(this);
-
-  connect(ui->tv_liveData, &QTreeView::clicked, this, &MainWindow::onLiveVehicleListClicked);
-  connect(ui->lv_historyVehicles_temperature,
-          &QListView::clicked,
-          this,
-          &MainWindow::onTemperatureHistoryVehicleListClicked);
-
-  connect(ui->pb_historyToday, &QPushButton::clicked, this,
-          &MainWindow::onPbHistoryTodayClicked);
-  connect(ui->de_history, &QDateEdit::userDateChanged, this,
-          &MainWindow::onDeHistoryDateChanged);
-
-  ui->de_history->setDate(QDate::currentDate());
-
-  QVBoxLayout *layout = new QVBoxLayout(ui->w_map);
-  m_mapWidget = new EgVehiclesMap(ui->w_map);
-  ui->w_map->setLayout(layout);
-  layout->addWidget(m_mapWidget);
-
-  m_liveVehModel = new LiveVehiclesProxyModel(this);
-  m_historyVehModel = new HistoryVehiclesProxyModel(this);
-
-  connect(m_mapWidget, &EgVehiclesMap::mapMarkerClicked, this, &MainWindow::onMapMarkerClicked);
 
   ui->tv_vehicleConfig->setModel(&vehicleTableModel);
   ui->tv_DeviceConfig->setModel(&deviceTableModel);
   ui->tv_SensorConfig->setModel(&sensorTableModel);
 
-  ui->tv_vehicleTreeView->setModel(&vehicleTreeModel);
+  static ColorDelegate colorDelegate;
+  ui->tv_vehicleConfig->setItemDelegateForColumn(VehicleTableModel::ColumnColor, &colorDelegate);
 }
 
-MainWindow::~MainWindow() { delete ui; }
-
-ChartWidget *MainWindow::historyPlot() { return m_historyPlot; }
-
-void MainWindow::onPbHistoryTodayClicked(bool state) {
-  ui->de_history->setDate(QDate::currentDate());
-  plotHistoryData();
-}
-
-void MainWindow::onDeHistoryDateChanged(const QDate &date) {
-  plotHistoryData();
+MainWindow::~MainWindow()
+{
+    delete ui;
 }
 
 DialogAssignSensor *MainWindow::dialogAssignSensor() const {
@@ -88,26 +61,6 @@ DialogAssignSensor *MainWindow::dialogAssignSensor() const {
 
 QPushButton *MainWindow::pbAssignSensor() const { return ui->pb_assignSensor; }
 QPushButton *MainWindow::pbEditVehicles() const { return ui->pb_editVehicles; }
-
-void MainWindow::setVehModel(VehiclesModel *newVehModel) {
-  m_vehModel = newVehModel;
-
-  m_liveVehModel->setSourceModel(m_vehModel);
-  m_historyVehModel->setSourceModel(newVehModel);
-  ui->lv_historyVehicles_temperature->setModel(m_historyVehModel);
-  // ui->lv_historyVehicles_gps->setModel(m_historyVehModel);
-
-  m_mapWidget->setVehiclesModel(newVehModel);
-
-  connect(m_vehModel, &QAbstractItemModel::dataChanged, this,
-          &MainWindow::onVehiclesModelDataChanged);
-
-  //  ui->tv_vehicleConfig->setModel(m_vehModel);
-}
-
-void MainWindow::setLiveViewModel(LiveViewModel *newLiveViewModel) {
-  ui->tv_liveData->setModel(newLiveViewModel);
-}
 
 void MainWindow::setMqttStatus(bool status) {
   QString text = "MQTT state: ";
@@ -137,62 +90,31 @@ void MainWindow::setRestStatus(bool status) {
   m_statusBarRestLabel->setText(text);
 }
 
-void MainWindow::onLiveVehicleListClicked(const QModelIndex &index) {
-  updateLiveEditFields(index);
-}
-
-void MainWindow::onTemperatureHistoryVehicleListClicked(const QModelIndex &index)
-{
-    m_historyVehicleListSelectedIndex = index;
-    plotHistoryData();
-}
 void MainWindow::onGpsHistoryVehicleListClicked(const QModelIndex &index) {}
 
+FormTemperatureHistory *MainWindow::formTemperatureHistory() const
+{
+    return m_formTemperatureHistory;
+}
+
+FormLiveView *MainWindow::formLiveView() const
+{
+    return m_formLiveView;
+}
+
 void MainWindow::plotHistoryData() {
-  if (!m_historyVehicleListSelectedIndex.isValid()) {
-    return;
-  }
-  bool ok;
-  int vehicleId =
-      m_vehModel->data(m_historyVehicleListSelectedIndex, Qt::DisplayRole)
-          .toInt(&ok);
-  if (!ok)
-    return;
+    // if (!m_historyVehicleListSelectedIndex.isValid()) {
+    //   return;
+    // }
+    // bool ok;
+    // // int vehicleId =
+    //     // m_vehModel->data(m_historyVehicleListSelectedIndex, Qt::DisplayRole)
+    // //         .toInt(&ok);
+    // if (!ok)
+    //   return;
 
-  QDate date = ui->de_history->date();
-  emit vehicleHistoryDataRequested(vehicleId, date);
-}
-
-void MainWindow::onHistoryDataReady(EgTemperatureListData &tempListData) {
-  m_historyPlot->clearGraphs();
-  for (auto &sensor_ref : tempListData.sensors.keys()) {
-    auto &sensor = tempListData.sensors[sensor_ref];
-
-    auto chart = m_historyPlot->addGraph(sensor->sensor_address,
-                                         sensor->sensor_name + " / " +
-                                             sensor->sensor_address);
-    chart->setData(sensor->timestamps, sensor->values);
-  }
-  m_historyPlot->rescaleAxis(Qt::XAxis);
-  m_historyPlot->rescaleAxis(Qt::YAxis);
-
-  //  QVector<double> x;
-  //  x.reserve(timestamps.length());
-  //  for (auto timestamp : timestamps) {
-  //    x.append(timestamp);
-  //  }
-  //  m_historyPlot->clearGraphs();
-  //  auto chart = m_historyPlot->addGraph("unknown");
-  //  chart->setData(x, temperatures);
-  //  m_historyPlot->rescaleAxis(Qt::XAxis);
-  //  m_historyPlot->rescaleAxis(Qt::YAxis);
-}
-
-void MainWindow::historyDataAutoRescale() {
-  if (ui->cb_autoReset->isChecked()) {
-    m_historyPlot->rescaleAxis(Qt::XAxis);
-    m_historyPlot->rescaleAxis(Qt::YAxis);
-  }
+    // QDate date = ui->de_history->date();
+    // emit vehicleHistoryDataRequested(vehicleId, date);
 }
 
 void MainWindow::updateLiveEditFields(const QModelIndex &index) {
@@ -214,131 +136,12 @@ void MainWindow::updateLiveEditFields(const QModelIndex &index) {
   //          .toString());
 }
 
-void MainWindow::setMainVehicleModel(MainVehicleModel *newMainVehicleModel) {
-  m_mainVehicleModel = newMainVehicleModel;
-
-  //  ui->tv_vehicleConfig->setModel(m_mainVehicleModel);
-}
-
-QModelIndex MainWindow::getVehicleModelIndexById(const int vehicleId) {
-  return m_vehModel->getRowByVehicleId(vehicleId);
-}
-
-void MainWindow::onSensorLiveDataReceived(EgVehicleSensorData &sensorData) {
-    if (sensorData.dataType == EgSensorDataType::Temperature) {
-        double timestamp = sensorData.timestamp.toSecsSinceEpoch();
-        double value = sensorData.temperature;
-
-        auto date_a = sensorData.timestamp.date();
-        auto date_b = ui->de_history->date();
-        if (date_a != date_b) {
-            return;
-        }
-
-        m_historyPlot->addData(timestamp, value, sensorData.sensorAddress);
-        historyDataAutoRescale();
-    } else if (sensorData.dataType == EgSensorDataType::GpsPosition) {
-        mapLiveModel.addMarker(sensorData.vehicleId);
-        auto coordinate = sensorData.geoPosition.coordinate();
-        mapLiveModel.updatePosition(sensorData.vehicleId, coordinate);
-    }
-
-  //    auto vehicle =
-  //        m_vehModel->getData().vehicles[m_historyVehicleListSelectedIndex.row()];
-  //    if (sensorData.vehicleId != vehicle->id) {
-  //      return;
-  //    }
-
-  //    auto date_a = sensorData.timestamp.date();
-  //    auto date_b = ui->de_history->date();
-  //    if (date_a != date_b) {
-  //      return;
-  //    }
-
-  //    m_historyPlot->appendPoint(sensorData.timestamp.toSecsSinceEpoch(),
-  //    value);
-
-  //    historyDataAutoRescale();
-}
-
-void MainWindow::onMapMarkerClicked(int vehicleId)
-{
-    qDebug() << "Marker clicked: " << vehicleId;
-    auto index = getVehicleModelIndexById(vehicleId);
-    updateLiveEditFields(index);
-}
-void MainWindow::onHistoryMapMarkerClicked(int vehicleId)
-{
-    qDebug() << "Marker clicked: " << vehicleId;
-    auto index = getVehicleModelIndexById(vehicleId);
-    updateLiveEditFields(index);
-}
-
 FormGPSHistory *MainWindow::formGpsHistory() const
 {
     return m_formGpsHistory;
 }
-
-void MainWindow::onVehiclesModelDataChanged(const QModelIndex &topLeft,
-                                            const QModelIndex &bottomRight,
-                                            const QVector<int> &roles) {
-  // todo use slot/signals
-  if (m_liveVehicleListSelectedRow >= topLeft.row() &&
-      m_liveVehicleListSelectedRow <= bottomRight.row()) {
-    if (roles.contains(Qt::DisplayRole)) {
-      for (int col = topLeft.column(); col <= bottomRight.column(); col++) {
-        QVariant data =
-            m_vehModel->data(topLeft.sibling(m_liveVehicleListSelectedRow, col),
-                             Qt::DisplayRole);
-        switch (col) {
-        case VehiclesModel::ColumnName:
-          ui->l_vehName->setText(data.toString());
-          break;
-        case VehiclesModel::ColumnPlateNo:
-          ui->l_plateNo->setText(data.toString());
-          break;
-        case VehiclesModel::ColumnTemperature:
-          ui->l_vehTemp->setText(data.toString());
-          break;
-        case VehiclesModel::ColumnBattery:
-          ui->l_sensorBatteryVoltage->setText(data.toString());
-          break;
-        }
-      }
-    }
-  }
-}
-
 void MainWindow::on_pb_editVehicles_clicked() {}
 
 DialogEditVehicles *MainWindow::dialogEditVehicles() const {
   return m_dialogEditVehicles;
-}
-
-void MainWindow::on_pb_historyReset_clicked() {
-  m_historyPlot->rescaleAxis(Qt::XAxis);
-  m_historyPlot->rescaleAxis(Qt::YAxis);
-}
-
-void MainWindow::on_pb_historyDateMinus_clicked() {
-  ui->de_history->setDate(ui->de_history->date().addDays(-1));
-}
-
-void MainWindow::on_pb_historyDatePlus_clicked() {
-  ui->de_history->setDate(ui->de_history->date().addDays(1));
-}
-
-void MainWindow::on_pb_historySelectDate_clicked() {
-  auto dialog = new QDialog(this);
-  auto calendar = new QCalendarWidget(dialog);
-  dialog->resize(368, 205);
-  calendar->setSelectedDate(ui->de_history->date());
-  dialog->setModal(true);
-  connect(calendar, &QCalendarWidget::selectionChanged, this,
-          [calendar, this]() {
-            this->ui->de_history->setDate(calendar->selectedDate());
-          });
-  connect(dialog, &QDialog::finished, this,
-          [dialog, this](bool result) { delete dialog; });
-  dialog->show();
 }

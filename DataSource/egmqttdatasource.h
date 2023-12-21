@@ -26,20 +26,19 @@ private slots:
   void serverStateChanged(bool state);
 
 private:
-  QString m_mqttServer = "10.22.1.57";
-  int m_mqttServerPort = 1883;
-  int m_uptime;
-  int m_serverTimeout = 30000;
-  int m_serverConnRetryInterval = 5000;
-  bool m_serverState = false;
-  QTimer *m_serverTimeoutTimer = nullptr;
-  QMqttClient *m_mqttClient;
-  void parseServiceServerMesssage(QString &parameter,
-                                  const QByteArray &message);
-  void setServerState(bool newServerState);
-  void parseVehicleMessage(int vehicle_id,
-                           const QStringList &topicLevels,
-                           const QByteArray &message);
+    QString m_mqttServer = "iot.2canit.pl";
+    int m_mqttServerPort = 1883;
+    int m_uptime;
+    int m_serverTimeout = 30000;
+    int m_serverConnRetryInterval = 5000;
+    bool m_serverState = false;
+    QTimer *m_serverTimeoutTimer = nullptr;
+    QMqttClient *m_mqttClient;
+    void parseServiceServerMesssage(QString &parameter, const QByteArray &message);
+    void setServerState(bool newServerState);
+    void parseVehicleMessage(int vehicle_id,
+                             const QStringList &topicLevels,
+                             const QByteArray &message);
 };
 
 #endif // EGMQTTDATASOURCE_H

@@ -29,10 +29,15 @@ private slots:
 
     void on_dateEdit_userDateChanged(const QDate &date);
 
+    void on_horizontalSlider_sliderMoved(int position);
+
+    void on_horizontalSlider_valueChanged(int value);
+
 private:
     Ui::FormGPSHistory *ui;
     void repaintGpsData();
     MapWidget *m_mapHistoryWidget;
+    EgGpsListData m_gpsList;
 };
 
 #endif // FORMGPSHISTORY_H

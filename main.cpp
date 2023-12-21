@@ -1,13 +1,21 @@
+#include "Configuration/configuration.h"
 #include "app.h"
 #include "mainwindow.h"
 
 #include <QApplication>
+#include <QErrorMessage>
+#include <QGroupBox>
+#include <QLabel>
+#include <QPushButton>
+#include <QToolBox>
+#include <QVBoxLayout>
 
 #include <QSslSocket>
 
 int main(int argc, char *argv[]) {
   QApplication a(argc, argv);
   a.setStyle("Fusion");
+
   MainWindow w;
   App app(&w);
 

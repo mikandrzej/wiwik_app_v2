@@ -1,15 +1,17 @@
 #ifndef EGVEHICLEDATA_H
 #define EGVEHICLEDATA_H
 
-#include "qgeopositioninfo.h"
+#include <QColor>
 #include <QDateTime>
 #include <QList>
 #include <QString>
+#include "qgeopositioninfo.h"
 
 struct EgVehicleData {
   int id;
   QString name;
   QString plateNo;
+  QColor color;
 };
 
 enum class EgSensorDataType { Temperature, BatteryVoltage, GpsPosition };

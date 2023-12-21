@@ -23,7 +23,7 @@ set(PROJECT_SOURCES
         eghistoryvehiclesmodel.h eghistoryvehiclesmodel.cpp
         dialogeditvehicles.h dialogeditvehicles.cpp dialogeditvehicles.ui
         egvehiclesmap.h egvehiclesmap.cpp
-        geomap.qml
+
         egcarsmapmodel.h egcarsmapmodel.cpp
         vehiclesmodel.h vehiclesmodel.cpp
         onevehiclemodel.h onevehiclemodel.cpp
@@ -34,7 +34,7 @@ set(PROJECT_SOURCES
         historyvehiclesproxymodel.h historyvehiclesproxymodel.cpp
         chartwidget.h chartwidget.cpp
         vehicleseditmodel.h vehicleseditmodel.cpp
-        liveviewmodel.h liveviewmodel.cpp
+
         treeitem.h treeitem.cpp
         resources.qrc
         vehicleeditmodel.h vehicleeditmodel.cpp
@@ -61,6 +61,8 @@ else()
             ${PROJECT_SOURCES}
             mapWidget.qml
             Forms/formgpshistory.h Forms/formgpshistory.cpp Forms/formgpshistory.ui
+            Forms/formliveview.h Forms/formliveview.cpp Forms/formliveview.ui
+            Forms/formtemperaturehistory.h Forms/formtemperaturehistory.cpp Forms/formtemperaturehistory.ui
         )
     endif()
 endif()
@@ -86,8 +88,9 @@ add_library(DataModels STATIC
     DataModels/device.h DataModels/device.cpp
     DataModels/sensor.h DataModels/sensor.cpp
     DataModels/measure.h DataModels/measure.cpp
+    DataModels/gpsdata.h DataModels/gpsdata.cpp
 
-    DataModels/gpsmeasure.h DataModels/gpsmeasure.cpp
+
 )
 target_link_libraries(DataModels PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Location Configuration)
 
@@ -109,13 +112,14 @@ add_library(AbstractDataModels STATIC
     AbstractDataModels/sensortablemodel.h AbstractDataModels/sensortablemodel.cpp
 
     AbstractDataModels/vehicletreemodel.h AbstractDataModels/vehicletreemodel.cpp
-    AbstractDataModels/liveviewtreemodel.h AbstractDataModels/liveviewtreemodel.cpp
+
     AbstractDataModels/vehicletreenode.h AbstractDataModels/vehicletreenode.cpp
     AbstractDataModels/mapmodel.h AbstractDataModels/mapmodel.cpp
     AbstractDataModels/vehiclelistmodel.h AbstractDataModels/vehiclelistmodel.cpp
+    AbstractDataModels/colordelegate.h AbstractDataModels/colordelegate.cpp
 
 )
-target_link_libraries(AbstractDataModels PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Location DataSource)
+target_link_libraries(AbstractDataModels PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Location Qt${QT_VERSION_MAJOR}::Widgets DataSource)
 
 add_library(Widgets STATIC
     mapwidget.h mapwidget.cpp

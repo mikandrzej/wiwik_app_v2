@@ -2,16 +2,18 @@
 #define MAINWINDOW_H
 
 // #include "QCustomPlot/qcustomplot.h"
+#include <QErrorMessage>
 #include <QLabel>
 #include <QMainWindow>
 #include "Forms/formgpshistory.h"
+#include "Forms/formliveview.h"
+#include "Forms/formtemperaturehistory.h"
 #include "chartwidget.h"
 #include "dialogassignsensor.h"
 #include "dialogeditvehicles.h"
 #include "egvehiclesmap.h"
 #include "historyvehiclesproxymodel.h"
 #include "livevehiclesproxymodel.h"
-#include "liveviewmodel.h"
 #include "mapwidget.h"
 #include "vehiclesmodel.h"
 
@@ -30,9 +32,6 @@ public:
   MainWindow(QWidget *parent = nullptr);
   ~MainWindow();
 
-  void setVehModel(VehiclesModel *newVehModel);
-  void setLiveViewModel(LiveViewModel *newLiveViewModel);
-
   DialogAssignSensor *dialogAssignSensor() const;
   QPushButton *pbAssignSensor() const;
 
@@ -40,59 +39,38 @@ public:
 
   QPushButton *pbEditVehicles() const;
   ChartWidget *historyPlot();
-  void setMainVehicleModel(MainVehicleModel *newMainVehicleModel);
 
   FormGPSHistory *formGpsHistory() const;
+
+  FormLiveView *formLiveView() const;
+
+  FormTemperatureHistory *formTemperatureHistory() const;
 
   public slots:
   void setMqttStatus(bool status);
   void setRestStatus(bool status);
 
-  void onSensorLiveDataReceived(EgVehicleSensorData &sensorData);
-  void onMapMarkerClicked(int vehicleId);
-  void onHistoryDataReady(EgTemperatureListData &tempListData);
-private slots:
-  void onVehiclesModelDataChanged(const QModelIndex &topLeft,
-                                  const QModelIndex &bottomRight,
-                                  const QVector<int> &roles);
-  void onLiveVehicleListClicked(const QModelIndex &index);
-
-  void onPbHistoryTodayClicked(bool state);
-  void onTemperatureHistoryVehicleListClicked(const QModelIndex &index);
+  private slots:
   void plotHistoryData();
 
   void on_pb_editVehicles_clicked();
 
-  void onDeHistoryDateChanged(const QDate &date);
-  void on_pb_historyReset_clicked();
-
-  void on_pb_historyDateMinus_clicked();
-
-  void on_pb_historyDatePlus_clicked();
-
-  void on_pb_historySelectDate_clicked();
-
   void onGpsHistoryVehicleListClicked(const QModelIndex &index);
-  void onHistoryMapMarkerClicked(int vehicleId);
 
   signals:
   void vehicleHistoryDataRequested(int, QDate &);
 
-private:
+  private:
   Ui::MainWindow *ui;
   FormGPSHistory *m_formGpsHistory = nullptr;
+  FormLiveView *m_formLiveView = nullptr;
+  FormTemperatureHistory *m_formTemperatureHistory = nullptr;
 
   QLabel *m_statusBarMqttLabel;
   QLabel *m_statusBarRestLabel;
-  ChartWidget *m_historyPlot;
   int m_liveVehicleListSelectedRow = -1;
   QModelIndex m_historyVehicleListSelectedIndex;
 
-  VehiclesModel *m_vehModel;
-  LiveVehiclesProxyModel *m_liveVehModel;
-  HistoryVehiclesProxyModel *m_historyVehModel;
-  EgVehiclesMap *m_mapWidget;
-  MapWidget *m_mapHistoryWidget;
   DialogAssignSensor *m_dialogAssignSensor;
   DialogEditVehicles *m_dialogEditVehicles;
   void historyDataAutoRescale();

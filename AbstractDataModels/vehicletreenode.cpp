@@ -1,6 +1,10 @@
 #include "vehicletreenode.h"
 
+#include <QIcon>
+#include <QPixmap>
 #include "../DataSource/datacontainer.h"
+
+#include <QPainter>
 
 VehicleTreeNode::VehicleTreeNode(QObject *parent)
     : QObject{parent}
@@ -146,7 +150,7 @@ QVariant VehicleTreeNode::vehicleData(int column, int role)
             return m_vehicle->name().length() > 0 ? m_vehicle->name() : "Bez nazwy";
             break;
         case Qt::DecorationRole:
-            return icon;
+            return TransformIconColor(m_vehicle->color(), icon);
             break;
         }
         break;
@@ -228,4 +232,36 @@ QList<VehicleTreeNode *> VehicleTreeNode::childs()
 VehicleTreeNode *VehicleTreeNode::parent() const
 {
     return m_parent;
+}
+
+QIcon VehicleTreeNode::TransformIconColor(QColor newColor, QIcon originalIcon)
+{
+    // Get the original pixmap from the original icon
+    QPixmap originalPixmap = originalIcon.pixmap(originalIcon.availableSizes().first());
+
+    // Convert the original pixmap to a QImage for direct manipulation
+    QImage originalImage = originalPixmap.toImage();
+
+    // Iterate through each pixel and change black to the specified color
+    for (int x = 0; x < originalImage.width(); ++x) {
+        for (int y = 0; y < originalImage.height(); ++y) {
+            QRgb pixelColor = originalImage.pixel(x, y);
+
+            // Check if the pixel is black (you may need to adjust the tolerance)
+            if (qRed(pixelColor) < 50 && qGreen(pixelColor) < 50 && qBlue(pixelColor) < 50) {
+                // Change black to the specified color while keeping the alpha channel
+                originalImage.setPixelColor(x,
+                                            y,
+                                            QColor(newColor.red(),
+                                                   newColor.green(),
+                                                   newColor.blue(),
+                                                   qAlpha(pixelColor)));
+            }
+        }
+    }
+
+    // Create a new QIcon from the modified QImage
+    QIcon newIcon(QPixmap::fromImage(originalImage));
+
+    return newIcon;
 }

@@ -1,6 +1,7 @@
 #include "egmqttdatasource.h"
 #include "EgVehicleData.h"
 
+#include <QGeoLocation>
 #include <QJsonDocument>
 #include <QJsonObject>
 
@@ -8,6 +9,7 @@
 #include <QMqttClient>
 #include <QTimer>
 
+#include "../DataModels/gpsdata.h"
 #include "../DataModels/measure.h"
 #include "../DataModels/sensor.h"
 #include "../DataSource/datacontainer.h"
@@ -47,7 +49,7 @@ void EgMqttDataSource::onMqttConnected() {
       this->onMqttServerMessageReceived(msg.payload(), msg.topic().levels());
   });
 
-  auto subsIrvine = m_mqttClient->subscribe(QMqttTopicFilter("irvine/#"));
+  auto subsIrvine = m_mqttClient->subscribe(QMqttTopicFilter("devices/#"));
   connect(subsIrvine, &QMqttSubscription::messageReceived, this, [this](QMqttMessage msg) {
       auto topicLevels = msg.topic().levels();
       topicLevels.removeFirst();
@@ -277,15 +279,35 @@ void EgMqttDataSource::onMqttDeviceMessageReceived(const QByteArray &msg, const 
     } else if (sensorType == "gps") {
         double latitude = jsonObj["latitude"].toDouble();
         double longitude = jsonObj["longitude"].toDouble();
+        double altitude = jsonObj["altitude"].toDouble();
         double precision = jsonObj["precision"].toDouble();
         double speed = jsonObj["speed"].toDouble();
-        auto gps_timestamp = QDateTime::fromSecsSinceEpoch(jsonObj["gps_timestamp"].toInt());
+        QString address = jsonObj["address"].toString();
+        auto gps_timestamp = QDateTime::fromSecsSinceEpoch(jsonObj["tim"].toInt());
 
-        QGeoPositionInfo positionInfo;
-        positionInfo.setCoordinate(QGeoCoordinate(latitude, longitude));
-        positionInfo.setAttribute(QGeoPositionInfo::GroundSpeed, speed);
-        positionInfo.setAttribute(QGeoPositionInfo::HorizontalAccuracy, precision);
-        positionInfo.setTimestamp(gps_timestamp);
+        GpsData gpsData;
+
+        gpsData.setCoordinate(QGeoCoordinate(latitude, longitude, altitude));
+
+        auto addressRaw = address.split(", ");
+        if (addressRaw.length() == 8) {
+            QGeoAddress geoAddress;
+            geoAddress.setStreet(addressRaw[1] + " " + addressRaw[0]);
+            geoAddress.setCity(addressRaw[2]);
+            geoAddress.setCounty(addressRaw[3]);
+            geoAddress.setDistrict(addressRaw[5]);
+            geoAddress.setPostalCode(addressRaw[6]);
+            geoAddress.setCountry(addressRaw[7]);
+            gpsData.setAddress(geoAddress);
+        } else {
+            qDebug() << "Invalid address data: \"" << address << "\" in msg: \"" << msg << "\"";
+        }
+
+        gpsData.setAccuracy(precision);
+        gpsData.setSpeed(speed);
+        gpsData.setGpsTimestamp(gps_timestamp);
+
+        measure = new Measure(timestamp, QVariant::fromValue(gpsData));
     } else {
         qWarning() << "Unknown sensor type: " << sensorType;
         return;

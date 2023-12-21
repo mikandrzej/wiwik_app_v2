@@ -53,6 +53,7 @@ Item {
 
         MapItemView{
             model: app.model
+            visible: model.path_enabled
             delegate: MapPolyline{
                 path: model.path
                 line.width: map.zoomLevel / 5
@@ -68,7 +69,8 @@ Item {
                     property int vehicleId : model.id
                     coordinate: QtPositioning.coordinate(model.marker_position.latitude,
                                                      model.marker_position.longitude)
-                    sourceItem: Image {
+                    sourceItem: Item {
+                        Image {
                         id: image
                         source: "qrc:/map_pin.png"
                         width: 30
@@ -100,26 +102,53 @@ Item {
                             "
                         }
 
+
+                            MouseArea {
+                                cursorShape: "PointingHandCursor"
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                id: mouseArea
+                                onEntered:
+                                    function() {
+                                        infoRect.visible = true
+                                    }
+                                onExited:
+                                    function() {
+                                        infoRect.visible = false
+                                    }
+
+                                onClicked:
+                                    function() {
+                                        console.log("map point clicked. Id:", vehicleId)
+                                    }
+                            }
+                        }
+
+                        Rectangle {
+                            visible: false
+                            id: infoRect
+                            y: image.y - 60
+                            color: "lightgray"
+                            height: childrenRect.height  // Resize to fit children
+                            width: childrenRect.width  // Resize to fit children
+                            radius: 5
+                            Column {
+                                y: 10
+                                Text {
+                                    x: 10
+                                    id: textTitle
+                                    text: "<b>" + model.name + "</b>"
+                                }
+                                TextArea {
+                                    id: textInfo
+                                    text: model.custom_data
+                                }
+                            }
+                        }
                     }
                     anchorPoint.x: 15
                     anchorPoint.y: 30
                     visible: true
-                    // MouseArea {
-                    //     cursorShape: "PointingHandCursor"
-                    //     anchors.fill: parent
-                    //     onClicked:
-                    //         function() {
-                    //             item.mapPointClicked(vehicleId)
-                    //             console.log("map point clicked. Id:", vehicleId)
-                    //         }
-                    // }
-//                    HoverHandler {
-//                        id: hover
-//                        target: Text {
-//                            text: "test"
-//                            visible: hover.hovered
-//                        }
-//                    }
             }
         }
     }

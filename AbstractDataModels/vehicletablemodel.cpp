@@ -41,9 +41,12 @@ QVariant VehicleTableModel::data(const QModelIndex &index, int role) const {
     case ColumnId:
       return vehicle->id();
     case ColumnName:
-      return vehicle->name();
+        return vehicle->name();
     case ColumnPlateNo:
-      return vehicle->plateNo();
+        return vehicle->plateNo();
+    case ColumnColor:
+        QColor color = vehicle->color();
+        return vehicle->color();
     }
   } else if (Qt::BackgroundRole == role) {
     switch (static_cast<Columns>(column)) {
@@ -75,8 +78,11 @@ bool VehicleTableModel::setData(const QModelIndex &index, const QVariant &value,
       vehicle->setName(value.toString());
       return true;
     case ColumnPlateNo:
-      vehicle->setPlateNo(value.toString());
-      return true;
+        vehicle->setPlateNo(value.toString());
+        return true;
+    case ColumnColor:
+        vehicle->setColor(value.value<QColor>());
+        return true;
     }
   } else if (Qt::CheckStateRole == role) {
     if (ColumnCommit == static_cast<Columns>(column)) {
@@ -107,6 +113,7 @@ Qt::ItemFlags VehicleTableModel::flags(const QModelIndex &index) const {
     switch (static_cast<Columns>(index.column())) {
     case ColumnName:
     case ColumnPlateNo:
+    case ColumnColor:
         flags |= Qt::ItemIsEditable | Qt::ItemIsEnabled;
         break;
     case ColumnCommit:

@@ -7,12 +7,21 @@
 #include <QNetworkReply>
 #include <QUrlQuery>
 
-Vehicle::Vehicle(int id, QString &name, QString &plateNo, QObject *parent)
-    : m_id(id), m_name(name), m_plateNo(plateNo), QObject(parent) {}
+Vehicle::Vehicle(int id, QString &name, QString &plateNo, QColor &color, QObject *parent)
+    : m_id(id)
+    , m_name(name)
+    , m_plateNo(plateNo)
+    , m_color(color)
+    , QObject(parent)
+{}
 
 Vehicle::Vehicle(const Vehicle &vehicle, QObject *parent)
-    : m_id(vehicle.id()), m_name(vehicle.name()), m_plateNo(vehicle.plateNo()),
-      QObject(parent) {}
+    : m_id(vehicle.id())
+    , m_name(vehicle.name())
+    , m_plateNo(vehicle.plateNo())
+    , m_color(vehicle.color())
+    , QObject(parent)
+{}
 
 int Vehicle::id() const { return m_id; }
 
@@ -49,6 +58,7 @@ void Vehicle::commitChanges() {
   uq.addQueryItem("vehicle_id", QString::number(m_id));
   uq.addQueryItem("name", m_name);
   uq.addQueryItem("plate", m_plateNo);
+  uq.addQueryItem("color", QString::number(m_color.rgba()));
 
   url.setQuery(uq);
   QNetworkRequest request(url);
@@ -97,4 +107,18 @@ void Vehicle::removeDevice(Device *device)
 QList<Device *> Vehicle::devices() const
 {
     return m_devices;
+}
+
+QColor Vehicle::color() const
+{
+    return m_color;
+}
+
+void Vehicle::setColor(const QColor &newColor)
+{
+    if (m_color == newColor)
+        return;
+    m_color = newColor;
+    setChangesPending(true);
+    emit colorChanged();
 }

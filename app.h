@@ -29,7 +29,6 @@ private:
   EgSettings m_egSettings;
   VehiclesModel m_vehiclesModel;
   VehiclesEditModel m_vehiclesEditModel;
-  LiveViewModel m_liveViewModel;
   EgCarsMapModel m_carsMapModel;
   MainWindow *m_mainWindow;
   EgDataProvider m_dataProvider;

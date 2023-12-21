@@ -20,14 +20,17 @@ FormGPSHistory::FormGPSHistory(QWidget *parent)
     // map
     auto *layout = new QVBoxLayout(ui->widget_map);
     m_mapHistoryWidget = new MapWidget(ui->widget_map);
+    m_mapHistoryWidget->setModel(&mapHistoryModel);
     ui->widget_map->setLayout(layout);
     layout->addWidget(m_mapHistoryWidget);
+
+    //date picker
+    ui->dateEdit->setDate(QDate::currentDate());
+
     // connect(m_mapHistoryWidget,
     //         &EgVehiclesMap::mapMarkerClicked,
     //         this,
     //         &MainWindow::onHistoryMapMarkerClicked);
-
-    m_mapHistoryWidget->setModel(&mapHistoryModel);
 }
 
 FormGPSHistory::~FormGPSHistory()
@@ -38,6 +41,9 @@ FormGPSHistory::~FormGPSHistory()
 void FormGPSHistory::onGpsDataReady(EgGpsListData &gpsList)
 {
     mapHistoryModel.clearMarkers();
+
+    if (gpsList.sensors.count() == 0)
+        return;
 
     int currentId = 0;
 
@@ -61,6 +67,11 @@ void FormGPSHistory::onGpsDataReady(EgGpsListData &gpsList)
 
         currentId++;
     }
+
+    m_gpsList = gpsList;
+    ui->horizontalSlider->setMinimum(0);
+    auto sensorData = gpsList.sensors.first();
+    ui->horizontalSlider->setMaximum(sensorData->timestamps.length());
 }
 
 void FormGPSHistory::on_listView_vehicles_clicked(const QModelIndex &index)
@@ -95,4 +106,19 @@ void FormGPSHistory::repaintGpsData()
 void FormGPSHistory::on_dateEdit_userDateChanged(const QDate &date)
 {
     repaintGpsData();
+}
+
+void FormGPSHistory::on_horizontalSlider_sliderMoved(int position) {}
+
+void FormGPSHistory::on_horizontalSlider_valueChanged(int value)
+{
+    auto sensor = m_gpsList.sensors.first();
+    if (sensor == nullptr)
+        return;
+    if (value >= sensor->geolocations.length())
+        return;
+    auto currentPosition = sensor->geolocations[value].coordinate();
+    auto timestamp = sensor->timestamps[value];
+    mapHistoryModel.updatePosition(0, currentPosition, true);
+    ui->label_sliderDate->setText(timestamp.toString("hh:mm:ss"));
 }

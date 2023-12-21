@@ -38,9 +38,9 @@ signals:
   private:
   QNetworkAccessManager *m_netAccMgr;
 
-  //  QString m_serverPath = "http://iot.2canit.pl:5000";
+  QString m_serverPath = "http://iot.2canit.pl:5000";
   // QString m_serverPath = "http://10.22.1.57:14999";
-  QString m_serverPath = "http://127.0.0.1:5000";
+  // QString m_serverPath = "http://127.0.0.1:5000";
   QString m_getVehiclesSubpath = "/api/getVehicles";
   QString m_getDevicesSubpath = "/api/getDevices";
   QString m_getSensorsSubpath = "/api/getSensors";

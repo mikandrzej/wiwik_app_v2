@@ -183,7 +183,7 @@ void EgRestDataSource::requestGpsHistoryData(int vehicleId, QDate &date)
                     auto deviceName = dbEntry["device_name"].toString();
                     auto address = dbEntry["address"].toString();
                     auto timestampRaw = dbEntry["timestamp"].toInt();
-                    auto timestamp = QDateTime::fromMSecsSinceEpoch(timestampRaw);
+                    auto timestamp = QDateTime::fromSecsSinceEpoch(timestampRaw);
                     auto latitude = dbEntry["latitude"].toDouble();
                     auto longitude = dbEntry["longitude"].toDouble();
                     auto precision = dbEntry["precision"].toDouble();
@@ -371,9 +371,10 @@ void EgRestDataSource::onVehicleListRequestReady(QByteArray &replyData) {
     vehData->id = jsonVeh["id"].toInt(-1);
     vehData->name = jsonVeh["name"].toString("Unknown");
     vehData->plateNo = jsonVeh["plate"].toString("Unknown");
+    vehData->color = jsonVeh["color"].toDouble();
 
-    qDebug() << "Parsed vehicle data: " << vehData->id << vehData->name
-             << vehData->plateNo;
+    qDebug() << "Parsed vehicle data: " << vehData->id << vehData->name << vehData->plateNo
+             << vehData->color;
 
     vehicleList.vehicles.append(vehData);
   }
@@ -382,7 +383,7 @@ void EgRestDataSource::onVehicleListRequestReady(QByteArray &replyData) {
 
   QList<Vehicle *> newVehList;
   for (auto &veh : vehicleList.vehicles) {
-    newVehList.append(new Vehicle(veh->id, veh->name, veh->plateNo));
+      newVehList.append(new Vehicle(veh->id, veh->name, veh->plateNo, veh->color));
   }
   DataContainer::instance()->overwriteVehicles(newVehList);
 }

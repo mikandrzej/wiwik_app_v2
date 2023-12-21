@@ -77,6 +77,11 @@ void Device::setVehicle(Vehicle *newVehicle)
     emit vehicleChanged();
 }
 
+QList<Sensor *> Device::sensors() const
+{
+    return m_sensors;
+}
+
 void Device::commitChanges() {
   if (!m_changesPending)
     return;
