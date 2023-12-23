@@ -3,9 +3,10 @@
 
 #include <QSortFilterProxyModel>
 
-class LiveVehiclesProxyModel : public QSortFilterProxyModel {
-public:
-  explicit LiveVehiclesProxyModel(QObject *parent = nullptr);
+class LiveVehiclesProxyModel : public QSortFilterProxyModel
+{
+  public:
+    explicit LiveVehiclesProxyModel(QObject* parent = nullptr);
 };
 
-#endif // LIVEVEHICLESPROXYMODEL_H
+#endif   // LIVEVEHICLESPROXYMODEL_H

@@ -4,62 +4,57 @@
 #include "onevehiclebatterymodel.h"
 #include "onevehiclepositionmodel.h"
 #include "onevehicletemperaturemodel.h"
-
 #include <QObject>
 
-class OneVehicleModel : public QObject {
-  Q_OBJECT
-public:
-  explicit OneVehicleModel(QObject *parent = nullptr);
+class OneVehicleModel : public QObject
+{
+    Q_OBJECT
+  public:
+    explicit OneVehicleModel(QObject* parent = nullptr);
 
-  QString name() const;
-  void setName(const QString &newName);
+    QString name() const;
+    void setName(const QString& newName);
 
-  QString plateNo() const;
-  void setPlateNo(const QString &newPlateNo);
+    QString plateNo() const;
+    void setPlateNo(const QString& newPlateNo);
 
-  OneVehiclePositionModel *positionModel() const;
+    OneVehiclePositionModel* positionModel() const;
 
-  OneVehicleTemperatureModel *temperatureModel() const;
+    OneVehicleTemperatureModel* temperatureModel() const;
 
-  OneVehicleBatteryModel *batteryModel() const;
+    OneVehicleBatteryModel* batteryModel() const;
 
-  int id() const;
-  void setId(int newId);
+    int id() const;
+    void setId(int newId);
 
-signals:
+  signals:
 
-  void nameChanged();
+    void nameChanged();
 
-  void plateNoChanged();
+    void plateNoChanged();
 
-  void positionModelChanged();
+    void positionModelChanged();
 
-  void temperatureModelChanged();
+    void temperatureModelChanged();
 
-  void batteryModelChanged();
+    void batteryModelChanged();
 
-  void idChanged();
+    void idChanged();
 
-private:
-  int m_id;
-  QString m_name;
-  QString m_plateNo;
-  OneVehicleTemperatureModel *m_temperatureModel =
-      new OneVehicleTemperatureModel(this);
-  OneVehiclePositionModel *m_position = new OneVehiclePositionModel(this);
-  OneVehicleBatteryModel *m_battery = new OneVehicleBatteryModel(this);
+  private:
+    int m_id {0};
+    QString m_name;
+    QString m_plateNo;
+    OneVehicleTemperatureModel* m_temperatureModel = new OneVehicleTemperatureModel(this);
+    OneVehiclePositionModel* m_position = new OneVehiclePositionModel(this);
+    OneVehicleBatteryModel* m_battery = new OneVehicleBatteryModel(this);
 
-  Q_PROPERTY(int id READ id WRITE setId NOTIFY idChanged)
-  Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
-  Q_PROPERTY(
-      QString plateNo READ plateNo WRITE setPlateNo NOTIFY plateNoChanged)
-  Q_PROPERTY(OneVehicleTemperatureModel *temperatureModel READ temperatureModel
-                 NOTIFY temperatureModelChanged)
-  Q_PROPERTY(OneVehiclePositionModel *positionModel READ positionModel NOTIFY
-                 positionModelChanged)
-  Q_PROPERTY(OneVehicleBatteryModel *batteryModel READ batteryModel NOTIFY
-                 batteryModelChanged)
+    Q_PROPERTY(int id READ id WRITE setId NOTIFY idChanged)
+    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
+    Q_PROPERTY(QString plateNo READ plateNo WRITE setPlateNo NOTIFY plateNoChanged)
+    Q_PROPERTY(OneVehicleTemperatureModel* temperatureModel READ temperatureModel NOTIFY temperatureModelChanged)
+    Q_PROPERTY(OneVehiclePositionModel* positionModel READ positionModel NOTIFY positionModelChanged)
+    Q_PROPERTY(OneVehicleBatteryModel* batteryModel READ batteryModel NOTIFY batteryModelChanged)
 };
 
-#endif // ONEVEHICLEMODEL_H
+#endif   // ONEVEHICLEMODEL_H

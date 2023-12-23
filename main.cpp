@@ -1,29 +1,28 @@
 #include "Configuration/configuration.h"
 #include "app.h"
 #include "mainwindow.h"
-
 #include <QApplication>
 #include <QErrorMessage>
 #include <QGroupBox>
 #include <QLabel>
 #include <QPushButton>
+#include <QSslSocket>
 #include <QToolBox>
 #include <QVBoxLayout>
 
-#include <QSslSocket>
+int main(int argc, char* argv[])
+{
+    QApplication a(argc, argv);
+    a.setStyle("Fusion");
 
-int main(int argc, char *argv[]) {
-  QApplication a(argc, argv);
-  a.setStyle("Fusion");
+    MainWindow w;
+    App app(&w);
 
-  MainWindow w;
-  App app(&w);
+    qDebug() << "SSL lib:";
+    qDebug() << QSslSocket::sslLibraryBuildVersionString();
+    qDebug() << QSslSocket::sslLibraryVersionString();
+    qDebug() << QSslSocket::supportsSsl();
 
-  qDebug()<<"SSL lib:";
-  qDebug()<<QSslSocket::sslLibraryBuildVersionString();
-  qDebug()<<QSslSocket::sslLibraryVersionString();
-  qDebug()<<QSslSocket::supportsSsl();
-
-  w.show();
-  return a.exec();
+    w.show();
+    return a.exec();
 }

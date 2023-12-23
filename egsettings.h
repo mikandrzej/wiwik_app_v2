@@ -3,22 +3,23 @@
 
 #include <QObject>
 
-class EgSettings : public QObject {
-  Q_OBJECT
-public:
-  explicit EgSettings(QObject *parent = nullptr);
+class EgSettings : public QObject
+{
+    Q_OBJECT
+  public:
+    explicit EgSettings(QObject* parent = nullptr);
 
-  QString serverUrl() const;
+    QString serverUrl() const;
 
-signals:
+  signals:
 
-  void serverUrlChanged(const QString &value);
+    void serverUrlChanged(const QString& value);
 
-public slots:
-  void setServerUrl(const QString &newServerUrl);
+  public slots:
+    void setServerUrl(const QString& newServerUrl);
 
-private:
-  QString m_serverUrl;
+  private:
+    QString m_serverUrl;
 };
 
-#endif // EGSETTINGS_H
+#endif   // EGSETTINGS_H

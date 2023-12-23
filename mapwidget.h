@@ -9,19 +9,19 @@
 class MapWidget : public QWidget
 {
     Q_OBJECT
-public:
-    explicit MapWidget(QWidget *parent = nullptr);
+  public:
+    explicit MapWidget(QWidget* parent = nullptr);
 
-    QAbstractItemModel *model() const;
-    void setModel(QAbstractItemModel *newModel);
+    QAbstractItemModel* model() const;
+    void setModel(QAbstractItemModel* newModel);
 
-signals:
+  signals:
     void modelChanged();
 
-private:
-    QAbstractItemModel *m_model;
-    QQuickView *m_quickView;
-    Q_PROPERTY(QAbstractItemModel *model READ model WRITE setModel NOTIFY modelChanged FINAL)
+  private:
+    QAbstractItemModel* m_model;
+    QQuickView* m_quickView;
+    Q_PROPERTY(QAbstractItemModel* model READ model WRITE setModel NOTIFY modelChanged FINAL)
 };
 
-#endif // MAPWIDGET_H
+#endif   // MAPWIDGET_H

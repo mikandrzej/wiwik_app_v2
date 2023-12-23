@@ -6,33 +6,42 @@
 
 class QSettings;
 
-class Configuration {
-public:
-  Configuration();
+class Configuration
+{
+  public:
+    Configuration();
 
-  enum class ConfigType { RestUrl, RestPort, MqttUrl, MqttPort, MqttUsername, MqttPassword };
+    enum class ConfigType
+    {
+        RestUrl,
+        RestPort,
+        MqttUrl,
+        MqttPort,
+        MqttUsername,
+        MqttPassword
+    };
 
-  QVariant getConfiguration(QString type);
-  void setConfiguration(ConfigType type, QVariant value);
+    QVariant getConfiguration(const QString& type);
+    void setConfiguration(ConfigType type, const QVariant& value);
 
-  bool validated() const;
-  void setValidated(bool newValidated);
+    bool validated() const;
+    void setValidated(bool newValidated);
 
   private:
-  QSettings *m_settings;
-  bool m_validated;
-  QMap<ConfigType, QString> m_configKeys = {
-      {ConfigType::RestUrl, "rest_url"},
-      {ConfigType::RestPort, "rest_port"},
-      {ConfigType::MqttUrl, "mqtt_url"},
-      {ConfigType::MqttPort, "mqtt_port"},
-      {ConfigType::MqttUsername, "mqtt_username"},
-      {ConfigType::MqttPassword, "mqtt_password"},
-  };
+    QSettings* m_settings;
+    bool m_validated;
+    QMap<ConfigType, QString> m_configKeys = {
+        {ConfigType::RestUrl, "rest_url"},
+        {ConfigType::RestPort, "rest_port"},
+        {ConfigType::MqttUrl, "mqtt_url"},
+        {ConfigType::MqttPort, "mqtt_port"},
+        {ConfigType::MqttUsername, "mqtt_username"},
+        {ConfigType::MqttPassword, "mqtt_password"},
+    };
 
-  void validate();
+    void validate();
 };
 
 extern Configuration configuration;
 
-#endif // CONFIGURATION_H
+#endif   // CONFIGURATION_H

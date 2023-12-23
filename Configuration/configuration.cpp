@@ -1,9 +1,6 @@
 #include "configuration.h"
-
-#include <QSettings>
-
 #include <QDebug>
-
+#include <QSettings>
 #include <QtWidgets/QDialog>
 
 Configuration configuration;
@@ -22,14 +19,15 @@ Configuration::Configuration()
     // dialog.show();
 }
 
-QVariant Configuration::getConfiguration(QString type) {
+QVariant Configuration::getConfiguration(const QString& type)
+{
     if (m_settings->contains(type))
         return m_settings->value(type);
 
-    return QVariant();
+    return {};
 }
 
-void Configuration::setConfiguration(ConfigType type, QVariant value) {}
+void Configuration::setConfiguration(ConfigType /*type*/, const QVariant& /*value*/) {}
 
 bool Configuration::validated() const
 {
@@ -43,8 +41,10 @@ void Configuration::setValidated(bool newValidated)
 
 void Configuration::validate()
 {
-    for (auto &key : m_configKeys) {
-        if (!m_settings->contains(key)) {
+    for (auto& key : m_configKeys)
+    {
+        if (!m_settings->contains(key))
+        {
             m_validated = false;
             return;
         }

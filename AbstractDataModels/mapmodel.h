@@ -10,23 +10,23 @@
 class MapModelData : public QObject
 {
     Q_OBJECT
-public:
-    MapModelData(int id, QObject *parent = nullptr);
+  public:
+    explicit MapModelData(int id, QObject* parent = nullptr);
 
     int id() const;
     void setId(int newId);
 
     QString name() const;
-    void setName(const QString &newName);
+    void setName(const QString& newName);
 
     QColor color() const;
-    void setColor(const QColor &newColor);
+    void setColor(const QColor& newColor);
 
     QIcon icon() const;
-    void setIcon(const QIcon &newIcon);
+    void setIcon(const QIcon& newIcon);
 
     QVariantList path() const;
-    void setPath(const QVariantList &newPath);
+    void setPath(const QVariantList& newPath);
 
     bool pathEnabled() const;
     void setPathEnabled(bool newPathEnabled);
@@ -35,17 +35,17 @@ public:
     void setPathWidth(int newPathWidth);
 
     QColor pathColor() const;
-    void setPathColor(const QColor &newPathColor);
+    void setPathColor(const QColor& newPathColor);
 
     QMap<QString, QString> customData() const;
-    void setCustomData(const QMap<QString, QString> &newCustomData);
+    void setCustomData(const QMap<QString, QString>& newCustomData);
 
     QString customDataString() const;
 
     QGeoCoordinate position() const;
-    void setPosition(const QGeoCoordinate &newPosition);
+    void setPosition(const QGeoCoordinate& newPosition);
 
-signals:
+  signals:
     void idChanged();
 
     void nameChanged();
@@ -66,7 +66,7 @@ signals:
 
     void positionChanged();
 
-private:
+  private:
     int m_id = 0;
     QString m_name;
     QColor m_color;
@@ -85,38 +85,38 @@ private:
     Q_PROPERTY(bool pathEnabled READ pathEnabled WRITE setPathEnabled NOTIFY pathEnabledChanged FINAL)
     Q_PROPERTY(int pathWidth READ pathWidth WRITE setPathWidth NOTIFY pathWidthChanged FINAL)
     Q_PROPERTY(QColor pathColor READ pathColor WRITE setPathColor NOTIFY pathColorChanged FINAL)
-    Q_PROPERTY(QMap<QString, QString> customData READ customData WRITE setCustomData NOTIFY
-                   customDataChanged FINAL)
+    Q_PROPERTY(QMap<QString, QString> customData READ customData WRITE setCustomData NOTIFY customDataChanged FINAL)
     Q_PROPERTY(QGeoCoordinate position READ position WRITE setPosition NOTIFY positionChanged FINAL)
 };
 
 class MapModel : public QAbstractListModel
 {
     Q_OBJECT
-public:
-    explicit MapModel(QObject *parent = nullptr);
+  public:
+    explicit MapModel(QObject* parent = nullptr);
 
     bool addMarker(int id);
     void removeMarker(int id);
     void clearMarkers();
-    void setMarkerName(int id, const QString &name);
-    void setMarkerColor(int id, const QColor &color);
-    void setMarkerIcon(int id, const QIcon &icon);
-    void setMarkerCustomData(int id, QMap<QString, QString> &values);
+    void setMarkerName(int id, const QString& name);
+    void setMarkerColor(int id, const QColor& color);
+    void setMarkerIcon(int id, const QIcon& icon);
+    void setMarkerCustomData(int id, QMap<QString, QString>& values);
     void setMarkerPathEnabled(int id, bool enabled);
-    void setMarkerPathColor(int id, const QColor &color);
+    void setMarkerPathColor(int id, const QColor& color);
     void setMarkerPathWidth(int id, int width);
-    void updatePosition(int id, QGeoCoordinate &coordinate, bool update = true);
-    void setPath(int id, QList<QGeoCoordinate> path);
+    void updatePosition(int id, QGeoCoordinate& coordinate, bool update = true);
+    void setPath(int id, const QList<QGeoCoordinate>& path);
 
     // QAbstractItemModel interface
-public:
-    int rowCount(const QModelIndex &parent) const;
-    QVariant data(const QModelIndex &index, int role) const;
-    QHash<int, QByteArray> roleNames() const;
+  public:
+    int rowCount(const QModelIndex& parent) const override;
+    QVariant data(const QModelIndex& index, int role) const override;
+    QHash<int, QByteArray> roleNames() const override;
 
-private:
-    enum {
+  private:
+    enum
+    {
         RoleId = Qt::UserRole,
         RoleName,
         RoleMarkerPosition,
@@ -129,11 +129,11 @@ private:
         RoleCustomData
     };
 
-    QVector<MapModelData *> m_data;
-    QMap<int, MapModelData *> m_dataById;
+    QVector<MapModelData*> m_data;
+    QMap<int, MapModelData*> m_dataById;
 };
 
 extern MapModel mapHistoryModel;
 extern MapModel mapLiveModel;
 
-#endif // MAPMODEL_H
+#endif   // MAPMODEL_H

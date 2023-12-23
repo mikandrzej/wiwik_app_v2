@@ -4,9 +4,7 @@
 #include "../chartwidget.h"
 #include "ui_formtemperaturehistory.h"
 
-FormTemperatureHistory::FormTemperatureHistory(QWidget *parent)
-    : QWidget(parent)
-    , ui(new Ui::FormTemperatureHistory)
+FormTemperatureHistory::FormTemperatureHistory(QWidget* parent) : QWidget(parent), ui(new Ui::FormTemperatureHistory)
 {
     ui->setupUi(this);
 
@@ -16,7 +14,7 @@ FormTemperatureHistory::FormTemperatureHistory(QWidget *parent)
 
     ui->listView_vehicles->setModel(&vehicleListModel);
 
-    //date picker
+    // date picker
     ui->dateEdit->setDate(QDate::currentDate());
 
     // connect(ui->pb_historyToday, &QPushButton::clicked, this, &MainWindow::onPbHistoryTodayClicked);
@@ -141,7 +139,7 @@ FormTemperatureHistory::~FormTemperatureHistory()
 //     plotHistoryData();
 // }
 
-void FormTemperatureHistory::on_listView_vehicles_clicked(const QModelIndex &index)
+void FormTemperatureHistory::on_listView_vehicles_clicked(const QModelIndex& index)
 {
     m_selectedIndex = index;
     refreshTemperatureData();
@@ -153,8 +151,7 @@ void FormTemperatureHistory::refreshTemperatureData()
     auto selectedIndex = ui->listView_vehicles->currentIndex();
     if (!selectedIndex.isValid())
         return;
-    auto vehicleIdVariant = ui->listView_vehicles->model()
-                                ->data(selectedIndex, VehicleListModel::roles::RoleVehicleId);
+    auto vehicleIdVariant = ui->listView_vehicles->model()->data(selectedIndex, VehicleListModel::roles::RoleVehicleId);
     if (!vehicleIdVariant.isValid())
         return;
     bool ok;
@@ -173,14 +170,14 @@ void FormTemperatureHistory::on_pb_historyToday_clicked()
     refreshTemperatureData();
 }
 
-void FormTemperatureHistory::onTemperatureDataReady(EgTemperatureListData &temperatureData)
+void FormTemperatureHistory::onTemperatureDataReady(EgTemperatureListData& temperatureData)
 {
     m_chartWidget->clearGraphs();
-    for (auto &sensor_ref : temperatureData.sensors.keys()) {
-        auto &sensor = temperatureData.sensors[sensor_ref];
+    for (auto& sensor_ref : temperatureData.sensors.keys())
+    {
+        auto& sensor = temperatureData.sensors[sensor_ref];
 
-        auto chart = m_chartWidget->addGraph(sensor->sensor_address,
-                                             sensor->sensor_name + " / " + sensor->sensor_address);
+        auto chart = m_chartWidget->addGraph(sensor->sensor_address, sensor->sensor_name + " / " + sensor->sensor_address);
         chart->setData(sensor->timestamps, sensor->values);
     }
     m_chartWidget->rescaleAxis(Qt::XAxis);
