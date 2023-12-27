@@ -1,7 +1,6 @@
 #include "egmqttdatasource.h"
 #include "../DataModels/gpsdata.h"
 #include "../DataModels/measure.h"
-#include "../DataModels/sensor.h"
 #include "../DataSource/datacontainer.h"
 #include "EgVehicleData.h"
 #include <QDebug>
@@ -232,7 +231,7 @@ void EgMqttDataSource::onMqttDeviceMessageReceived(const QByteArray& msg, const 
 {
     if (topic.length() < 3)
         return;
-    const auto& deviceAddress = topic[0];
+    // const auto& deviceAddress = topic[0];
     const auto& sensorType = topic[1];
     auto sensorAddress = topic[2];
 
@@ -251,16 +250,7 @@ void EgMqttDataSource::onMqttDeviceMessageReceived(const QByteArray& msg, const 
     }
     // auto timestamp = QDateTime::fromSecsSinceEpoch(jsonObj["timestamp"].toInt());
     auto timestampStr = jsonObj["timestamp"].toString();
-    auto splTimestampStr = timestampStr.split(" GMT");
-    if (splTimestampStr.length() != 2)
-    {
-        qWarning() << "Invalid timestamp str: \"" << timestampStr << "\" for device " << deviceAddress;
-        return;
-    }
-    auto dateTimeStr = splTimestampStr[0];
-    auto hourOffset = splTimestampStr[1].toInt();
-    auto timestamp = QDateTime::fromString(dateTimeStr, "yyyy-MM-dd hh:mm:ss");
-    timestamp.setOffsetFromUtc(hourOffset * 60 * 60);
+    auto timestamp = dateTimeFromString(timestampStr);
 
     Measure* measure = nullptr;
 
@@ -291,33 +281,36 @@ void EgMqttDataSource::onMqttDeviceMessageReceived(const QByteArray& msg, const 
         double altitude = jsonObj["altitude"].toDouble();
         double precision = jsonObj["precision"].toDouble();
         double speed = jsonObj["speed"].toDouble();
-        QString address = jsonObj["address"].toString();
-        auto gps_timestamp = QDateTime::fromSecsSinceEpoch(jsonObj["tim"].toInt());
+
+        QString country = jsonObj["country"].toString();
+        QString postcode = jsonObj["postcode"].toString();
+        QString village = jsonObj["village"].toString();
+        QString road = jsonObj["road"].toString();
+
+        auto gpsTimestampStr = jsonObj["gps_timestamp"].toString();
+        auto gpsTimestamp = dateTimeFromString(gpsTimestampStr);
 
         GpsData gpsData;
 
         gpsData.setCoordinate(QGeoCoordinate(latitude, longitude, altitude));
 
-        auto addressRaw = address.split(", ");
-        if (addressRaw.length() == 8)
+        if (country.length() > 0)
         {
             QGeoAddress geoAddress;
-            geoAddress.setStreet(addressRaw[1] + " " + addressRaw[0]);
-            geoAddress.setCity(addressRaw[2]);
-            geoAddress.setCounty(addressRaw[3]);
-            geoAddress.setDistrict(addressRaw[5]);
-            geoAddress.setPostalCode(addressRaw[6]);
-            geoAddress.setCountry(addressRaw[7]);
+            geoAddress.setStreet(road);
+            geoAddress.setCity(village);
+            geoAddress.setPostalCode(postcode);
+            geoAddress.setCountry(country);
             gpsData.setAddress(geoAddress);
         }
         else
         {
-            qDebug() << "Invalid address data: \"" << address << "\" in msg: \"" << msg << "\"";
+            qDebug() << "Invalid address data: " << country << " " << postcode << " " << village << " " << road;
         }
 
         gpsData.setAccuracy(precision);
         gpsData.setSpeed(speed);
-        gpsData.setGpsTimestamp(gps_timestamp);
+        gpsData.setGpsTimestamp(gpsTimestamp);
 
         measure = new Measure(timestamp, QVariant::fromValue(gpsData));
     }
@@ -346,4 +339,20 @@ void EgMqttDataSource::setServerState(bool newServerState)
         return;
     m_serverState = newServerState;
     emit serverStateChanged(m_serverState);
+}
+
+QDateTime EgMqttDataSource::dateTimeFromString(QString& text)
+{
+    auto splTimestampStr = text.split(" GMT");
+    if (splTimestampStr.length() != 2)
+    {
+        qWarning() << "Invalid timestamp str: \"" << text;
+        return QDateTime();
+    }
+    auto dateTimeStr = splTimestampStr[0];
+    auto hourOffset = splTimestampStr[1].toInt();
+    auto timestamp = QDateTime::fromString(dateTimeStr, "yyyy-MM-dd hh:mm:ss");
+    timestamp.setOffsetFromUtc(hourOffset * 60 * 60);
+
+    return timestamp;
 }

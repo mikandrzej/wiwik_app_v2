@@ -4,8 +4,9 @@
 #include "../DataModels/gpsdata.h"
 #include "../DataSource/datacontainer.h"
 #include "../mapwidget.h"
-#include <QGeoPositionInfo>
 #include "ui_formliveview.h"
+#include <QGeoPositionInfo>
+#include <QStringBuilder>
 
 FormLiveView::FormLiveView(QWidget* parent) : QWidget(parent), ui(new Ui::FormLiveView)
 {
@@ -74,6 +75,10 @@ void FormLiveView::sensorPositionDataChanged(Sensor* sensor)
                     if (sensor->type() == "battery")
                     {
                         customData["Bateria"] = sensor->lastMeasureString();
+                    }
+                    if (sensor->type() == "gps")
+                    {
+                        // todo
                     }
                 }
 

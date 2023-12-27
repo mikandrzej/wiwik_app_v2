@@ -1,5 +1,6 @@
 #include "egrestdatasource.h"
 #include "../DataModels/device.h"
+#include "../DataModels/gpsdata.h"
 #include "../DataModels/sensor.h"
 #include "../DataModels/vehicle.h"
 #include "datacontainer.h"
@@ -190,7 +191,6 @@ void EgRestDataSource::requestGpsHistoryData(int vehicleId, QDate& date)
                 foreach (auto dbEntry, dbEntries)
                 {
                     auto deviceName = dbEntry["device_name"].toString();
-                    auto address = dbEntry["address"].toString();
                     auto timestampRaw = dbEntry["timestamp"].toInt();
                     auto timestamp = QDateTime::fromSecsSinceEpoch(timestampRaw);
                     auto latitude = dbEntry["latitude"].toDouble();
@@ -198,6 +198,11 @@ void EgRestDataSource::requestGpsHistoryData(int vehicleId, QDate& date)
                     auto sensorAddress = dbEntry["sensor_addr"].toString();
                     auto sensorName = dbEntry["sensor_name"].toString();
                     auto speed = dbEntry["speed"];
+
+                    QString country = dbEntry["country"].toString();
+                    QString postcode = dbEntry["postcode"].toString();
+                    QString village = dbEntry["village"].toString();
+                    QString road = dbEntry["road"].toString();
 
                     auto pack = tempList.sensors[sensorAddress];
                     if (!pack)
@@ -207,26 +212,26 @@ void EgRestDataSource::requestGpsHistoryData(int vehicleId, QDate& date)
                         pack->sensor_address = sensorAddress;
                         tempList.sensors[sensorAddress] = pack;
                     }
-                    QGeoLocation geoLocation;
-                    geoLocation.setCoordinate(QGeoCoordinate(latitude, longitude));
-                    if (!address.isEmpty())
-                    {
-                        auto addressComponents = address.split(", ");
-                        if (addressComponents.length() == 8)
-                        {
-                            QGeoAddress geoAddress;
-                            geoAddress.setStreet(addressComponents[1]);
-                            geoAddress.setCity(addressComponents[2]);
-                            geoAddress.setState(addressComponents[5]);
-                            geoAddress.setPostalCode(addressComponents[6]);
-                            geoAddress.setCountry(addressComponents[7]);
 
-                            geoLocation.setAddress(geoAddress);
-                        }
+                    GpsData gpsData;
+                    gpsData.setCoordinate(QGeoCoordinate(latitude, longitude));
+
+                    if (country.length() > 0)
+                    {
+                        QGeoAddress geoAddress;
+                        geoAddress.setStreet(road);
+                        geoAddress.setCity(village);
+                        geoAddress.setPostalCode(postcode);
+                        geoAddress.setCountry(country);
+                        gpsData.setAddress(geoAddress);
+                    }
+                    else
+                    {
+                        qDebug() << "Invalid address data: " << country << " " << postcode << " " << village << " " << road;
                     }
 
                     pack->timestamps.push_back(timestamp);
-                    pack->geolocations.push_back(geoLocation);
+                    pack->geolocations.push_back(gpsData);
                 }
             }
         }

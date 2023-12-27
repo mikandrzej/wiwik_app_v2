@@ -36,6 +36,7 @@ class EgMqttDataSource : public QObject
     void parseServiceServerMesssage(QString& parameter, const QByteArray& message);
     void setServerState(bool newServerState);
     void parseVehicleMessage(int vehicle_id, const QStringList& topicLevels, const QByteArray& message);
+    QDateTime dateTimeFromString(QString& text);
 };
 
 #endif   // EGMQTTDATASOURCE_H

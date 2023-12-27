@@ -46,7 +46,7 @@ TreeItem* TreeItem::parentItem()
 void TreeItem::clear()
 {
     m_childItems.clear();
-};
+}
 
 int TreeItem::row() const
 {

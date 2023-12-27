@@ -1,6 +1,7 @@
 #ifndef EGDEVICEDATA_H
 #define EGDEVICEDATA_H
 
+#include "../DataModels/gpsdata.h"
 #include <QDateTime>
 #include <QGeoLocation>
 #include <QList>
@@ -52,7 +53,7 @@ struct EgTemperatureListData
 
 struct EgGpsData
 {
-    QVector<QGeoLocation> geolocations;
+    QVector<GpsData> geolocations;
     QVector<QDateTime> timestamps;
     QString sensor_address;
     QString sensor_name;
